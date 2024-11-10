@@ -1,7 +1,8 @@
 name: Lint
-run-name: Run #${{ github.run_number }} - ${{ github.event_name }}
+run-name: "Lint: ${{ github.ref_name }} by ${{ github.actor }}"
 
 on:
+  workflow_dispatch:
   push:
     branches: [ $default-branch ]
   pull_request:
