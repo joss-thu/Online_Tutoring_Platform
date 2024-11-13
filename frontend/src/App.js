@@ -1,6 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import ActionButton from "./Components/ActionButton";
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
   const handleClick = async () => {
     const res = await fetch("http://localhost:8080/sample");
     setCount(count + 1);
-  }
+  };
 
   useEffect(() => {
     //fetchData();
@@ -36,7 +36,7 @@ function App() {
           Learn React
         </a>
       </header>
-      <ActionButton text={count} onClick={handleClick}/>
+      <ActionButton text={count} onClick={handleClick} />
     </div>
   );
 }
