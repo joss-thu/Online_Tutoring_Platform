@@ -4,21 +4,13 @@ import React, { useEffect, useState } from "react";
 import ActionButton from "./Components/ActionButton";
 
 function App() {
-  const fetchData = async () => {
-    const res = await fetch("http://localhost:8080/sample");
-    console.log(res);
-  };
-
   const [count, setCount] = useState(0);
 
   const handleClick = async () => {
-    const res = await fetch("http://localhost:8080/sample");
     setCount(count + 1);
   };
 
-  useEffect(() => {
-    //fetchData();
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className="app">
