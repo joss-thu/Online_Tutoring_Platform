@@ -1,36 +1,19 @@
-import logo from "./logo.svg";
 import "./App.css";
-import React, { useEffect, useState } from "react";
-import ActionButton from "./Components/ActionButton";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import MyCourses from "./pages/MyCourses";
+import TutorCentre from "./pages/TutorCentre";
+import Messages from "./pages/Messages";
 
-function App() {
-  const [count, setCount] = useState(0);
-
-  const handleClick = async () => {
-    setCount(count + 1);
-  };
-
-  useEffect(() => {}, []);
-
+export default function App() {
   return (
-    <div className="app">
-      <header className="app-header">
-        <img src={logo} className="app-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="app-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <ActionButton text={count} onClick={handleClick} />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/my-courses" element={<MyCourses />} />
+        <Route path="/tutor-centre" element={<TutorCentre />} />
+        <Route path="/messages" element={<Messages />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
