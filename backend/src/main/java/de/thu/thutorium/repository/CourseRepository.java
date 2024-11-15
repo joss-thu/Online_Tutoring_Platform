@@ -1,18 +1,23 @@
 package de.thu.thutorium.repository;
 
 import de.thu.thutorium.model.Course;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-/**
- * Repository interface for managing {@link Course} entities.
- *
- * <p>This interface extends the {@link CrudRepository} interface provided by Spring Data, enabling
- * basic CRUD (Create, Read, Update, Delete) operations on Course entities.
- *
- * <p>By extending {@link CrudRepository}, this interface inherits several methods for working with
- * Course persistence, including methods for saving, deleting, and finding Course entities.
- *
- * @see Course
- * @see CrudRepository
- */
-public interface CourseRepository extends CrudRepository<Course, Integer> {}
+import java.util.List;
+
+public interface CourseRepository extends JpaRepository<Course, Long> {
+
+    /**
+     * Retrieves courses that belong to a specific category.
+     *
+     * @param category The category name to search for (case-insensitive).
+     * @return A list of {@link Course} entities that match the given category.
+     * Uses a custom JPQL query to perform a case-insensitive search in the database.
+     */
+
+
+    @Query("SELECT c FROM Course c WHERE c.category = :category")
+    List<Course> findByCategory(@Param("category") String category);
+}
