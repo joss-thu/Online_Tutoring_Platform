@@ -1,6 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 :root {
-    --blue: #61dafb;
-    --white: #fff;
+    --primary_color: #003366;
+    --secondary_color1: #E0f7E9;
+    --secondary_color2: #333333;
+    --secondary_color3: #FFA000;
+    --secondary_color4: #4A90E2;
 }
 
 .app {
@@ -34,9 +41,9 @@
 }
 
 .btn {
-    background-color: var(--blue);
+    background-color: var(--primary_color);
     color: white;
-    border: 2px solid var(--blue);
+    border: 2px solid var(--secondary_color2);
     padding: 10px 20px;
     font-size: 20px;
     margin: 10px;
@@ -49,7 +56,7 @@
 
 .btn:hover {
     background-color: white;
-    color: var(--blue);
+    color: var(--secondary_color2);
     cursor: pointer;
 }
 
