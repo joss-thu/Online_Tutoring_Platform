@@ -51,7 +51,7 @@ const CustomDropdown = ({ selectedOption, setSelectedOption, options }) => {
   );
 };
 
-const SearchSection = (props) => {
+const SearchSection = () => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const options = ["Courses", "Tutors"];
@@ -106,7 +106,7 @@ const SearchSection = (props) => {
 
       <div className="mt-[30px] flex flex-wrap justify-center items-start w-full max-w-2xl mx-auto bg-white">
         {categories
-          .map((label, index) => (
+          .map((label) => (
             <button
               key={label.categoryId}
               className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
@@ -118,7 +118,7 @@ const SearchSection = (props) => {
 
         {expanded &&
           categories
-            .map((label, index) => (
+            .map((label) => (
               <button
                 key={label.categoryId}
                 className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
@@ -174,7 +174,7 @@ const StatsSection = (props) => {
   );
 };
 
-const FeaturesSection = (props) => {
+const FeaturesSection = () => {
   return (
     <>
       <div className="mt-[50px] text-3xl font-merriweather_sans text-dark-6 text-center mb-[20px]">
@@ -249,9 +249,6 @@ const FeaturesSection = (props) => {
 function Home() {
   const [studentCount, setStudentCount] = useState("...");
   const [tutorCount, setTutorCount] = useState("...");
-
-  const options = ["Courses", "Tutors"];
-  const [selectedOption, setSelectedOption] = useState(options[0]);
 
   useEffect(() => {
     const fetchStudentCount = async () => {
