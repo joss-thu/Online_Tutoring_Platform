@@ -52,3 +52,8 @@ public class UserController {
     return userService.getTutorCount();
   }
 }
+
+//  @GetMapping("courses/count")
+//  public Long getCoursesCount(){
+//  return userService.getCoursesCount();
+//  }
