@@ -7,10 +7,10 @@ spring:
         username: ${DB_USER}
         password: ${DB_PASS}
         # uncomment the following lines for developing locally
-        # hikari:
-        #     data-source-properties:
-        #         socketFactory: "com.google.cloud.sql.postgres.SocketFactory"
-        #         cloudSqlInstance: "decoded-carport-440920-j9:europe-west3:thutorium-db"
+        hikari:
+             data-source-properties:
+                 socketFactory: "com.google.cloud.sql.postgres.SocketFactory"
+                 cloudSqlInstance: "decoded-carport-440920-j9:europe-west3:thutorium-db"
     jpa:
         hibernate:
             ddl-auto: update
