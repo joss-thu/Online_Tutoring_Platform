@@ -57,23 +57,17 @@ const SearchSection = (props) => {
   const options = ["Courses", "Tutors"];
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [value, setValue] = useState("");
+  const [categories, setCategories] = useState([]);
 
-  const mainButtons = [
-    "Engineering",
-    "Mathematics",
-    "Computer Science",
-    "Languages",
-  ];
+  const fetchCategories = async () => {
+    const response = await fetch("http://localhost:8080/search/categories");
+    const data = await response.json();
+    setCategories(data);
+  };
 
-  const extraButtons = [
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Economics",
-    "Philosophy",
-    "Art",
-    "History",
-  ];
+  useEffect(() => {
+    fetchCategories();
+  }, [categories]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
@@ -111,24 +105,28 @@ const SearchSection = (props) => {
       </div>
 
       <div className="mt-[30px] flex flex-wrap justify-center items-start w-full max-w-2xl mx-auto bg-white">
-        {mainButtons.map((label, index) => (
-          <button
-            key={index}
-            className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
-          >
-            {label}
-          </button>
-        ))}
-
-        {expanded &&
-          extraButtons.map((label, index) => (
+        {categories
+          .map((label, index) => (
             <button
-              key={index}
+              key={label.categoryId}
               className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
             >
-              {label}
+              {label.categoryName}
             </button>
-          ))}
+          ))
+          .splice(0, 4)}
+
+        {expanded &&
+          categories
+            .map((label, index) => (
+              <button
+                key={label.categoryId}
+                className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
+              >
+                {label.categoryName}
+              </button>
+            ))
+            .splice(4)}
 
         <button
           className={`${

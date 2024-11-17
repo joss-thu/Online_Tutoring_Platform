@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import CourseSearchResultItem from "../components/CourseSearchResultItem";
 
 function Search() {
   const [searchResults, setSearchResults] = useState([]);
@@ -28,7 +29,10 @@ function Search() {
           `http://localhost:8080/search?${queryParams}`,
         );
         data = await response.json();
-        if (!response.ok) {
+        console.log(data);
+        if (response.ok) {
+          setSearchResults(data);
+        } else {
           setError("Error fetching search results.");
         }
       } catch (err) {
@@ -41,7 +45,7 @@ function Search() {
   };
 
   useEffect(() => {
-    fetchSearchResults().then((r) => setSearchResults(r));
+    fetchSearchResults();
   }, [courseName, tutorName]);
 
   return (
@@ -49,15 +53,16 @@ function Search() {
       <NavBar isLoggedIn={false} currentPage="/" />
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
-      {searchResults && searchResults.length > 0 ? (
-        <ul>
-          {searchResults.map((result, index) => (
-            <li key={index}>{result.name}</li>
-          ))}
-        </ul>
-      ) : (
-        <div>No results found for "{courseName}"</div>
-      )}
+      {searchResults &&
+        searchResults.length > 0 &&
+        courseName &&
+        !tutorName && (
+          <ul className="w-full max-w-4xl mt-[150px]">
+            {searchResults.map((result, index) => (
+              <CourseSearchResultItem course={result} key={index} />
+            ))}
+          </ul>
+        )}
     </div>
   );
 }
