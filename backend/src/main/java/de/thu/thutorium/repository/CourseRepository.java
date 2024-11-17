@@ -1,7 +1,9 @@
 package de.thu.thutorium.repository;
 
 import de.thu.thutorium.model.Course;
+
 import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,41 +15,55 @@ import org.springframework.data.repository.query.Param;
  */
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-  /**
-   * Finds a list of courses based on the tutor's first and last names. This method uses a custom
-   * JPQL query to search for courses where the tutor's first and last name match the provided
-   * parameters. The search is case-insensitive and supports partial matches for both first and last
-   * names.
-   *
-   * @param firstName The tutor's first name.
-   * @param lastName The tutor's last name.
-   * @return A list of {@link Course} objects taught by the tutor with the provided name. If no
-   *     courses are found, an empty list is returned.
-   */
-  @Query(
-      "SELECT c FROM Course c WHERE LOWER(c.tutor.firstName) LIKE LOWER(CONCAT('%', :firstName, '%')) AND LOWER(c.tutor.lastName) LIKE LOWER(CONCAT('%', :lastName, '%'))")
-  List<Course> findByTutorFirstNameAndLastName(
-      @Param("firstName") String firstName, @Param("lastName") String lastName);
+    /**
+     * Finds a list of courses based on the tutor's first and last names. This method uses a custom
+     * JPQL query to search for courses where the tutor's first and last name match the provided
+     * parameters. The search is case-insensitive and supports partial matches for both first and last
+     * names.
+     *
+     * @param firstName The tutor's first name.
+     * @param lastName  The tutor's last name.
+     * @return A list of {@link Course} objects taught by the tutor with the provided name. If no
+     * courses are found, an empty list is returned.
+     */
+    @Query(
+            "SELECT c FROM Course c WHERE LOWER(c.tutor.firstName) LIKE LOWER(CONCAT('%', :firstName, '%')) AND LOWER(c.tutor.lastName) LIKE LOWER(CONCAT('%', :lastName, '%'))")
+    List<Course> findByTutorFirstNameAndLastName(
+            @Param("firstName") String firstName, @Param("lastName") String lastName);
 
-  /**
-   * Finds courses by the tutor's full name.
-   *
-   * @param tutorName The full name of the tutor (e.g., "John Doe").
-   * @return A list of {@link Course} objects taught by the tutor with the provided name.
-   */
-  @Query(
-      "SELECT c FROM Course c "
-          + "WHERE LOWER(CONCAT(c.tutor.firstName, ' ', c.tutor.lastName)) LIKE LOWER(CONCAT('%', :tutorName, '%')) "
-          + "OR LOWER(CONCAT(c.tutor.lastName, ' ', c.tutor.firstName)) LIKE LOWER(CONCAT('%', :tutorName, '%'))")
-  List<Course> findByTutorFullName(@Param("tutorName") String tutorName);
+    /**
+     * Finds courses by the tutor's full name.
+     *
+     * @param tutorName The full name of the tutor (e.g., "John Doe").
+     * @return A list of {@link Course} objects taught by the tutor with the provided name.
+     */
+    @Query(
+            "SELECT c FROM Course c "
+                    + "WHERE LOWER(CONCAT(c.tutor.firstName, ' ', c.tutor.lastName)) LIKE LOWER(CONCAT('%', :tutorName, '%')) "
+                    + "OR LOWER(CONCAT(c.tutor.lastName, ' ', c.tutor.firstName)) LIKE LOWER(CONCAT('%', :tutorName, '%'))")
+    List<Course> findByTutorFullName(@Param("tutorName") String tutorName);
 
-  /**
-   * Finds courses by a partial match on the course name. This method uses a custom JPQL query to
-   * search for courses where the name contains the specified string, case-insensitive.
-   *
-   * @param name The partial course name to search for.
-   * @return A list of {@link Course} objects with names that match the specified partial name.
-   */
-  @Query("SELECT c FROM Course c WHERE LOWER(c.courseName) LIKE LOWER(CONCAT('%', :name, '%'))")
-  List<Course> findCourseByName(@Param("name") String name);
+    /**
+     * Finds courses by a partial match on the course name. This method uses a custom JPQL query to
+     * search for courses where the name contains the specified string, case-insensitive.
+     *
+     * @param name The partial course name to search for.
+     * @return A list of {@link Course} objects with names that match the specified partial name.
+     */
+    @Query("SELECT c FROM Course c WHERE LOWER(c.courseName) LIKE LOWER(CONCAT('%', :name, '%'))")
+    List<Course> findCourseByName(@Param("name") String name);
+
+    /**
+     * Counts the total number of courses in the system.
+     *
+     * <p>This method uses a custom JPQL query to retrieve the count of all {@link Course}
+     * entities in the database. The query performs an aggregation operation to return
+     * the total number of records in the {@code Course} table.
+     *
+     * @return the total count of courses in the system.
+     * @apiNote This method is implemented using the {@code @Query} annotation with the JPQL
+     * query: <code>"SELECT COUNT(c) FROM Course c"</code>.
+     */
+    @Query("SELECT COUNT(c) FROM Course c")
+    long countAllCourses();
 }
