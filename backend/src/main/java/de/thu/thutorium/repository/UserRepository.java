@@ -23,7 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param role the {@link UserRole} to count (e.g., STUDENT, TUTOR)
    * @return the total count of users with the specified role
    * @apiNote This method uses a custom JPQL query to count users by their role.
-   * @example countByRole(UserRole.STUDENT) // returns 42
    */
   @Query("SELECT COUNT(u) FROM User u WHERE u.role = :role")
   Long countByRole(UserRole role);
