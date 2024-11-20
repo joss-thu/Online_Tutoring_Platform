@@ -80,6 +80,9 @@ const SearchSection = () => {
     }
   };
 
+  const handleCategoryClick = (categoryName) => {
+    navigate("/search?categoryName=" + categoryName);
+  };
   return (
     <>
       <div className="mt-[150px] mb-[20px] block font-merriweather_sans text-dark text-center text-4xl">
@@ -110,6 +113,7 @@ const SearchSection = () => {
             <button
               key={label.categoryId}
               className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
+              onClick={() => handleCategoryClick(label.categoryName)}
             >
               {label.categoryName}
             </button>

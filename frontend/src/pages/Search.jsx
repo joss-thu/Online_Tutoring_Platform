@@ -3,6 +3,7 @@ import NavBar from "../components/Navbar";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
+import TutorSearchResultItem from "../components/TutorSearchResultItem";
 
 function Search() {
   const [searchResults, setSearchResults] = useState([]);
@@ -13,6 +14,7 @@ function Search() {
   const query = new URLSearchParams(location.search);
   const courseName = query.get("courseName");
   const tutorName = query.get("tutorName");
+  const categoryName = query.get("categoryName");
 
   const fetchSearchResults = async () => {
     let data;
@@ -24,10 +26,15 @@ function Search() {
         const queryParams = new URLSearchParams();
         if (courseName) queryParams.append("courseName", courseName);
         if (tutorName) queryParams.append("tutorName", tutorName);
+        let response;
+        if (categoryName) {
+          response = await fetch(
+            `http://localhost:8080/search/category/${categoryName}`,
+          );
+        } else {
+          response = await fetch(`http://localhost:8080/search?${queryParams}`);
+        }
 
-        const response = await fetch(
-          `http://localhost:8080/search?${queryParams}`,
-        );
         data = await response.json();
         console.log(data);
         if (response.ok) {
@@ -53,16 +60,45 @@ function Search() {
       <NavBar isLoggedIn={false} currentPage="/" />
       {loading && <div>Loading...</div>}
       {error && <div>{error}</div>}
-      {searchResults &&
-        searchResults.length > 0 &&
-        courseName &&
-        !tutorName && (
-          <ul className="w-full max-w-4xl mt-[150px]">
-            {searchResults.map((result, index) => (
-              <CourseSearchResultItem course={result} key={index} />
-            ))}
+      {searchResults?.length > 0 && (
+        <div className="w-full max-w-4xl mt-[150px]">
+          {courseName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              {searchResults.length} result(s) for '{courseName}'
+            </span>
+          )}
+          {tutorName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              {searchResults.length} result(s) for '{tutorName}'
+            </span>
+          )}
+          {categoryName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              {searchResults.length} result(s) for '{categoryName}'
+            </span>
+          )}
+          <ul
+            className={
+              tutorName
+                ? "grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-4"
+                : ""
+            }
+          >
+            {searchResults.map((result, index) => {
+              if (courseName) {
+                return <CourseSearchResultItem course={result} key={index} />;
+              }
+              if (tutorName) {
+                return <TutorSearchResultItem tutor={result} key={index} />;
+              }
+              if (categoryName) {
+                return <CourseSearchResultItem course={result} key={index} />;
+              }
+              return null;
+            })}
           </ul>
-        )}
+        </div>
+      )}
     </div>
   );
 }
