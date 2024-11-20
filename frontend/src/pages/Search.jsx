@@ -1,12 +1,11 @@
-import React from "react";
-import NavBar from "../components/Navbar";
-import { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import NavBar from "../components/Navbar";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import TutorSearchResultItem from "../components/TutorSearchResultItem";
 
 function Search() {
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -16,9 +15,8 @@ function Search() {
   const tutorName = query.get("tutorName");
   const categoryName = query.get("categoryName");
 
-  const fetchSearchResults = async () => {
-    let data;
-    if (courseName || tutorName) {
+  const fetchSearchResults = useCallback(async () => {
+    if (courseName || tutorName || categoryName) {
       try {
         setLoading(true);
         setError(null);
@@ -35,8 +33,7 @@ function Search() {
           response = await fetch(`http://localhost:8080/search?${queryParams}`);
         }
 
-        data = await response.json();
-        console.log(data);
+        const data = await response.json();
         if (response.ok) {
           setSearchResults(data);
         } else {
@@ -47,20 +44,25 @@ function Search() {
       } finally {
         setLoading(false);
       }
-      return data;
     }
-  };
+  }, [courseName, tutorName, categoryName]);
 
   useEffect(() => {
     fetchSearchResults();
-  }, [courseName, tutorName]);
+  }, [fetchSearchResults]);
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar isLoggedIn={false} currentPage="/" />
-      {loading && <div>Loading...</div>}
-      {error && <div>{error}</div>}
-      {searchResults?.length > 0 && (
+      {loading && (
+        <div className="mt-[150px] font-merriweather_sans text-xl">
+          Loading...
+        </div>
+      )}
+      {!loading && error && (
+        <div className="mt-[150px] font-merriweather_sans">{error}</div>
+      )}
+      {!loading && !error && searchResults?.length > 0 && (
         <div className="w-full max-w-4xl mt-[150px]">
           {courseName && (
             <span className="font-merriweather_sans text-xl m-5">
@@ -97,6 +99,25 @@ function Search() {
               return null;
             })}
           </ul>
+        </div>
+      )}
+      {!loading && !error && searchResults?.length === 0 && (
+        <div className="flex flex-col items-center w-full bg-white overflow-hidden mt-[150px]">
+          {courseName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              No results found for '{courseName}'
+            </span>
+          )}
+          {tutorName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              No results found for '{tutorName}'
+            </span>
+          )}
+          {categoryName && (
+            <span className="font-merriweather_sans text-xl m-5">
+              No results found for '{categoryName}'
+            </span>
+          )}
         </div>
       )}
     </div>

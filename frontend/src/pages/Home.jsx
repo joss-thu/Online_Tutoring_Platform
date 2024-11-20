@@ -108,17 +108,18 @@ const SearchSection = () => {
       </div>
 
       <div className="mt-[30px] flex flex-wrap justify-center items-start w-full max-w-2xl mx-auto bg-white">
-        {categories
-          .map((label) => (
-            <button
-              key={label.categoryId}
-              className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
-              onClick={() => handleCategoryClick(label.categoryName)}
-            >
-              {label.categoryName}
-            </button>
-          ))
-          .splice(0, 4)}
+        {categories &&
+          categories
+            .map((label) => (
+              <button
+                key={label.categoryId}
+                className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
+                onClick={() => handleCategoryClick(label.categoryName)}
+              >
+                {label.categoryName}
+              </button>
+            ))
+            .splice(0, 4)}
 
         {expanded &&
           categories

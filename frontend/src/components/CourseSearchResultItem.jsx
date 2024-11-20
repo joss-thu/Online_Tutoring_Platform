@@ -1,5 +1,21 @@
 import { format } from "date-fns";
 
+function calculateAverageRating(course) {
+  let average;
+  let sum = 0;
+  console.log(course.ratings);
+  if (course.ratings.length > 0) {
+    course.ratings.map((item, index) => {
+      sum += item.points;
+      return index;
+    });
+    average = sum / course.ratings.length;
+    return average;
+  } else {
+    return 0;
+  }
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
 
@@ -25,9 +41,20 @@ function CourseSearchResultItem({ course }) {
     >
       <div>
         <span className="text-blue-100 py-1 px-2 rounded-sm font-merriweather_sans bg-blue-600 bg-opacity-40 text-xs">
-          {course.category.categoryName}
+          {course.category.categoryName}{" "}
         </span>
-        <div className="font-merriweather_sans text-xl mt-[5px] text-white">
+        {course.ratings.length > 0 ? (
+          <div className="font-merriweather_sans text-sm text-gray-400 mt-1">
+            Average Rating: {calculateAverageRating(course)} (
+            {course.ratings.length})
+          </div>
+        ) : (
+          <div className="font-merriweather_sans text-sm text-gray-400 mt-1">
+            Not yet rated
+          </div>
+        )}
+
+        <div className="font-merriweather_sans text-xl text-white">
           {course.courseName}
         </div>
         <div className="font-merriweather_sans text-sm text-white mb-[10px]">
