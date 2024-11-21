@@ -19,39 +19,41 @@ import java.util.List;
 @Service
 public class SearchService {
 
-  @Autowired private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired private CourseRepository courseRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
-  /**
-   * Searches for tutors based on their full name or a partial match of their name.
-   *
-   * <p>Uses the {@link UserRepository#findByTutorFullName(String)} method to retrieve all users
-   * with the role of "TUTOR" whose full name matches the provided search string. The search is
-   * case-insensitive and supports partial matches.
-   *
-   * @param tutorName The search string to match against the tutor's full name. This parameter is
-   *     compared case-insensitively and supports partial matching.
-   * @return A list of {@link User} objects representing tutors whose full names match the search
-   *     string.
-   */
-  public List<User> searchTutors(String tutorName) {
-    return userRepository.findByTutorFullName(tutorName);
-  }
+    /**
+     * Searches for tutors based on their full name or a partial match of their name.
+     *
+     * <p>Uses the {@link UserRepository#findByTutorFullName(String)} method to retrieve all users
+     * with the role of "TUTOR" whose full name matches the provided search string. The search is
+     * case-insensitive and supports partial matches.
+     *
+     * @param tutorName The search string to match against the tutor's full name. This parameter is
+     *                  compared case-insensitively and supports partial matching.
+     * @return A list of {@link User} objects representing tutors whose full names match the search
+     * string.
+     */
+    public List<User> searchTutors(String tutorName) {
+        return userRepository.findByTutorFullName(tutorName);
+    }
 
-  /**
-   * Searches for courses by their name or partial match of the course name.
-   *
-   * <p>Uses the {@link CourseRepository#findCourseByName(String)} method to retrieve all courses
-   * whose name matches the provided search string. The search is case-insensitive and supports
-   * partial matches.
-   *
-   * @param courseName The search string to match against the course's name. This parameter is
-   *     compared case-insensitively and supports partial matching.
-   * @return A list of {@link Course} objects representing courses whose names match the search
-   *     string.
-   */
-  public List<Course> searchCourses(String courseName) {
-    return courseRepository.findCourseByName(courseName);
-  }
+    /**
+     * Searches for courses by their name or partial match of the course name.
+     *
+     * <p>Uses the {@link CourseRepository#findCourseByName(String)} method to retrieve all courses
+     * whose name matches the provided search string. The search is case-insensitive and supports
+     * partial matches.
+     *
+     * @param courseName The search string to match against the course's name. This parameter is
+     *                   compared case-insensitively and supports partial matching.
+     * @return A list of {@link Course} objects representing courses whose names match the search
+     * string.
+     */
+    public List<Course> searchCourses(String courseName) {
+        return courseRepository.findCourseByName(courseName);
+    }
 }
