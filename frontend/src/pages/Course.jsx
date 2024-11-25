@@ -10,12 +10,12 @@ function Course() {
   const id = query.get("id");
   const categoryName = "Philosophy";
   const tutorId = 8;
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = false;
 
-  const fetchCourseDetails = async () => {
-    const res = await fetch("http://localhost:8000/courses/" + id);
-    const data = await res.json();
-  };
+  // const fetchCourseDetails = async () => {
+  //   const res = await fetch("http://localhost:8000/courses/" + id);
+  //   const data = await res.json();
+  // };
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
