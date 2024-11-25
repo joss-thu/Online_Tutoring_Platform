@@ -97,7 +97,7 @@ public class CourseControllerTest {
         .thenReturn(Collections.singletonList(sampleCourse));
 
     mockMvc
-        .perform(get("/courses/category/{categoryName}", categoryName))
+        .perform(get("/search/category/{categoryName}", categoryName))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$[0].courseId").value(1))
         .andExpect(jsonPath("$[0].courseName").value("Mathematics"))
@@ -105,4 +105,19 @@ public class CourseControllerTest {
 
     verify(courseService, times(1)).getCoursesByCategory(categoryName);
   }
+  @Test
+  public void testGetCoursesCount() throws Exception {
+    Long totalCourses = 10L;
+
+    when(courseService.getTotalCountOfCourses()).thenReturn(totalCourses);
+
+    mockMvc
+            .perform(get("/courses/count"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("10"));
+
+    verify(courseService, times(1)).getTotalCountOfCourses();
+  }
 }
+
+
