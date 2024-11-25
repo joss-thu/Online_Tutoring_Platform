@@ -1,9 +1,9 @@
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 function calculateAverageRating(course) {
   let average;
   let sum = 0;
-  console.log(course.ratings);
   if (course.ratings.length > 0) {
     course.ratings.map((item, index) => {
       sum += item.points;
@@ -34,9 +34,14 @@ function formatDate(dateString) {
 }
 
 function CourseSearchResultItem({ course }) {
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/course?id=" + course.courseId);
+  };
   return (
     <li
       key={course.courseId}
+      onClick={handleClick}
       className="cursor-pointer flex rounded-2xl shadow-gray-300 shadow-sm bg-gray-900 p-7 m-5"
     >
       <div>

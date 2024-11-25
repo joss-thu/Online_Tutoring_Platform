@@ -32,8 +32,8 @@ function Search() {
         } else {
           response = await fetch(`http://localhost:8080/search?${queryParams}`);
         }
-
         const data = await response.json();
+        console.log(data);
         if (response.ok) {
           setSearchResults(data);
         } else {

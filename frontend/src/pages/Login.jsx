@@ -11,10 +11,7 @@ function Login() {
 
   return (
     <div className="relative min-h-screen bg-white overflow-hidden">
-      {/* Fixed Navbar */}
       <NavBar isLoggedIn={false} currentPage={"/"} />
-
-      {/* Centered Login Form */}
       <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full px-4 ">
         <div className="flex flex-col justify-center w-full max-w-xl bg-gray-100 p-10 rounded-2xl font-merriweather_sans">
           <div className="flex items-center justify-center text-2xl">
@@ -51,6 +48,14 @@ function Login() {
             >
               {passwordVisible ? "visibility" : "visibility_off"}
             </span>
+          </div>
+          <div
+            className="inline-flex mt-2 justify-end text-blue-900 cursor-pointer self-end w-auto"
+            onClick={() => {
+              alert("Too bad :(");
+            }}
+          >
+            Forgot password?
           </div>
           <button className="bg-blue-900 text-white py-2 px-1 rounded-md mt-7 hover:bg-blue-800 focus:outline-none">
             Log In

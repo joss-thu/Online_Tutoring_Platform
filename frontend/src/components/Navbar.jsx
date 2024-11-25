@@ -46,7 +46,10 @@ export default function NavBar({ isLoggedIn, currentPage }) {
               >
                 Log In
               </button>
-              <button className="border-black border rounded-full inline-flex items-center justify-center py-2 px-4 text-center text-sm font-merriweather_sans text-black">
+              <button
+                onClick={() => navigate("/signup")}
+                className="border-black border rounded-full inline-flex items-center justify-center py-2 px-4 text-center text-sm font-merriweather_sans text-black"
+              >
                 Sign Up
               </button>
             </div>
