@@ -12,10 +12,10 @@ function Course() {
   const tutorId = 8;
   const isLoggedIn = false;
 
-  // const fetchCourseDetails = async () => {
-  //   const res = await fetch("http://localhost:8000/courses/" + id);
-  //   const data = await res.json();
-  // };
+  const fetchCourseDetails = async () => {
+    const res = await fetch("http://localhost:8080/course?id=" + id);
+    const data = await res.json();
+  };
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">

@@ -27,7 +27,7 @@ function Search() {
         let response;
         if (categoryName) {
           response = await fetch(
-            `http://localhost:8080/search/category/${categoryName}`,
+            `http://localhost:8080/courses/category/${categoryName}`,
           );
         } else {
           response = await fetch(`http://localhost:8080/search?${queryParams}`);
