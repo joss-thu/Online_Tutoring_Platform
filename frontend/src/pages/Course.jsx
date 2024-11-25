@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import NavBar from "../components/Navbar";
-import React, { useState } from "react";
+import React from "react";
 import { Tooltip } from "react-tooltip";
 
 function Course() {
