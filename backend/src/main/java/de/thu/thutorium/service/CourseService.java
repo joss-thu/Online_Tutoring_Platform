@@ -3,6 +3,8 @@ package de.thu.thutorium.service;
 import de.thu.thutorium.model.Course;
 import de.thu.thutorium.repository.CourseRepository;
 import java.util.List;
+
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,11 @@ public class CourseService {
     return courseRepository.findCourseByName(name);
   }
 
+
+  public Course findCourseById(Long id) {
+    return courseRepository.findCourseById(id);
+  }
+
   /**
    * Fetches a list of courses belonging to the specified category by delegating the query to the
    * repository layer.
@@ -52,5 +59,15 @@ public class CourseService {
    */
   public List<Course> getCoursesByCategory(String categoryName) {
     return courseRepository.findCoursesByCategoryName(categoryName);
+  }
+
+  /**
+   * Retrieves the total count of courses from the repository.
+   *
+   * @return the total number of courses as a {@code Long}.
+   */
+  public Long getTotalCountOfCourses() {
+    return courseRepository.countAllCourses();
+
   }
 }

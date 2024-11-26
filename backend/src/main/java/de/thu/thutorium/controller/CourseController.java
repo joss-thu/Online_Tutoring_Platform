@@ -3,6 +3,8 @@ package de.thu.thutorium.controller;
 import de.thu.thutorium.model.Course;
 import de.thu.thutorium.service.CourseService;
 import java.util.List;
+
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,13 @@ public class CourseController {
     return courseService.findCoursesByName(name);
   }
 
+
+  @GetMapping("/course")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Course getCourseById(@RequestParam Long id) {
+    return courseService.findCourseById(id);
+  }
+  
   /**
    * Retrieves a list of courses based on the specified category name. This endpoint is cross-origin
    * enabled for requests from "http://localhost:3000" and allows preflight requests to be cached
@@ -62,9 +71,22 @@ public class CourseController {
    * @param categoryName The name of the category for which courses are to be retrieved.
    * @return A list of {@link Course} objects that belong to the specified category.
    */
-  @GetMapping("/courses/category/{categoryName}")
+  @GetMapping("/search/category/{categoryName}")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public List<Course> getCoursesByCategory(@PathVariable String categoryName) {
     return courseService.getCoursesByCategory(categoryName);
+  }
+
+  /**
+   * Handles a GET request to retrieve the total count of courses. Allows cross-origin requests from
+   * "http://localhost:3000" with a maximum age of 3600 seconds.
+   *
+   * @return the total number of courses as a {@code Long}.
+   */
+  @GetMapping("/courses/count")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Long getCoursesCount() {
+    return courseService.getTotalCountOfCourses();
+
   }
 }
