@@ -3,6 +3,8 @@ package de.thu.thutorium.controller;
 import de.thu.thutorium.model.Course;
 import de.thu.thutorium.service.CourseService;
 import java.util.List;
+
+import jakarta.persistence.Id;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,13 @@ public class CourseController {
     return courseService.findCoursesByName(name);
   }
 
+
+  @GetMapping("/course")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Course getCourseById(@RequestParam Long id) {
+    return courseService.findCourseById(id);
+  }
+  
   /**
    * Retrieves a list of courses based on the specified category name. This endpoint is cross-origin
    * enabled for requests from "http://localhost:3000" and allows preflight requests to be cached
@@ -78,5 +87,6 @@ public class CourseController {
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public Long getCoursesCount() {
     return courseService.getTotalCountOfCourses();
+
   }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 /**
  * Repository interface for managing {@link Course} entities. This interface extends {@link
@@ -52,6 +53,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
   @Query("SELECT c FROM Course c WHERE LOWER(c.courseName) LIKE LOWER(CONCAT('%', :name, '%'))")
   List<Course> findCourseByName(@Param("name") String name);
 
+
+  @Query("SELECT c FROM Course c WHERE c.courseId = :id")
+  Course findCourseById(@Param("id") Long id);
+
   /**
    * Finds courses by matching the category name. This method uses a custom JPQL query to search for
    * courses that belong to a specific category, identified by its name.
@@ -69,4 +74,5 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
    */
   @Query("SELECT COUNT(c) from Course c")
   Long countAllCourses();
+
 }
