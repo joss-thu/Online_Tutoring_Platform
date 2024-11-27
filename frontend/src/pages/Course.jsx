@@ -3,6 +3,7 @@ import NavBar from "../components/Navbar";
 import React, { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { Rating, StickerStar } from "@smastrom/react-rating";
+import calculateAverageRating from "../helpers/CalculateAverageRating";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -15,13 +16,11 @@ function Course() {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
-  const categoryName = "Philosophy";
-  const tutorId = 8;
   const isLoggedIn = false;
   const [course, setCourse] = useState({});
 
   const fetchCourseDetails = async () => {
-    const res = await fetch("http://localhost:8080/tutor?id=" + id);
+    const res = await fetch("http://localhost:8080/course?id=" + id);
     const data = await res.json();
     setCourse(data);
   };
@@ -43,20 +42,24 @@ function Course() {
               <span className="mx-1">/</span>
               <span
                 className="cursor-pointer"
-                onClick={() => navigate("/search?categoryName=" + categoryName)}
+                onClick={() =>
+                  navigate(
+                    "/search?categoryName=" + course.category?.categoryName,
+                  )
+                }
               >
-                Philosophy
+                {course.category?.categoryName}
               </span>
               <span className="mx-1">/</span>
               <span
                 className="cursor-pointer"
                 onClick={() => navigate("/course?id=" + id)}
               >
-                Introduction to Philosophy
+                {course.courseName}
               </span>
             </div>
             <div className="inline-flex items-center w-full mt-5">
-              <div className="text-4xl">Introduction to Philosophy</div>
+              <div className="text-4xl">{course.courseName}</div>
               <span
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
@@ -74,12 +77,19 @@ function Course() {
               Link copied!
             </Tooltip>
             <div
-              onClick={() => navigate("/tutor?id=" + tutorId)}
+              onClick={() => navigate("/tutor?id=" + course.tutor.userId)}
               className="text-xl text-gray-800 cursor-pointer w-auto self-start"
             >
-              By Hannah Davis
+              By {course.tutor?.firstName} {course.tutor?.lastName}
             </div>
-            <div className="text-sm text-gray-500 mt-3">Rating: 3 (1)</div>
+            {course.ratings && (
+              <Rating
+                readOnly={true}
+                style={{ maxWidth: 100 }}
+                value={calculateAverageRating(course.ratings)}
+                itemStyles={ratingStyle}
+              />
+            )}
           </div>
           <button
             onClick={() => {
@@ -127,18 +137,11 @@ function Course() {
           <div className="flex flex-col w-3/4">
             <div className="text-xl text-gray-800">Class Description</div>
             <div className="mt-1 text-sm text-gray-600">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem
-              lorem aliquam sed lacinia quis. Nibh dictumst vulputate odio
-              pellentesque sit quis ac, sit ipsum. Sit rhoncus velit in sed
-              massa arcu sit eu. Vitae et vitae eget lorem non dui. Sollicitudin
-              ut mi adipiscing duis. Convallis in semper laoreet nibh leo.
-              Vivamus malesuada ipsum pulvinar non rutrum risus dui, risus.
-              Purus massa velit iaculis tincidunt tortor, risus, scelerisque
-              risus. In at lorem pellentesque orci aenean dictum dignissim in.
-              Aenean pulvinar diam interdum ullamcorper. Vel urna, tortor, massa
-              metus purus metus. Maecenas mollis in velit auctor cursus
-              scelerisque eget. Nibh faucibus purus elementum ultrices
-              elementum, urna.{" "}
+              <i>
+                <strong>{course.descriptionShort}</strong>
+              </i>
+              <br />
+              {course.descriptionLong}
             </div>
           </div>
           <div className="flex flex-col bg-gray-200 rounded-xl w-1/4 p-4 self-start h-auto">
@@ -146,7 +149,7 @@ function Course() {
               Reviews
             </div>
             {course.ratings?.length > 0 ? (
-              course.ratings.map((result, index) => {
+              course.ratings?.map((result, index) => {
                 return (
                   <>
                     <div className="text-sm mt-4">
