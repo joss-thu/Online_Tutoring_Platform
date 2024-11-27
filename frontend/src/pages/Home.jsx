@@ -255,6 +255,7 @@ const FeaturesSection = () => {
 function Home() {
   const [studentCount, setStudentCount] = useState("...");
   const [tutorCount, setTutorCount] = useState("...");
+  const [courseCount, setCourseCount] = useState("...");
 
   useEffect(() => {
     const fetchStudentCount = async () => {
@@ -281,16 +282,33 @@ function Home() {
         console.error("Failed to fetch student count:", error);
       }
     };
+    const fetchCourseCount = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/courses/count");
+        if (!response.ok) {
+          console.error("Network response was not ok");
+        }
+        const count = await response.json();
+        setCourseCount(count);
+      } catch (error) {
+        console.error("Failed to fetch student count:", error);
+      }
+    };
 
     fetchStudentCount();
     fetchTutorCount();
+    fetchCourseCount();
   }, []);
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar isLoggedIn={false} currentPage={window.location.pathname} />
       <SearchSection />
-      <StatsSection students={studentCount} courses={100} tutors={tutorCount} />
+      <StatsSection
+        students={studentCount}
+        courses={courseCount}
+        tutors={tutorCount}
+      />
       <FeaturesSection />
     </div>
   );

@@ -1,7 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import NavBar from "../components/Navbar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
+import { Rating, StickerStar } from "@smastrom/react-rating";
+
+const ratingStyle = {
+  itemShapes: StickerStar,
+  activeFillColor: "#1e40af",
+  inactiveFillColor: "#bcbcbc",
+};
 
 function Course() {
   const navigate = useNavigate();
@@ -11,11 +18,17 @@ function Course() {
   const categoryName = "Philosophy";
   const tutorId = 8;
   const isLoggedIn = false;
+  const [course, setCourse] = useState({});
 
   const fetchCourseDetails = async () => {
-    const res = await fetch("http://localhost:8080/course?id=" + id);
+    const res = await fetch("http://localhost:8080/tutor?id=" + id);
     const data = await res.json();
+    setCourse(data);
   };
+
+  useEffect(() => {
+    fetchCourseDetails();
+  });
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
@@ -66,9 +79,7 @@ function Course() {
             >
               By Hannah Davis
             </div>
-            <div className="text-sm text-gray-500 mt-3">
-              Average Rating: 3 (1)
-            </div>
+            <div className="text-sm text-gray-500 mt-3">Rating: 3 (1)</div>
           </div>
           <button
             onClick={() => {
@@ -78,14 +89,14 @@ function Course() {
             }}
             className={
               isLoggedIn
-                ? "bg-blue-800 ml-5 max-h-12 rounded-full text-white py-2 px-4"
-                : "reserve_now_anchor_element bg-blue-800 ml-5 max-h-12 rounded-full text-white py-2 px-4"
+                ? "bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
+                : "enroll_now_anchor_element bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
             }
           >
             Enroll now
           </button>
           <Tooltip
-            anchorSelect=".reserve_now_anchor_element"
+            anchorSelect=".enroll_now_anchor_element"
             place="top"
             openOnClick={true}
           >
@@ -112,20 +123,51 @@ function Course() {
             />
           </div>
         </div>
-        <div className="flex flex-col">
-          <div className="mt-10 text-xl text-gray-800">Class Description</div>
-          <div className="mt-1 text-sm text-gray-600">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem lorem
-            aliquam sed lacinia quis. Nibh dictumst vulputate odio pellentesque
-            sit quis ac, sit ipsum. Sit rhoncus velit in sed massa arcu sit eu.
-            Vitae et vitae eget lorem non dui. Sollicitudin ut mi adipiscing
-            duis. Convallis in semper laoreet nibh leo. Vivamus malesuada ipsum
-            pulvinar non rutrum risus dui, risus. Purus massa velit iaculis
-            tincidunt tortor, risus, scelerisque risus. In at lorem pellentesque
-            orci aenean dictum dignissim in. Aenean pulvinar diam interdum
-            ullamcorper. Vel urna, tortor, massa metus purus metus. Maecenas
-            mollis in velit auctor cursus scelerisque eget. Nibh faucibus purus
-            elementum ultrices elementum, urna.{" "}
+        <div className="flex mt-10">
+          <div className="flex flex-col w-3/4">
+            <div className="text-xl text-gray-800">Class Description</div>
+            <div className="mt-1 text-sm text-gray-600">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem
+              lorem aliquam sed lacinia quis. Nibh dictumst vulputate odio
+              pellentesque sit quis ac, sit ipsum. Sit rhoncus velit in sed
+              massa arcu sit eu. Vitae et vitae eget lorem non dui. Sollicitudin
+              ut mi adipiscing duis. Convallis in semper laoreet nibh leo.
+              Vivamus malesuada ipsum pulvinar non rutrum risus dui, risus.
+              Purus massa velit iaculis tincidunt tortor, risus, scelerisque
+              risus. In at lorem pellentesque orci aenean dictum dignissim in.
+              Aenean pulvinar diam interdum ullamcorper. Vel urna, tortor, massa
+              metus purus metus. Maecenas mollis in velit auctor cursus
+              scelerisque eget. Nibh faucibus purus elementum ultrices
+              elementum, urna.{" "}
+            </div>
+          </div>
+          <div className="flex flex-col bg-gray-200 rounded-xl w-1/4 p-4 self-start h-auto">
+            <div className="text-xl rounded-md text-black self-start w-auto">
+              Reviews
+            </div>
+            {course.ratings?.length > 0 ? (
+              course.ratings.map((result, index) => {
+                return (
+                  <>
+                    <div className="text-sm mt-4">
+                      {result.student.firstName} {result.student.lastName}
+                    </div>
+                    <Rating
+                      key={index}
+                      readOnly={true}
+                      style={{ maxWidth: 100 }}
+                      value={result.points}
+                      itemStyles={ratingStyle}
+                    />
+                    <div className="text-sm text-gray-600">{result.review}</div>
+                  </>
+                );
+              })
+            ) : (
+              <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 p-4">
+                No reviews yet
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,37 +1,14 @@
-import { format } from "date-fns";
+import formatDate from "../helpers/FormatDate";
 import { useNavigate } from "react-router-dom";
+import calculateAverageRating from "../helpers/CalculateAverageRating";
+import { Rating, StickerStar } from "@smastrom/react-rating";
+import React from "react";
 
-function calculateAverageRating(course) {
-  let average;
-  let sum = 0;
-  if (course.ratings.length > 0) {
-    course.ratings.map((item, index) => {
-      sum += item.points;
-      return index;
-    });
-    average = sum / course.ratings.length;
-    return average;
-  } else {
-    return 0;
-  }
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-
-  // Add ordinal suffix to the day
-  const ordinal = (n) => {
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  };
-
-  const day = ordinal(date.getDate());
-  const month = format(date, "MMM"); // 'Jan', 'Feb', etc.
-  const year = format(date, "yyyy");
-
-  return `${day} ${month} ${year}`;
-}
+const ratingStyle = {
+  itemShapes: StickerStar,
+  activeFillColor: "#ffffff",
+  inactiveFillColor: "#878787",
+};
 
 function CourseSearchResultItem({ course }) {
   const navigate = useNavigate();
@@ -42,16 +19,20 @@ function CourseSearchResultItem({ course }) {
     <li
       key={course.courseId}
       onClick={handleClick}
-      className="cursor-pointer flex rounded-2xl shadow-gray-300 shadow-sm bg-gray-900 p-7 m-5"
+      className="cursor-pointer flex rounded-2xl shadow-gray-300 shadow-sm bg-gray-900 p-7 mt-5"
     >
       <div>
         <span className="text-blue-100 py-1 px-2 rounded-sm font-merriweather_sans bg-blue-600 bg-opacity-40 text-xs">
           {course.category.categoryName}{" "}
         </span>
         {course.ratings.length > 0 ? (
-          <div className="font-merriweather_sans text-sm text-gray-400 mt-1">
-            Average Rating: {calculateAverageRating(course)} (
-            {course.ratings.length})
+          <div className="font-merriweather_sans text-sm text-gray-400 mt-2">
+            <Rating
+              readOnly={true}
+              style={{ maxWidth: 100 }}
+              value={calculateAverageRating(course.ratings)}
+              itemStyles={ratingStyle}
+            />
           </div>
         ) : (
           <div className="font-merriweather_sans text-sm text-gray-400 mt-1">

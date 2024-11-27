@@ -27,7 +27,7 @@ function Search() {
         let response;
         if (categoryName) {
           response = await fetch(
-            `http://localhost:8080/courses/category/${categoryName}`,
+            `http://localhost:8080/search/category/${categoryName}`,
           );
         } else {
           response = await fetch(`http://localhost:8080/search?${queryParams}`);
@@ -65,17 +65,17 @@ function Search() {
       {!loading && !error && searchResults?.length > 0 && (
         <div className="w-full max-w-4xl mt-[150px]">
           {courseName && (
-            <span className="font-merriweather_sans text-xl m-5">
+            <span className="font-merriweather_sans text-xl my-5">
               {searchResults.length} result(s) for '{courseName}'
             </span>
           )}
           {tutorName && (
-            <span className="font-merriweather_sans text-xl m-5">
+            <span className="font-merriweather_sans text-xl my-5">
               {searchResults.length} result(s) for '{tutorName}'
             </span>
           )}
           {categoryName && (
-            <span className="font-merriweather_sans text-xl m-5">
+            <span className="font-merriweather_sans text-xl my-5">
               {searchResults.length} result(s) for '{categoryName}'
             </span>
           )}
