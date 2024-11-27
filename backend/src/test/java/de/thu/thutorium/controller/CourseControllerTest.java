@@ -8,9 +8,11 @@ import de.thu.thutorium.model.Course;
 import de.thu.thutorium.model.User;
 import de.thu.thutorium.model.Category;
 import de.thu.thutorium.service.CourseService;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(CourseController.class)
 public class CourseControllerTest {
+
 
   @Autowired private MockMvc mockMvc;
 
@@ -118,6 +121,24 @@ public class CourseControllerTest {
 
     verify(courseService, times(1)).getTotalCountOfCourses();
   }
+      @Test
+    public void testGetCourseById() throws Exception {
+        Long courseId = 1L;
+
+        Course sampleCourse = new Course();
+        sampleCourse.setCourseId(courseId);
+        sampleCourse.setCourseName("Mathematics");
+
+        when(courseService.findCourseById(courseId)).thenReturn(sampleCourse);
+
+        mockMvc
+                .perform(get("/course").param("id", String.valueOf(courseId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseId").value(1))
+                .andExpect(jsonPath("$.courseName").value("Mathematics"));
+
+        verify(courseService, times(1)).findCourseById(courseId);
+    }
 }
 
 
