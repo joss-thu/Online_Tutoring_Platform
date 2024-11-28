@@ -72,6 +72,7 @@ const SearchSection = () => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
+      if (value.length === 0) return;
       if (selectedOption === "Courses") {
         navigate("/search?courseName=" + value);
       } else if (selectedOption === "Tutors") {
