@@ -96,12 +96,7 @@ function Tutor() {
             <div className="flex flex-col w-3/4 mr-10">
               <div className="mt-5 text-xl text-gray-800">Overview</div>
               <div className="mt-1 text-sm text-gray-600">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem
-                lorem aliquam sed lacinia quis. Nibh dictumst vulputate odio
-                pellentesque sit quis ac, sit ipsum. Sit rhoncus velit in sed
-                massa arcu sit eu. Vitae et vitae eget lorem non dui.
-                Sollicitudin ut mi adipiscing duis. Convallis in semper laoreet
-                nibh leo.{" "}
+                {tutor.tutor_description}
               </div>
               <div className="mt-5 flex text-black">
                 {tutor.ratings?.length > 0 ? (
