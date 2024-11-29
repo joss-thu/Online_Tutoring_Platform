@@ -1,5 +1,3 @@
-version: "3.4"
-
 services:
 
   database:
@@ -13,7 +11,7 @@ services:
     # - postgres_data:/var/lib/postgresql/data
     - ./database/data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5431:5432"
     restart: no
     env_file:
       - ./.env
@@ -38,7 +36,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
     restart: no
     env_file:
       - ./.env
