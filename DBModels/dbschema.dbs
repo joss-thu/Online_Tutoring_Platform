@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="drawSQL-pgsql-export-2024-11-11 (1).sql" database="PostgreSQL" id="Project-2506" >
+	<schema name="public" >
+		<table name="Meeting" spec="" >
+			<column name="meeting_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="course_id" type="bigint" jt="-5" />
+			<column name="meeting_date" type="date" jt="91" mandatory="y" />
+			<column name="meeting_type" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="meeting_status" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="room_num" type="varchar" length="50" jt="12" />
+			<column name="address_id" type="bigint" jt="-5" />
+			<column name="duration" type="integer" jt="4" mandatory="y" />
+			<column name="meeting_link" type="text" jt="12" />
+			<index name="pk_meeting" unique="PRIMARY_KEY" >
+				<column name="meeting_id" />
+			</index>
+			<constraint name="cns_meeting_meeting_type" >
+				<string><![CDATA["meeting_type" IN('')]]></string>
+			</constraint>
+			<constraint name="cns_meeting_meeting_status" >
+				<string><![CDATA["meeting_status" IN('')]]></string>
+			</constraint>
+			<fk name="meeting_address_id_foreign" to_schema="public" to_table="address" options="" >
+				<fk_column name="address_id" pk="address_id" />
+			</fk>
+			<fk name="fk_meeting_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
+		</table>
+		<table name="Message" spec="" >
+			<column name="message_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="sender_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="receiver_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="message_content" type="text" jt="12" mandatory="y" />
+			<column name="send_at" type="timestamp" jt="93" mandatory="y" />
+			<column name="read_at" type="timestamp" jt="93" />
+			<column name="is_read" type="boolean" jt="16" mandatory="y" />
+			<index name="pk_message" unique="PRIMARY_KEY" >
+				<column name="message_id" />
+			</index>
+			<fk name="message_sender_id_foreign" to_schema="public" to_table="User" options="" >
+				<fk_column name="sender_id" pk="user_id" />
+			</fk>
+			<fk name="message_receiver_id_foreign" to_schema="public" to_table="User" options="" >
+				<fk_column name="receiver_id" pk="user_id" />
+			</fk>
+		</table>
+		<table name="Rating" spec="" >
+			<column name="rating_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="tutor_id" type="integer" jt="4" mandatory="y" />
+			<column name="student_id" type="integer" jt="4" mandatory="y" />
+			<column name="points" type="numeric" length="8" decimal="2" jt="2" mandatory="y" />
+			<index name="pk_rating" unique="PRIMARY_KEY" >
+				<column name="rating_id" />
+			</index>
+			<fk name="rating_student_id_foreign" to_schema="public" to_table="User" options="" >
+				<fk_column name="student_id" pk="user_id" />
+			</fk>
+			<fk name="rating_tutor_id_foreign" to_schema="public" to_table="User" options="" >
+				<fk_column name="tutor_id" pk="user_id" />
+			</fk>
+		</table>
+		<table name="User" spec="" >
+			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="first_name" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="last_name" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="role" type="varchar[]" jt="2003" mandatory="y" />
+			<column name="isverified" prior="verification" type="boolean" length="255" jt="16" mandatory="y" />
+			<column name="affiliation_id" type="varchar[]" jt="2003" mandatory="y" />
+			<column name="created_at" type="timestamp" jt="93" mandatory="y" />
+			<column name="email_id" type="varchar" length="500" jt="12" mandatory="y" />
+			<column name="passwd" type="varchar" length="500" jt="12" mandatory="y" />
+			<column name="user_description" type="text" jt="12" />
+			<column name="verified_by" type="bigint" jt="-5" />
+			<column name="verified_on" type="date" jt="91" />
+			<column name="enabled" prior="is_blocked" type="boolean" jt="16" />
+			<index name="pk_user" unique="PRIMARY_KEY" >
+				<column name="user_id" />
+			</index>
+			<constraint name="cns_user_verified" >
+				<string><![CDATA["verified" IN('')]]></string>
+			</constraint>
+			<constraint name="cns_user_role" >
+				<string><![CDATA["role" IN('')]]></string>
+			</constraint>
+			<constraint name="cns_user_verification" >
+				<string><![CDATA["verification" IN('')]]></string>
+			</constraint>
+			<fk name="user_affiliation_id_foreign" to_schema="public" to_table="affiliation" options="" >
+				<fk_column name="affiliation_id" pk="affiliation_id" />
+			</fk>
+			<fk name="fk_user_user" to_schema="public" to_table="User" >
+				<fk_column name="verified_by" pk="user_id" />
+			</fk>
+		</table>
+		<table name="address" spec="" >
+			<column name="address_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="house_num" type="smallint" jt="5" mandatory="y" />
+			<column name="street_name" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="city" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="postal_code" type="smallint" jt="5" mandatory="y" />
+			<column name="country" type="varchar" length="255" jt="12" mandatory="y" />
+			<index name="pk_address" unique="PRIMARY_KEY" >
+				<column name="address_id" />
+			</index>
+		</table>
+		<table name="affiliation" spec="" >
+			<column name="affiliation_id" type="integer" jt="4" mandatory="y" />
+			<column name="university_id" type="bigint" jt="-5" />
+			<column name="affiliation_type" type="varchar" length="255" jt="12" mandatory="y" />
+			<index name="pk_affiliation" unique="PRIMARY_KEY" >
+				<column name="affiliation_id" />
+			</index>
+			<index name="unq_affiliation" unique="UNIQUE_INDEX" >
+				<column name="university_id" />
+			</index>
+			<constraint name="cns_affiliation_affiliation_type" >
+				<string><![CDATA["affiliation_type" IN('')]]></string>
+			</constraint>
+			<fk name="affiliation_university_id_foreign" to_schema="public" to_table="university" options="" >
+				<fk_column name="university_id" pk="university_id" />
+			</fk>
+		</table>
+		<table name="course" spec="" >
+			<column name="course_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="tutor_id" prior="creator_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="course_name" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="course_description" prior="description" type="text" jt="12" />
+			<column name="created_at" type="timestamp" jt="93" />
+			<column name="start_date" type="date" jt="91" mandatory="y" />
+			<column name="end_date" type="date" jt="91" mandatory="y" />
+			<column name="rating_id" type="bigint" jt="-5" mandatory="y" />
+			<index name="pk_course" unique="PRIMARY_KEY" >
+				<column name="course_id" />
+			</index>
+			<fk name="fk_course_user" to_schema="public" to_table="User" >
+				<fk_column name="tutor_id" pk="user_id" />
+			</fk>
+			<fk name="fk_course_rating" to_schema="public" to_table="Rating" >
+				<fk_column name="rating_id" pk="rating_id" />
+			</fk>
+		</table>
+		<table name="course_participants" prior="participants" spec="" >
+			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="course_id" type="integer" jt="4" mandatory="y" />
+			<index name="pk_participants" unique="PRIMARY_KEY" >
+				<column name="user_id" />
+				<column name="course_id" />
+			</index>
+			<fk name="fk_participants_user" to_schema="public" to_table="User" >
+				<fk_column name="user_id" pk="user_id" />
+			</fk>
+			<fk name="fk_participants_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
+		</table>
+		<table name="meeting_participants" prior="attendies_meeting" spec="" >
+			<column name="meeting_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
+			<index name="pk_attendies_meeting" unique="PRIMARY_KEY" >
+				<column name="meeting_id" />
+				<column name="user_id" />
+			</index>
+			<fk name="attendies_meeting_user_id_foreign" to_schema="public" to_table="User" options="" >
+				<fk_column name="user_id" pk="user_id" />
+			</fk>
+			<fk name="attendies_meeting_meeting_id_foreign" to_schema="public" to_table="Meeting" options="" >
+				<fk_column name="meeting_id" pk="meeting_id" />
+			</fk>
+		</table>
+		<table name="progress" prior="tbl" >
+			<column name="student_id" type="integer" jt="4" mandatory="y" />
+			<column name="course_id" type="integer" jt="4" mandatory="y" />
+			<column name="score" prior="points" type="numeric" length="8" jt="2" />
+			<index name="pk_progress" unique="PRIMARY_KEY" >
+				<column name="student_id" />
+				<column name="course_id" />
+			</index>
+			<fk name="fk_progress_student" to_schema="public" to_table="User" >
+				<fk_column name="student_id" pk="user_id" />
+			</fk>
+			<fk name="fk_progress_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
+		</table>
+		<table name="university" spec="" >
+			<column name="university_id" type="integer" jt="4" mandatory="y" />
+			<column name="name" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="address_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="phone_number" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="fax_number" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="email_addr" type="varchar" length="255" jt="12" mandatory="y" />
+			<index name="pk_university" unique="PRIMARY_KEY" >
+				<column name="university_id" />
+			</index>
+			<index name="unq_university" unique="UNIQUE_INDEX" >
+				<column name="address_id" />
+			</index>
+			<fk name="university_address_id_foreign" to_schema="public" to_table="address" options="" >
+				<fk_column name="address_id" pk="address_id" />
+			</fk>
+		</table>
+	</schema>
+	<layout name="Layout" id="Layout-194f" show_relation="columns" >
+		<entity schema="public" name="Meeting" color="3986C1" x="688" y="304" />
+		<entity schema="public" name="Message" color="BED3F4" x="256" y="320" />
+		<entity schema="public" name="Rating" color="BED3F4" x="480" y="272" />
+		<entity schema="public" name="User" color="BED3F4" x="240" y="48" />
+		<entity schema="public" name="address" color="C7F4BE" x="512" y="416" />
+		<entity schema="public" name="affiliation" color="C7F4BE" x="304" y="512" />
+		<entity schema="public" name="course" color="BED3F4" x="656" y="48" />
+		<entity schema="public" name="course_participants" color="BED3F4" x="464" y="80" />
+		<entity schema="public" name="meeting_participants" color="BED3F4" x="48" y="368" />
+		<entity schema="public" name="progress" color="C1D8EE" x="80" y="64" />
+		<entity schema="public" name="university" color="C7F4BE" x="656" y="528" />
+	</layout>
+</project>
