@@ -29,51 +29,51 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Rating {
 
-    /** Primary key of the Rating table, automatically generated. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rating_id")
-    private Long ratingId;
+  /** Primary key of the Rating table, automatically generated. */
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "rating_id")
+  private Long ratingId;
 
-//    /**
-//     * The user who is receiving the rating. Can be a tutor or course instructor. Mapped as a foreign
-//     * key to the User table.
-//     */
-//    @ManyToOne
-//    @JoinColumn(name = "rated_user_id")
-//    @JsonIgnoreProperties({"ratings", "credentials", "courses"})
-//    private User ratedUser;
-//
-//    /**
-//     * The user who created the rating, typically a student. Mapped as a foreign key to the User
-//     * table.
-//     */
-//    @ManyToOne
-//    @JoinColumn(name = "student_id", nullable = false)
-//    @JsonIgnoreProperties({"ratings", "credentials", "courses"})
-//    private User student;
-//
-    /**
-     * The course associated with the rating. This field is optional. Mapped as a foreign key to the
-     * Course table.
-     */
-    @ManyToOne
-    @JoinColumn(name = "course_id")
-    private Course course;
+  /**
+   * The user who is receiving the rating. Can be a tutor or course instructor. Mapped as a foreign
+   * key to the User table.
+   */
+  @ManyToOne
+  @JoinColumn(name = "rated_user_id")
+  @JsonIgnoreProperties({"ratings", "credentials", "courses"})
+  private User ratedUser;
 
-    /** The numerical rating points, in the range of 1 to 5. */
-    @Column(name = "points", nullable = false)
-    private Integer points;
+  /**
+   * The user who created the rating, typically a student. Mapped as a foreign key to the User
+   * table.
+   */
+  @ManyToOne
+  @JoinColumn(name = "student_id", nullable = false)
+  @JsonIgnoreProperties({"ratings", "credentials", "courses"})
+  private User student;
 
-    /** Optional review text provided by the student. Maximum length is 1000 characters. */
-    @Column(name = "review", length = 1000)
-    private String review;
+  /**
+   * The course associated with the rating. This field is optional. Mapped as a foreign key to the
+   * Course table.
+   */
+  @ManyToOne
+  @JoinColumn(name = "course_id")
+  private Course course;
 
-    /**
-     * The type of the rating, indicating whether it applies to a tutor or a course. Stored as an
-     * enumerated string.
-     */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "rating_type", nullable = false)
-    private RatingType ratingType;
+  /** The numerical rating points, in the range of 1 to 5. */
+  @Column(name = "points", nullable = false)
+  private Integer points;
+
+  /** Optional review text provided by the student. Maximum length is 1000 characters. */
+  @Column(name = "review", length = 1000)
+  private String review;
+
+  /**
+   * The type of the rating, indicating whether it applies to a tutor or a course. Stored as an
+   * enumerated string.
+   */
+  @Enumerated(EnumType.STRING)
+  @Column(name = "rating_type", nullable = false)
+  private RatingType ratingType;
 }

@@ -39,16 +39,15 @@ public class Course {
   @Column(name = "course_id")
   private Long courseId;
 
-  //    /**
-  //     * The tutor responsible for teaching the course.
-  //     *
-  //     * <p>This relationship is mapped by the {@code tutor} field in the {@link User} entity.
-  // Deleting
-  //     * a course does not delete the associated tutor.
-  //     */
-  //    @ManyToOne
-  //    @JoinColumn(name = "tutor_id", nullable = false)
-  //    private User tutor;
+  /**
+   * The tutor responsible for teaching the course.
+   *
+   * <p>This relationship is mapped by the {@code tutor} field in the {@link User} entity. Deleting
+   * a course does not delete the associated tutor.
+   */
+  @ManyToOne
+  @JoinColumn(name = "tutor_id", nullable = false)
+  private User tutor;
 
   /** The name of the course. This field is mandatory and cannot be null. */
   @Column(name = "course_name", nullable = false)
@@ -88,20 +87,6 @@ public class Course {
 
   /**
    * Represents the list of ratings associated with this course.
-   *
-   * <p>This relationship is mapped by the {@code course} field in the {@link Rating} entity. The
-   * cascade type {@code CascadeType.ALL} ensures that all operations (such as persist and remove)
-   * are propagated to the associated ratings. Additionally, {@code orphanRemoval = true} guarantees
-   * that ratings that are no longer associated with this course will be automatically deleted.
-   *
-   * <p>If the course is deleted, all ratings associated with it will also be deleted due to the
-   * cascading operations defined in this relationship.
-   *
-   * <p>The {@link Rating} entity references the {@code course} field, and we use the
-   * {@code @JsonIgnoreProperties} annotation to prevent infinite recursion during serialization.
-   * This annotation ensures that the fields {@code course}, {@code tutor}, and {@code
-   * ratingsAsStudents} in the {@link Rating} entity are ignored during JSON serialization to avoid
-   * circular dependencies.
    *
    * @see Rating
    * @see Course

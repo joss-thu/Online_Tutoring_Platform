@@ -37,14 +37,13 @@ public class User {
   @Column(name = "last_name", nullable = false)
   private String lastName;
 
-  //    /**
-  //     * The role of the user within the system, such as STUDENT or TUTOR. This field is
-  // represented as
-  //     * a string in the database.
-  //     */
-  //    @Enumerated(EnumType.STRING)
-  //    @Column(name = "role", nullable = false)
-  //    private UserRole role;
+  /**
+   * The role of the user within the system, such as STUDENT or TUTOR. This field is represented as
+   * a string in the database.
+   */
+  @Enumerated(EnumType.STRING)
+  @Column(name = "role", nullable = false)
+  private UserRole role;
 
   /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
   @Column(name = "is_verified", nullable = false)
