@@ -1,0 +1,9 @@
+@Entity - Marks class as a JPA. Indicates that class maps to a table in a relational DB.
+
+@Table(name = "X") - Overrides the default table name (one derived from class name) to which entity is mapped.
+
+@Data - Automatically generates common boilerplate code : getter, setter, toString(), equals(), hashCode().
+
+@NoArgsConstructor - Automatically creates a no-argument constructor
+
+@AllArgsConstructor - Automatically creates all argument constructor
