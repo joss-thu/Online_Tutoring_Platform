@@ -12,7 +12,7 @@ import java.util.List;
         "spring", // means its a spring managed bean, i can inject it using @Autowired in services
                   // or controllers
 
-    //        uses = {UserMapper.class, RatingMapper.class, CategoryMapper.class}, // used for
+    // uses = {UserMapper.class, RatingMapper.class, CategoryMapper.class}, // used for
     // nested mappings , uncomment once you have UserMapper or derived from it
 
     unmappedTargetPolicy =
@@ -26,11 +26,6 @@ public interface CourseMapper {
   @Mapping(source = "ratings", target = "ratings")
   @Mapping(source = "category", target = "categoryId")
   CourseDTO toDTO(Course course);
-
-  // For Creation: maps fields from CourseCreateDTO to Course (Ratings not included, since initially course comes with no ratings)
-  @Mapping(source = "tutor", target = "tutor") // Map tutor from DTO
-  @Mapping(source = "categoryId", target = "category") // Fetch category by ID in service
-  Course toEntity(CourseDTO dto);
 
   //Used for List Mappings
   List<CourseDTO> toDTOList(List<Course> courses);
