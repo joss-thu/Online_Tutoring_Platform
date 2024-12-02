@@ -1,6 +1,6 @@
 package de.thu.thutorium.database.dbObjects;
 
-public enum UserRole {
+public enum UserRoleDBO {
     TUTOR,
     STUDENT,
     ADMIN,
