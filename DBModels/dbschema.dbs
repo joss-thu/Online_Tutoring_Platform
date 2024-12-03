@@ -6,14 +6,17 @@
 			<column name="course_id" type="bigint" jt="-5" />
 			<column name="meeting_date" type="date" jt="91" mandatory="y" />
 			<column name="meeting_time" type="timestamp" jt="93" />
+			<column name="duration" type="integer" jt="4" mandatory="y" />
 			<column name="meeting_type" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="meeting_status" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="room_num" type="varchar" length="50" jt="12" />
 			<column name="address_id" type="bigint" jt="-5" />
-			<column name="duration" type="integer" jt="4" mandatory="y" />
 			<column name="meeting_link" type="text" jt="12" />
 			<index name="pk_meeting" unique="PRIMARY_KEY" >
 				<column name="meeting_id" />
+			</index>
+			<index name="unq_meeting" unique="UNIQUE_INDEX" >
+				<column name="address_id" />
 			</index>
 			<constraint name="cns_meeting_meeting_type" >
 				<string><![CDATA["meeting_type" IN('')]]></string>
@@ -96,21 +99,7 @@
 				<column name="category_id" />
 			</index>
 		</table>
-		<table name="course_participants" prior="participants" spec="" >
-			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
-			<column name="course_id" type="integer" jt="4" mandatory="y" />
-			<index name="pk_participants" unique="PRIMARY_KEY" >
-				<column name="user_id" />
-				<column name="course_id" />
-			</index>
-			<fk name="fk_participants_user" to_schema="public" to_table="user_account" >
-				<fk_column name="user_id" pk="user_id" />
-			</fk>
-			<fk name="fk_participants_course" to_schema="public" to_table="course" >
-				<fk_column name="course_id" pk="course_id" />
-			</fk>
-		</table>
-		<table name="courses_category" prior="tbl" >
+		<table name="courses_categories" prior="courses_category" >
 			<column name="course_id" type="integer" jt="4" mandatory="y" />
 			<column name="category_id" type="integer" jt="4" mandatory="y" />
 			<index name="pk_courses_category" unique="PRIMARY_KEY" >
@@ -124,6 +113,20 @@
 				<fk_column name="category_id" pk="category_id" />
 			</fk>
 		</table>
+		<table name="courses_participants" prior="course_participants" spec="" >
+			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="course_id" type="integer" jt="4" mandatory="y" />
+			<index name="pk_participants" unique="PRIMARY_KEY" >
+				<column name="user_id" />
+				<column name="course_id" />
+			</index>
+			<fk name="fk_participants_user" to_schema="public" to_table="user_account" >
+				<fk_column name="user_id" pk="user_id" />
+			</fk>
+			<fk name="fk_participants_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
+		</table>
 		<table name="meeting_participants" prior="attendies_meeting" spec="" >
 			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="meeting_id" type="bigint" jt="-5" mandatory="y" />
@@ -135,6 +138,17 @@
 				<fk_column name="user_id" pk="user_id" />
 			</fk>
 			<fk name="attendies_meeting_meeting_id_foreign" to_schema="public" to_table="Meeting" options="" >
+				<fk_column name="meeting_id" pk="meeting_id" />
+			</fk>
+		</table>
+		<table name="meeting_types" prior="tbl" >
+			<column name="meeting_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="meeting_type" prior="meeting_id" type="varchar" jt="12" mandatory="y" />
+			<index name="pk_meeting_types" unique="PRIMARY_KEY" >
+				<column name="meeting_id" />
+				<column name="meeting_type" />
+			</index>
+			<fk name="fk_meeting_types_meeting" to_schema="public" to_table="Meeting" >
 				<fk_column name="meeting_id" pk="meeting_id" />
 			</fk>
 		</table>
@@ -189,7 +203,11 @@
 		</table>
 		<table name="roles" prior="tbl" >
 			<column name="user_id" prior="role_id" type="integer" jt="4" mandatory="y" />
-			<column name="role" type="varchar" jt="12" />
+			<column name="role" type="varchar" jt="12" mandatory="y" />
+			<index name="pk_roles" unique="PRIMARY_KEY" >
+				<column name="user_id" />
+				<column name="role" />
+			</index>
 			<fk name="fk_roles_course" to_schema="public" to_table="user_account" >
 				<fk_column name="user_id" pk="user_id" />
 			</fk>
@@ -263,13 +281,14 @@
 		<entity schema="public" name="affiliation" color="C7F4BE" x="240" y="448" />
 		<entity schema="public" name="course" color="BED3F4" x="672" y="48" />
 		<entity schema="public" name="course_category" color="C1D8EE" x="1056" y="144" />
-		<entity schema="public" name="course_participants" color="BED3F4" x="480" y="80" />
-		<entity schema="public" name="courses_category" color="C1D8EE" x="896" y="144" />
+		<entity schema="public" name="courses_categories" color="C1D8EE" x="896" y="144" />
+		<entity schema="public" name="courses_participants" color="BED3F4" x="480" y="80" />
 		<entity schema="public" name="meeting_participants" color="BED3F4" x="64" y="368" />
+		<entity schema="public" name="meeting_types" color="C1D8EE" x="1152" y="368" />
 		<entity schema="public" name="progress" color="C1D8EE" x="96" y="64" />
 		<entity schema="public" name="rating_course" color="C1D8EE" x="816" y="304" />
 		<entity schema="public" name="rating_tutor" color="BED3F4" x="560" y="288" />
-		<entity schema="public" name="roles" color="C1D8EE" x="432" y="192" />
+		<entity schema="public" name="roles" color="C1D8EE" x="464" y="192" />
 		<entity schema="public" name="university" color="C7F4BE" x="480" y="448" />
 		<entity schema="public" name="user_account" color="BED3F4" x="256" y="48" />
 		<entity schema="public" name="users_verifiers" color="C1D8EE" x="336" y="320" />

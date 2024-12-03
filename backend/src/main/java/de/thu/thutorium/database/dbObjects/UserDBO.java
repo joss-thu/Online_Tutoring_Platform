@@ -192,4 +192,14 @@ public class UserDBO {
           orphanRemoval = false)
   private List<MessageDBO> messages_received;
 
+
+  /**
+   * Ratings given by a student to tutors.
+   *<p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
+   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
+   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
+   */
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ProgressDBO> receivedScores;
+
 }

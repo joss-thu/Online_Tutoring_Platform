@@ -91,6 +91,21 @@ public class CourseDBO {
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RatingCourseDBO> receivedCourseRatings;
 
+  /**
+   * Meetings received for a course.
+   * <p> Defines a one-to-many relationship with {@link MeetingDBO}.
+   * The {@code orphanRemoval} attribute ensures that meetings are removed if they are no longer associated with
+   * the course.
+   */
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<MeetingDBO> meetings;
+
+  /**
+   * Progress recorded for a course.
+   * <p> Defines a one-to-many relationship with {@link ProgressDBO}.
+   * The {@code orphanRemoval} attribute ensures that progress is removed if they are no longer associated with
+   * the course.
+   */
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<ProgressDBO> progress;
 }
