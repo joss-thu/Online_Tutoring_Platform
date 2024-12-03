@@ -90,4 +90,7 @@ public class CourseDBO {
    */
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RatingCourseDBO> receivedCourseRatings;
+
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MeetingDBO> meetings;
 }

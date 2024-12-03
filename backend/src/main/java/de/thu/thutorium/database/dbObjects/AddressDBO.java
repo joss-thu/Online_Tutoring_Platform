@@ -64,4 +64,11 @@ public class AddressDBO {
   /** The country for the address. This field is required and cannot be null. */
   @Column(name = "country", nullable = false)
   private String country;
+
+  /**
+   * The meeting associated with this address.
+   * <p> Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
+   */
+  @OneToOne(mappedBy = "address")
+  private MeetingDBO meeting;
 }

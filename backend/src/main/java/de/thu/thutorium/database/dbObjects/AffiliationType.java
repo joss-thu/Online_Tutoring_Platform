@@ -1,5 +1,8 @@
 package de.thu.thutorium.database.dbObjects;
 
 public enum AffiliationType {
-    STUDENT
+    //TO DO
+    STUDENT,
+    PROFESSOR,
+    EXTERNAL
 }

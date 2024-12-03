@@ -160,4 +160,18 @@ public class UserDBO {
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RatingCourseDBO> givenCourseRatings;
 
+  /**
+   * Meetings scheduled for the users.
+   * <p>
+   * Defines a many-to-many relationship with {@link UserDBO} using the join table "users_meetings" for defining the
+   * meetings scheduled for the users. It is s bidirectional relationship(!!), the counterpart denoted as Set<UserDBO>
+   * called 'participants' in {@link MeetingDBO}.
+   */
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @JoinTable(name = "users_meetings",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "meeting_id")
+  )
+  private Set<MeetingDBO> meetings;
+
 }
