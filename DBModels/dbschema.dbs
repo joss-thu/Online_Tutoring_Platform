@@ -160,11 +160,11 @@
 			</fk>
 		</table>
 		<table name="roles" prior="tbl" >
-			<column name="role_id" type="integer" jt="4" mandatory="y" />
+			<column name="user_id" prior="role_id" type="integer" jt="4" mandatory="y" />
 			<column name="role" type="varchar" jt="12" />
-			<index name="pk_roles" unique="PRIMARY_KEY" >
-				<column name="role_id" />
-			</index>
+			<fk name="fk_roles_course" to_schema="public" to_table="user_account" >
+				<fk_column name="user_id" pk="user_id" />
+			</fk>
 		</table>
 		<table name="university" spec="" >
 			<column name="university_id" type="integer" jt="4" mandatory="y" />
@@ -187,15 +187,15 @@
 			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="first_name" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="last_name" type="varchar" length="255" jt="12" mandatory="y" />
-			<column name="role" type="varchar[]" jt="2003" mandatory="y" />
-			<column name="affiliation_id" type="varchar[]" jt="2003" mandatory="y" />
-			<column name="created_at" type="timestamp" jt="93" mandatory="y" />
 			<column name="email_id" type="varchar" length="500" jt="12" mandatory="y" />
 			<column name="passwd" type="varchar" length="500" jt="12" mandatory="y" />
+			<column name="role" type="varchar[]" jt="2003" mandatory="y" />
+			<column name="affiliation_id" type="varchar[]" jt="2003" mandatory="y" />
 			<column name="user_description" type="text" jt="12" />
+			<column name="created_at" type="timestamp" jt="93" mandatory="y" />
 			<column name="isverified" prior="verification" type="boolean" length="255" jt="16" mandatory="y" />
-			<column name="verifies" prior="verified_by" type="bigint" jt="-5" />
 			<column name="verified_on" type="date" jt="91" />
+			<column name="verifier_id" prior="verifies" type="bigint" jt="-5" />
 			<column name="enabled" prior="is_blocked" type="boolean" jt="16" />
 			<index name="pk_user" unique="PRIMARY_KEY" >
 				<column name="user_id" />
@@ -212,21 +212,18 @@
 			<fk name="user_affiliation_id_foreign" to_schema="public" to_table="affiliation" options="" >
 				<fk_column name="affiliation_id" pk="affiliation_id" />
 			</fk>
-			<fk name="fk_user_user" to_schema="public" to_table="user_account" >
-				<fk_column name="verifies" pk="user_id" />
-			</fk>
 		</table>
-		<table name="users_roles" prior="userroles" >
+		<table name="users_verifiers" prior="user_verifier" >
+			<column name="verifier_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
-			<column name="role_id" prior="user_id" type="bigint" jt="-5" mandatory="y" />
-			<index name="pk_users_roles" unique="PRIMARY_KEY" >
+			<index name="pk_users_verifiers" unique="PRIMARY_KEY" >
+				<column name="verifier_id" />
 				<column name="user_id" />
-				<column name="role_id" />
 			</index>
-			<fk name="fk_users_roles_roles" to_schema="public" to_table="roles" >
-				<fk_column name="role_id" pk="role_id" />
+			<fk name="fk_users_verifiers" to_schema="public" to_table="user_account" >
+				<fk_column name="verifier_id" pk="user_id" />
 			</fk>
-			<fk name="fk_users_roles_user" to_schema="public" to_table="user_account" >
+			<fk name="fk_verifiers_users" to_schema="public" to_table="user_account" >
 				<fk_column name="user_id" pk="user_id" />
 			</fk>
 		</table>
@@ -242,9 +239,9 @@
 		<entity schema="public" name="progress" color="C1D8EE" x="96" y="64" />
 		<entity schema="public" name="rating" color="C1D8EE" x="672" y="288" />
 		<entity schema="public" name="rating_tutor" color="BED3F4" x="480" y="304" />
-		<entity schema="public" name="roles" color="C1D8EE" x="544" y="208" />
+		<entity schema="public" name="roles" color="C1D8EE" x="464" y="192" />
 		<entity schema="public" name="university" color="C7F4BE" x="480" y="448" />
 		<entity schema="public" name="user_account" color="BED3F4" x="256" y="48" />
-		<entity schema="public" name="users_roles" color="C1D8EE" x="416" y="192" />
+		<entity schema="public" name="users_verifiers" color="C1D8EE" x="336" y="320" />
 	</layout>
 </project>

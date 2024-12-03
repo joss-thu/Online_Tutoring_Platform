@@ -31,46 +31,93 @@ public class UserDBO {
   @Column(name = "user_id")
   @Setter(AccessLevel.NONE)
   private Long userId;
-}
 
-//  /** The first name of the user. This field is mandatory and cannot be null. */
-//  @Column(name = "first_name", nullable = false)
-//  private String firstName;
-//
-//  /** The last name of the user. This field is mandatory and cannot be null. */
-//  @Column(name = "last_name", nullable = false)
-//  private String lastName;
-//
-//  /** The user's email, used for login. This field must be unique. */
-//  @Column(name = "email_address", nullable = false, unique = true)
-//  private String email;
-//
-//  /** The hashed password for authentication. This field is mandatory. */
-//  @Column(name = "hashed_password", nullable = false)
-//  private String password;
-//
-//  /**
-//   * The roles of the user within the system, such as STUDENT, TUTOR etc. Multiple roles are foreseen:
-//    * a tutor could also be a student,
-//    * an admin could be a verifier.
-//   * The user roles are resolved into another table with n:m relationship, in order to not violate
-//   * the database normalization principles.
-//   */
-//
-//
-//  @Column(nullable = false)
-//  private Set<UserRole> roles ;
-//
-//  /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
-//  @Column(name = "is_verified", nullable = false)
-//  private Boolean isVerified = false;
-//
-//  /**
-//   * The timestamp when the user account was created. This field is mandatory and cannot be null.
-//   */
-//  @Column(name = "created_at", nullable = false)
-//  private LocalDateTime createdAt;
-//
+  /** The first name of the user. This field is mandatory and cannot be null. */
+  @Column(name = "first_name", nullable = false)
+  private String firstName;
+
+  /** The last name of the user. This field is mandatory and cannot be null. */
+  @Column(name = "last_name", nullable = false)
+  private String lastName;
+
+  /** The user's email, used for login. This field must be unique. */
+  @Column(name = "email_address", nullable = false, unique = true)
+  private String email;
+
+  /** The hashed password for authentication. This field is mandatory. */
+  @Column(name = "hashed_password", nullable = false)
+  private String password;
+
+  /**
+   * The roles of the user within the system, such as STUDENT, TUTOR etc. Multiple roles are foreseen:
+    * a tutor could also be a student,
+    * an admin could be a verifier.
+   * The user roles are resolved into another table, in order to not violate
+   * the database normalization principles.
+   */
+  @ElementCollection(targetClass = Role.class)
+  @Enumerated(EnumType.STRING)
+  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+  @Column(name = "role", nullable = false)
+  private Set<Role> roles;
+
+  /**
+   * Defines a many-to-one relationship between a user and their affiliation.
+   * <p>
+   * This relationship is mapped by the {@code affiliation_id} foreign key column in the {@link UserDBO} entity.
+   * The {@code affiliation} field represents the affiliation to which the user belongs.
+   * @see de.thu.thutorium.database.dbObjects.AffiliationDBO
+   */
+  @ManyToOne
+  @JoinColumn(name="affiliation_id", nullable = false)
+  private AffiliationDBO affiliation;
+
+  /**
+   * A textual description of the user.
+   */
+  @Column(name="user_description", columnDefinition = "TEXT")
+  private String description;
+
+  /**
+   * The timestamp when the user account was created. This field is initialised with current time.
+   */
+  @Column(name = "created_at", nullable = false)
+  private LocalDateTime createdAt= LocalDateTime.now();
+
+
+  /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
+  @Column(name = "is_verified", nullable = false)
+  private Boolean isVerified = false;
+
+  /**
+   * The timestamp when the user account was verified.
+   */
+  @Column(name = "verified_on")
+  private LocalDateTime verified_on;
+
+
+  /**
+   * Verifiers for this user.
+   * <p>
+   * Defines a many-to-many relationship with {@link UserDBO} using the join table "users_verifiers" for defining the
+   * verifiers who can verify other users. It is s uni-directional relationship, since the users do not know who has
+   * verified them.
+   */
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @JoinTable(name = "users_verifiers",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "verifier_id")
+  )
+  private Set<UserDBO> verifiers;
+
+  /**
+   * Describes if the user is enabled or not. Default value: True.
+   */
+  @Column(name = "enabled", nullable = false)
+  private Boolean enabled= true;
+
+
+
 //  /**
 //   * Represents the list of courses associated with this user if they are a tutor.
 //   *
@@ -91,9 +138,9 @@ public class UserDBO {
 //  @OneToMany(mappedBy = "ratedUser", cascade = CascadeType.ALL, orphanRemoval = true)
 //  private List<Rating> ratings;
 //
-//
-//
 //  /** A long description of the tutor. This field is optional and can be null. */
 //  @Column(name = "tutor_description", length = 1500)
 //  private String tutor_description;
-//}
+
+
+}

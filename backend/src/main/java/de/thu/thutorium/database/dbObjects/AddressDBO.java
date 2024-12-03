@@ -1,9 +1,7 @@
 package de.thu.thutorium.database.dbObjects;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Represents an address entity in the database. This class is mapped to the "address" table in the
@@ -31,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class AddressDBO {
 
   /**
    * The unique identifier for the address. This is the primary key and is auto-generated using
@@ -40,7 +38,12 @@ public class Address {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "address_id")
+  @Setter(AccessLevel.NONE)
   private Long addressId;
+
+  /** The campus name for the university. */
+  @Column(name="campus_name", length= 255)
+  private String campusName;
 
   /** The house number for the address. This field is required and cannot be null. */
   @Column(name = "house_number", nullable = false)
