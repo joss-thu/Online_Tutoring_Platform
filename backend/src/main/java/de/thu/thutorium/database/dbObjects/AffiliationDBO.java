@@ -1,5 +1,6 @@
 package de.thu.thutorium.database.dbObjects;
 
+import de.thu.thutorium.database.dbObjects.enums.AffiliationType;
 import jakarta.persistence.*;
 import lombok.*;
 

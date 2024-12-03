@@ -1,5 +1,7 @@
 package de.thu.thutorium.database.dbObjects;
 
+import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
+import de.thu.thutorium.database.dbObjects.enums.MeetingType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

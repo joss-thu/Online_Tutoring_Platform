@@ -1,12 +1,12 @@
 package de.thu.thutorium.database.dbObjects;
 
+import de.thu.thutorium.database.dbObjects.enums.Role;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import lombok.*;
-import org.hibernate.action.internal.OrphanRemovalAction;
 
 /**
  * Represents a user account entity within the system. This entity is mapped to the "user_account"
@@ -173,5 +173,23 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "meeting_id")
   )
   private Set<MeetingDBO> meetings;
+
+  /**
+   * Messages sent by a sender to receiver.
+   *<p> Defines a one-to-many relationship with {@link MessageDBO}.
+   * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
+   */
+  @OneToMany(mappedBy = "sender", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+          orphanRemoval = false)
+  private List<MessageDBO> messages_sent;
+
+  /**
+   * Messages received by a receiver from a sender.
+   * <p> Defines a one-to-many relationship with {@link MessageDBO}.
+   * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
+   */
+  @OneToMany(mappedBy = "receiver", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
+          orphanRemoval = false)
+  private List<MessageDBO> messages_received;
 
 }

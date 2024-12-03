@@ -1,10 +1,6 @@
-package de.thu.thutorium.database.dbObjects;
+package de.thu.thutorium.database.dbObjects.enums;
 
-/**
- * Enumeration representing the different roles a user can have.
- */
 public enum Role {
-
     STUDENT,
     TUTOR,
     ADMIN,
@@ -12,5 +8,4 @@ public enum Role {
      * Role for users who can verify a tutor.
      */
     VERIFIER
-
 }
