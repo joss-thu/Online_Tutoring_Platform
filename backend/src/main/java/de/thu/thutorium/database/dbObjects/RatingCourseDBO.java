@@ -6,18 +6,19 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Represents a rating given by a student for a tutor.
- *
+ * Represents a rating given by a student for a course.
  * <p>This entity stores the details of the rating, including the student who gave the rating, the
- * tutor being rated, the rating points (e.g., 1.0 to 5.0), and an optional review text.
+ * course being rated, the rating points (e.g., 1.0 to 5.0), and an optional review text.
+ *
  * @see UserDBO
+ * @see CourseDBO
  */
 @Entity
-@Table(name = "rating_tutor")
+@Table(name = "rating_course")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RatingTutorDBO {
+public class RatingCourseDBO {
   /** Primary key of the Rating table, automatically generated. */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,21 +28,21 @@ public class RatingTutorDBO {
 
   /**
    * The student who gave the rating.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by Set<RatingTutorDBO>
-   * 'givenTutorRatings' in {@link UserDBO}.
+   * <p> Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by Set<RatingCourseDBO>
+   * 'givenCourseRatings' in {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "student_id", nullable = false)
   private UserDBO student;
 
   /**
-   * The tutor who received the rating.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by
-   * Set<RatingTutorDBO> 'receivedTutorRatings' in {@link UserDBO}.
+   * The course which received the rating.
+   * <p> Defines a many-to-one relationship with {@link CourseDBO}.The counterpart is denoted by
+   * Set<RatingCourseDBO> 'receivedCourseRatings' in {@link CourseDBO}.
    */
   @ManyToOne
-  @JoinColumn(name = "tutor_id", nullable = false)
-  private UserDBO tutor;
+  @JoinColumn(name = "course_id", nullable = false)
+  private CourseDBO course;
 
   /**
    * The rating points given by the student.

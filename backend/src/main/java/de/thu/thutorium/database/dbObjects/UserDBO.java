@@ -134,20 +134,30 @@ public class UserDBO {
   private Set<CourseDBO> courses;
 
   /**
-   * Ratings given by this student to tutors.
+   * Ratings given by a student to tutors.
    *<p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
    * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
    */
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<RatingTutorDBO> givenRatings;
+  private List<RatingTutorDBO> givenTutorRatings;
 
   /**
-   * Ratings received by this tutor from students.
+   * Ratings received by a tutor from students.
    * <p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
    * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
    */
   @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<RatingTutorDBO> receivedRatings;
+  private List<RatingTutorDBO> receivedTutorRatings;
+
+  /**
+   * Ratings given by this student to courses.
+   *<p> Defines a one-to-many relationship with {@link RatingCourseDBO}.
+   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
+   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
+   */
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RatingCourseDBO> givenCourseRatings;
+
 }

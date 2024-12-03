@@ -81,13 +81,13 @@ public class CourseDBO {
   @Column(name = "end_date")
   private LocalDate endDate;
 
-//  /**
-//   * The rating associated with this course.
-//   * <p> Defines a one-to-one relationship with {@link RatingDBO}. The cascade type {@code ALL} ensures that all operations are propagated to
-//   * the associated rating.The {@code orphanRemoval} attribute ensures that the rating is removed if it
-//   * is no longer associated with the course.
-//   */
-//   @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
-//   @JoinColumn(name="rating_id")
-//   private RatingDBO rating;
+
+  /**
+   * Ratings received by a course from students.
+   * <p> Defines a one-to-many relationship with {@link RatingCourseDBO}.
+   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
+   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
+   */
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<RatingCourseDBO> receivedCourseRatings;
 }
