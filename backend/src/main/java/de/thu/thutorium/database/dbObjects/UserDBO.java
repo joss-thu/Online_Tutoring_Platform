@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import lombok.*;
+import org.hibernate.action.internal.OrphanRemovalAction;
 
 /**
  * Represents a user account entity within the system. This entity is mapped to the "user_account"
@@ -62,11 +63,11 @@ public class UserDBO {
   private Set<Role> roles;
 
   /**
-   * Defines a many-to-one relationship between a user and their affiliation.
+   * Defines a many-to-one relationship between a user and their affiliation with respect to the university.
    * <p>
    * This relationship is mapped by the {@code affiliation_id} foreign key column in the {@link UserDBO} entity.
    * The {@code affiliation} field represents the affiliation to which the user belongs.
-   * @see de.thu.thutorium.database.dbObjects.AffiliationDBO
+   * The counterpart is denoted by a List<UserDBO> called 'affiliatedUsers' in the {@link affiliationDBO}.
    */
   @ManyToOne
   @JoinColumn(name="affiliation_id", nullable = false)
@@ -100,7 +101,7 @@ public class UserDBO {
    * Verifiers for this user.
    * <p>
    * Defines a many-to-many relationship with {@link UserDBO} using the join table "users_verifiers" for defining the
-   * verifiers who can verify other users. It is s uni-directional relationship, since the users do not know who has
+   * verifiers who can verify other users. It is s uni-directional relationship(!!), since the users do not know who has
    * verified them.
    */
   @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
@@ -116,31 +117,37 @@ public class UserDBO {
   @Column(name = "enabled", nullable = false)
   private Boolean enabled= true;
 
+  /**
+   * Represents the list of courses associated with this user if they are a tutor.
+   * <p>This relationship is mapped by the {@code tutor} field in the {@link Course} entity. The
+   * cascade type {@code CascadeType.ALL} ensures that all operations (such as persist and remove)
+   * are propagated to the associated courses.
+   * <p>If this user is deleted, all their associated courses will also be deleted due to the
+   * cascading operations defined in this relationship.
+   * The counterpart is denoted by a Set<UserDBO> called 'participants' in the {@link CourseDBO}.
+   */
+  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinTable(name = "course_participants",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "course_id")
+  )
+  private Set<CourseDBO> courses;
 
+  /**
+   * Ratings given by this student to tutors.
+   *<p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
+   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
+   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
+   */
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<RatingTutorDBO> givenRatings;
 
-//  /**
-//   * Represents the list of courses associated with this user if they are a tutor.
-//   *
-//   * <p>This relationship is mapped by the {@code tutor} field in the {@link Course} entity. The
-//   * cascade type {@code CascadeType.ALL} ensures that all operations (such as persist and remove)
-//   * are propagated to the associated courses. Additionally, {@code orphanRemoval = true} guarantees
-//   * that courses that no longer have a tutor reference are automatically deleted.
-//   *
-//   * <p>If this user is deleted, all their associated courses will also be deleted due to the
-//   * cascading operations defined in this relationship.
-//   *
-//   * @see Course
-//   */
-//  @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Course> courses;
-//
-//  /** List of ratings related to this user, either as a tutor or a student. */
-//  @OneToMany(mappedBy = "ratedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-//  private List<Rating> ratings;
-//
-//  /** A long description of the tutor. This field is optional and can be null. */
-//  @Column(name = "tutor_description", length = 1500)
-//  private String tutor_description;
-
-
+  /**
+   * Ratings received by this tutor from students.
+   * <p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
+   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
+   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
+   */
+  @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<RatingTutorDBO> receivedRatings;
 }

@@ -3,7 +3,7 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Represents a university entity in the database. This class is mapped to the "university" table in
@@ -25,7 +25,7 @@ public class UniversityDBO {
    */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "university_name")
+  @Column(name = "university_id")
   @Setter(AccessLevel.NONE)
   private Integer universityId;
 
@@ -57,7 +57,7 @@ public class UniversityDBO {
   private String emailAddress;
 
   /**
-   * The address of the university. This establishes a one-to-one relationship with the {@code
+   * The address of the university. This establishes a uni-directional(!!) one-to-one relationship with the {@code
    * Address} entity.
    */
   @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
@@ -65,21 +65,12 @@ public class UniversityDBO {
   private AddressDBO address;
 
   /**
-   * Defines a bidirectional one-to-many relationship between a university and
-   * its associated universities.
-   * <p>
-   * This relationship is mapped by the {@code university} field in the {@link UniversityDBO} entity. The
-   * {@code CascadeType.ALL} cascade type ensures that all operations (such as persist, merge, remove, refresh, and
-   * detach) are propagated from the universities to their corresponding affiliations.
-   * <p>
-   * The {@code mappedBy} attribute specifies that the {@code university} field in the {@link UniversityDBO}
-   * entity owns the relationship. This attribute is used to establish a bidirectional relationship, ensuring
-   * that both sides of the relationship are aware of each other.
-   * <p>
-   * If the parent university entity is deleted, all associated affiliations will also be deleted due to the
-   * cascading operations defined in this relationship.
-   * @see UniversityDBO
+   * Defines a one-to-many relationship between an affiliation and its associated affiliations.
+   * This relationship is mapped by the {@code affiliation} field in the {@link AffiliationDBO} entity.
+   * The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure that these operations
+   * are propagated to the associated affiliations.
+   * @see AffiliationDBO
    */
-  @OneToMany(mappedBy = "university", cascade = CascadeType.ALL)
-  private Set<UniversityDBO> universities;
+  @OneToMany(mappedBy = "university", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  private List<AffiliationDBO> affiliations;
 }

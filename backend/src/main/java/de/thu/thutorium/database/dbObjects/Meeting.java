@@ -30,56 +30,56 @@ public class Meeting {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "meeting_id")
   private Long meetingId;
-
-  /**
-   * The course to which this meeting is related. The association is managed as a many-to-one
-   * relationship.
-   */
-  @ManyToOne
-  @JoinColumn(name = "course_id")
-  private Course course;
-
-  /** The date on which the meeting is scheduled to be held. This field cannot be null. */
-  @Column(name = "meeting_date", nullable = false)
-  private LocalDate meetingDate;
-
-  /**
-   * The type of the meeting (e.g., lecture, tutorial, etc.). Must be a non-null string with a
-   * maximum length of 255 characters.
-   */
-  @Column(name = "meeting_type", nullable = false, length = 255)
-  private String meetingType;
-
-  /**
-   * The current status of the meeting (e.g., confirmed, canceled, etc.). Must be a non-null string
-   * with a maximum length of 255 characters.
-   */
-  @Column(name = "meeting_status", nullable = false, length = 255)
-  private String meetingStatus;
-
-  /**
-   * The room number where the meeting is taking place, if applicable. This field may be null and
-   * can have a length of up to 50 characters.
-   */
-  @Column(name = "room_number", length = 50)
-  private String roomNum;
-
-  /** The address where the meeting is being held. This is managed as a many-to-one relationship. */
-  @ManyToOne
-  @JoinColumn(name = "address_id")
-  private Address address;
-
-  /** The duration of the meeting in minutes. This field cannot be null. */
-  @Column(name = "duration", nullable = false)
-  private Integer duration;
-
-  /**
-   * The link to access the meeting, often in the form of a URL. This is stored as text in the
-   * database.
-   */
-  @Column(name = "meeting_link", columnDefinition = "TEXT")
-  private String meetingLink;
-
-  @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-  private List<User> meetingParticipants;
+//
+//  /**
+//   * The course to which this meeting is related. The association is managed as a many-to-one
+//   * relationship.
+//   */
+//  @ManyToOne
+//  @JoinColumn(name = "course_id")
+//  private Course course;
+//
+//  /** The date on which the meeting is scheduled to be held. This field cannot be null. */
+//  @Column(name = "meeting_date", nullable = false)
+//  private LocalDate meetingDate;
+//
+//  /**
+//   * The type of the meeting (e.g., lecture, tutorial, etc.). Must be a non-null string with a
+//   * maximum length of 255 characters.
+//   */
+//  @Column(name = "meeting_type", nullable = false, length = 255)
+//  private String meetingType;
+//
+//  /**
+//   * The current status of the meeting (e.g., confirmed, canceled, etc.). Must be a non-null string
+//   * with a maximum length of 255 characters.
+//   */
+//  @Column(name = "meeting_status", nullable = false, length = 255)
+//  private String meetingStatus;
+//
+//  /**
+//   * The room number where the meeting is taking place, if applicable. This field may be null and
+//   * can have a length of up to 50 characters.
+//   */
+//  @Column(name = "room_number", length = 50)
+//  private String roomNum;
+//
+//  /** The address where the meeting is being held. This is managed as a many-to-one relationship. */
+//  @ManyToOne
+//  @JoinColumn(name = "address_id")
+//  private Address address;
+//
+//  /** The duration of the meeting in minutes. This field cannot be null. */
+//  @Column(name = "duration", nullable = false)
+//  private Integer duration;
+//
+//  /**
+//   * The link to access the meeting, often in the form of a URL. This is stored as text in the
+//   * database.
+//   */
+//  @Column(name = "meeting_link", columnDefinition = "TEXT")
+//  private String meetingLink;
+//
+//  @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
+//  private List<User> meetingParticipants;
 }

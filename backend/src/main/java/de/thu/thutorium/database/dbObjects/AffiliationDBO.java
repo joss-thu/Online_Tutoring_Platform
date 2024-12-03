@@ -3,7 +3,7 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Represents an affiliation between a university and an affiliation type. This class is mapped to
@@ -39,20 +39,18 @@ public class AffiliationDBO {
 
   /**
    * The university associated with the affiliation. This is a many-to-one relationship with the
-   * {@code University} entity.
+   * {@code University} entity. The counterpart is denoted by a List<AffiliationDBO> called 'affiliations'
+   * in {@code University}
    */
   @ManyToOne
   @JoinColumn(name = "university_id")
   private UniversityDBO university;
 
   /**
-   * Defines a one-to-many relationship between an affiliation and its associated affiliations.
-   * This relationship is mapped by the {@code affiliation} field in the {@link AffiliationDBO} entity.
-   * The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure that these operations
-   * are propagated to the associated affiliations.
-   * @see AffiliationDBO
+   * Users affiliated with this affiliation.
+   * <p>Defines a one-to-many relationship with {@link UserDBO}.
    */
   @OneToMany(mappedBy = "affiliation", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<AffiliationDBO> affiliations;
+  private List<UserDBO> affiliatedUsers;
 }
 

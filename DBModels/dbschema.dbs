@@ -5,6 +5,7 @@
 			<column name="meeting_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="course_id" type="bigint" jt="-5" />
 			<column name="meeting_date" type="date" jt="91" mandatory="y" />
+			<column name="meeting_time" type="timestamp" jt="93" />
 			<column name="meeting_type" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="meeting_status" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="room_num" type="varchar" length="50" jt="12" />
@@ -75,20 +76,25 @@
 			<column name="course_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="tutor_id" prior="creator_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="course_name" type="varchar" length="255" jt="12" mandatory="y" />
-			<column name="course_description" prior="description" type="text" jt="12" />
-			<column name="created_at" type="timestamp" jt="93" />
+			<column name="course_description_short" prior="course_description" type="text" jt="12" />
+			<column name="course_description_long" type="text" jt="12" />
+			<column name="category_id" prior="course_category" type="varchar" jt="12" />
 			<column name="start_date" type="date" jt="91" mandatory="y" />
 			<column name="end_date" type="date" jt="91" mandatory="y" />
-			<column name="rating_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="created_at" type="timestamp" jt="93" />
 			<index name="pk_course" unique="PRIMARY_KEY" >
 				<column name="course_id" />
 			</index>
 			<fk name="fk_course_user" to_schema="public" to_table="user_account" >
 				<fk_column name="tutor_id" pk="user_id" />
 			</fk>
-			<fk name="fk_course_rating" to_schema="public" to_table="rating" >
-				<fk_column name="rating_id" pk="rating_id" />
-			</fk>
+		</table>
+		<table name="course_category" prior="category" >
+			<column name="category_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="category" type="varchar" jt="12" />
+			<index name="pk_course_category" unique="PRIMARY_KEY" >
+				<column name="category_id" />
+			</index>
 		</table>
 		<table name="course_participants" prior="participants" spec="" >
 			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
@@ -102,6 +108,20 @@
 			</fk>
 			<fk name="fk_participants_course" to_schema="public" to_table="course" >
 				<fk_column name="course_id" pk="course_id" />
+			</fk>
+		</table>
+		<table name="courses_category" prior="tbl" >
+			<column name="course_id" type="integer" jt="4" mandatory="y" />
+			<column name="category_id" type="integer" jt="4" mandatory="y" />
+			<index name="pk_courses_category" unique="PRIMARY_KEY" >
+				<column name="course_id" />
+				<column name="category_id" />
+			</index>
+			<fk name="fk_courses_category_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
+			<fk name="fk_courses_category" to_schema="public" to_table="course_category" >
+				<fk_column name="category_id" pk="category_id" />
 			</fk>
 		</table>
 		<table name="meeting_participants" prior="attendies_meeting" spec="" >
@@ -133,18 +153,29 @@
 				<fk_column name="course_id" pk="course_id" />
 			</fk>
 		</table>
-		<table name="rating" prior="tbl" >
-			<column name="rating_id" type="bigint" jt="-5" mandatory="y" />
-			<column name="points" type="numeric" length="8" jt="2" />
-			<column name="description" type="text" jt="12" />
+		<table name="rating_course" prior="course_rating" >
+			<column name="student_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="course_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="points" type="numeric" jt="2" />
+			<column name="review" prior="description" type="text" jt="12" />
+			<column name="created_at" type="timestamp" jt="93" />
 			<index name="pk_rating" unique="PRIMARY_KEY" >
-				<column name="rating_id" />
+				<column name="course_id" />
+				<column name="student_id" />
 			</index>
+			<fk name="fk_rating_user_account" to_schema="public" to_table="user_account" >
+				<fk_column name="student_id" pk="user_id" />
+			</fk>
+			<fk name="fk_rating_course" to_schema="public" to_table="course" >
+				<fk_column name="course_id" pk="course_id" />
+			</fk>
 		</table>
 		<table name="rating_tutor" prior="ratingg" spec="" >
 			<column name="student_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="tutor_id" type="bigint" jt="-5" mandatory="y" />
-			<column name="rating_id" type="bigint" jt="-5" />
+			<column name="points" type="numeric" jt="2" />
+			<column name="review" type="text" jt="12" />
+			<column name="created_at" type="timestamp" jt="93" />
 			<index name="pk_rating_tutor" unique="PRIMARY_KEY" >
 				<column name="student_id" />
 				<column name="tutor_id" />
@@ -154,9 +185,6 @@
 			</fk>
 			<fk name="fk_rating_tutor_user_account" to_schema="public" to_table="user_account" >
 				<fk_column name="tutor_id" pk="user_id" />
-			</fk>
-			<fk name="fk_rating_tutor_rating" to_schema="public" to_table="rating" >
-				<fk_column name="rating_id" pk="rating_id" />
 			</fk>
 		</table>
 		<table name="roles" prior="tbl" >
@@ -229,17 +257,19 @@
 		</table>
 	</schema>
 	<layout name="Layout" id="Layout-194f" show_relation="columns" >
-		<entity schema="public" name="Meeting" color="3986C1" x="896" y="304" />
+		<entity schema="public" name="Meeting" color="3986C1" x="944" y="304" />
 		<entity schema="public" name="Message" color="BED3F4" x="48" y="176" />
 		<entity schema="public" name="address" color="C7F4BE" x="688" y="448" />
 		<entity schema="public" name="affiliation" color="C7F4BE" x="240" y="448" />
 		<entity schema="public" name="course" color="BED3F4" x="672" y="48" />
+		<entity schema="public" name="course_category" color="C1D8EE" x="1056" y="144" />
 		<entity schema="public" name="course_participants" color="BED3F4" x="480" y="80" />
+		<entity schema="public" name="courses_category" color="C1D8EE" x="896" y="144" />
 		<entity schema="public" name="meeting_participants" color="BED3F4" x="64" y="368" />
 		<entity schema="public" name="progress" color="C1D8EE" x="96" y="64" />
-		<entity schema="public" name="rating" color="C1D8EE" x="672" y="288" />
-		<entity schema="public" name="rating_tutor" color="BED3F4" x="480" y="304" />
-		<entity schema="public" name="roles" color="C1D8EE" x="464" y="192" />
+		<entity schema="public" name="rating_course" color="C1D8EE" x="816" y="304" />
+		<entity schema="public" name="rating_tutor" color="BED3F4" x="560" y="288" />
+		<entity schema="public" name="roles" color="C1D8EE" x="432" y="192" />
 		<entity schema="public" name="university" color="C7F4BE" x="480" y="448" />
 		<entity schema="public" name="user_account" color="BED3F4" x="256" y="48" />
 		<entity schema="public" name="users_verifiers" color="C1D8EE" x="336" y="320" />
