@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,10 +19,10 @@ import java.util.Set;
  *
  * @see CourseDBO
  */
+@Builder// If Builder is intended to be used
 @Entity
 @Table(name = "CourseCategory")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class CourseCategoryDBO {
 
@@ -62,11 +63,18 @@ public class CourseCategoryDBO {
    * Defines a many-to-many relationship with {@link CourseDBO} using the join table "courses_categories" for defining the
    * courses associated with a category. The counterpart is denoted as a List<CourseCategoryDBO> called courseCategories
    * in {@link CourseDBO}.
+   * TODO: The cascading action is not specified here because the course categories are set by the admin. Can the tutors
+   * also set their own course categories?
    */
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToMany
   @JoinTable(name = "courses_categories",
           joinColumns = @JoinColumn(name = "category_id"),
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
-  private List<CourseDBO> courses;
+  @Builder.Default
+  private List<CourseDBO> courses= new ArrayList<>();
+
+  public CourseCategoryDBO() {
+    this.courses = new ArrayList<>();
+  }
 }
