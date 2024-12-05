@@ -53,24 +53,25 @@ public class UserDBO {
    * The roles of the user within the system, such as STUDENT, TUTOR etc. Multiple roles are foreseen:
     * a tutor could also be a student,
     * an admin could be a verifier.
-   * The user roles are resolved into another table, in order to not violate
-   * the database normalization principles.
+   * The user roles are resolved as having many-to-many relations with the user.
+   * The counterpart is a Set<UserDBO> called 'users' in {@link RoleDBO}
    */
-  @ElementCollection(targetClass = Role.class)
-  @Enumerated(EnumType.STRING)
-  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-  @Column(name = "role", nullable = false)
-  private Set<Role> roles;
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @JoinTable(name = "user_roles",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<RoleDBO> roles;
 
   /**
    * Defines a many-to-one relationship between a user and their affiliation with respect to the university.
    * <p>
    * This relationship is mapped by the {@code affiliation_id} foreign key column in the {@link UserDBO} entity.
    * The {@code affiliation} field represents the affiliation to which the user belongs.
-   * The counterpart is denoted by a List<UserDBO> called 'affiliatedUsers' in the {@link affiliationDBO}.
+   * The counterpart is denoted by a List<UserDBO> called 'affiliatedUsers' in the {@link AffiliationDBO}.
    */
   @ManyToOne
-  @JoinColumn(name="affiliation_id", nullable = false)
+  @JoinColumn(name="affiliation_id")
   private AffiliationDBO affiliation;
 
   /**
@@ -82,12 +83,12 @@ public class UserDBO {
   /**
    * The timestamp when the user account was created. This field is initialised with current time.
    */
-  @Column(name = "created_at", nullable = false)
+  @Column(name = "created_at")
   private LocalDateTime createdAt= LocalDateTime.now();
 
 
   /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
-  @Column(name = "is_verified", nullable = false)
+  @Column(name = "is_verified")
   private Boolean isVerified = false;
 
   /**
@@ -114,12 +115,12 @@ public class UserDBO {
   /**
    * Describes if the user is enabled or not. Default value: True.
    */
-  @Column(name = "enabled", nullable = false)
+  @Column(name = "enabled")
   private Boolean enabled= true;
 
   /**
    * Represents the list of courses associated with this user if they are a tutor.
-   * <p>This relationship is mapped by the {@code tutor} field in the {@link Course} entity. The
+   * <p>This relationship is mapped by the {@code tutor} field in the {@link CourseDBO} entity. The
    * cascade type {@code CascadeType.ALL} ensures that all operations (such as persist and remove)
    * are propagated to the associated courses.
    * <p>If this user is deleted, all their associated courses will also be deleted due to the
