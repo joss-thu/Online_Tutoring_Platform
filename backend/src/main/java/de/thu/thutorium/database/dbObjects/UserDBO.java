@@ -128,8 +128,8 @@ public class UserDBO {
    * The counterpart is denoted by a Set<UserDBO> called 'participants' in the {@link CourseDBO}.
    */
   @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  @JoinTable(name = "course_participants",
-          joinColumns = @JoinColumn(name = "user_id"),
+  @JoinTable(name = "course_students",
+          joinColumns = @JoinColumn(name = "student_id"),
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
   private Set<CourseDBO> courses;
