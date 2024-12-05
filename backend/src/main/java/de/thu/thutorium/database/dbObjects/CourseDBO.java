@@ -43,19 +43,19 @@ public class CourseDBO {
   @Column(name = "course_name", nullable = false)
   private String courseName;
 
-  /**
-   * Categories associated with this course.
-   * <p>Defines a many-to-many relationship with {@link CourseCategoryDBO} using the
-   * join table "courses_categories". The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure
-   * that these operations are propagated to the associated categories. The counterpart is denoted by a Set<CourseDBO> #
-   * called 'courses' in {@link CourseCategoryDBO}.
-   */
-  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-  @JoinTable(name = "courses_categories",
-          joinColumns = @JoinColumn(name = "course_id"),
-          inverseJoinColumns = @JoinColumn(name = "category_id")
-  )
-  private Set<CourseCategoryDBO> courseCategories;
+//  /**
+//   * Categories associated with this course.
+//   * <p>Defines a many-to-many relationship with {@link CourseCategoryDBO} using the
+//   * join table "courses_categories". The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure
+//   * that these operations are propagated to the associated categories. The counterpart is denoted by a Set<CourseDBO> #
+//   * called 'courses' in {@link CourseCategoryDBO}.
+//   */
+//  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+//  @JoinTable(name = "courses_categories",
+//          joinColumns = @JoinColumn(name = "course_id"),
+//          inverseJoinColumns = @JoinColumn(name = "category_id")
+//  )
+//  private Set<CourseCategoryDBO> courseCategories;
 
   /**
    * A short description of the course (1-2 sentences). This field is mandatory and cannot be null.
@@ -108,4 +108,10 @@ public class CourseDBO {
    */
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ProgressDBO> progress;
+
+  /**
+   * The list of course categories for a course.
+   */
+  @ManyToMany(mappedBy = "courses")
+  private List<CourseCategoryDBO> courseCategories;
 }

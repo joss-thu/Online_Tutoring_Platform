@@ -3,6 +3,8 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,7 +19,7 @@ import java.util.Set;
  * @see CourseDBO
  */
 @Entity
-@Table(name = "category")
+@Table(name = "CourseCategory")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,12 +42,31 @@ public class CourseCategoryDBO {
   private String categoryName;
 
   /**
-   * Courses associated with this category.
-   * <p> Defines a many-to-many relationship with {@link CourseDBO}.
-   * The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure that these operations
-   * are propagated to the associated courses.
+   * The timestamp when the course category was created. This field is mandatory and cannot be {@code null}.
    */
-  @ManyToMany(mappedBy = "courseCategories",
-          cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<CourseDBO> courses;
+  @Column(name = "created_on")
+  private LocalDateTime createdOn;
+
+  /**
+   * The user (admin) who created the course category.
+   * <p> Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by
+   * a List<CourseCategoryDBO> courseCategories {@link UserDBO}.
+   */
+  @ManyToOne
+  @JoinColumn(name = "created_by")
+  private UserDBO created_by;
+
+  /**
+   * The courses for a course category.
+   * <p>
+   * Defines a many-to-many relationship with {@link CourseDBO} using the join table "courses_categories" for defining the
+   * courses associated with a category. The counterpart is denoted as a List<CourseCategoryDBO> called courseCategories
+   * in {@link CourseDBO}.
+   */
+  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @JoinTable(name = "courses_categories",
+          joinColumns = @JoinColumn(name = "category_id"),
+          inverseJoinColumns = @JoinColumn(name = "course_id")
+  )
+  private List<CourseDBO> courses;
 }

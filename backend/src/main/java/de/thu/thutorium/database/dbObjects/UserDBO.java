@@ -203,4 +203,12 @@ public class UserDBO {
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<ProgressDBO> receivedScores;
 
+
+  /**
+   * The list of course categories created by a user with admin role.
+   * <p> Defines a one-to-many relationship with {@link CourseCategoryDBO}.
+   */
+  @OneToMany(mappedBy = "created_by")
+  private List<CourseCategoryDBO> courseCategories;
+
 }
