@@ -3,6 +3,8 @@ package de.thu.thutorium.database.dbObjects;
 import de.thu.thutorium.database.dbObjects.enums.Role;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,10 +20,10 @@ import lombok.*;
  * <p>Lombok annotations are used to automatically generate boilerplate code like getters, setters,
  * and constructors.
  */
+@Builder// If Builder is intended to be used
 @Entity
 @Table(name = "user_account")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserDBO {
   /**
@@ -56,12 +58,13 @@ public class UserDBO {
    * The user roles are resolved as having many-to-many relations with the user.
    * The counterpart is a Set<UserDBO> called 'users' in {@link RoleDBO}
    */
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToMany
   @JoinTable(name = "user_roles",
           joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
-  private Set<RoleDBO> roles;
+  @Builder.Default
+  private Set<RoleDBO> roles= new HashSet<RoleDBO>();
 
   /**
    * Defines a many-to-one relationship between a user and their affiliation with respect to the university.
@@ -105,12 +108,13 @@ public class UserDBO {
    * verifiers who can verify other users. It is s uni-directional relationship(!!), since the users do not know who has
    * verified them.
    */
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToMany
   @JoinTable(name = "users_verifiers",
           joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "verifier_id")
   )
-  private Set<UserDBO> verifiers;
+  @Builder.Default
+  private Set<UserDBO> verifiers= new HashSet<UserDBO>();
 
   /**
    * Describes if the user is enabled or not. Default value: True.
@@ -127,12 +131,13 @@ public class UserDBO {
    * cascading operations defined in this relationship.
    * The counterpart is denoted by a Set<UserDBO> called 'participants' in the {@link CourseDBO}.
    */
-  @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @ManyToMany
   @JoinTable(name = "course_students",
           joinColumns = @JoinColumn(name = "student_id"),
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
-  private Set<CourseDBO> courses;
+  @Builder.Default
+  private Set<CourseDBO> courses= new HashSet<CourseDBO>();
 
   /**
    * Ratings given by a student to tutors.
@@ -140,7 +145,7 @@ public class UserDBO {
    * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
    */
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "student", orphanRemoval = true)
   private List<RatingTutorDBO> givenTutorRatings;
 
   /**
@@ -149,8 +154,9 @@ public class UserDBO {
    * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
    */
-  @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<RatingTutorDBO> receivedTutorRatings;
+  @OneToMany(mappedBy = "tutor", orphanRemoval = true)
+  @Builder.Default
+  private List<RatingTutorDBO> receivedTutorRatings= new ArrayList<RatingTutorDBO>();
 
   /**
    * Ratings given by this student to courses.
@@ -158,8 +164,9 @@ public class UserDBO {
    * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
    */
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<RatingCourseDBO> givenCourseRatings;
+  @OneToMany(mappedBy = "student", orphanRemoval = true)
+  @Builder.Default
+  private List<RatingCourseDBO> givenCourseRatings= new ArrayList<RatingCourseDBO>();
 
   /**
    * Meetings scheduled for the users.
@@ -168,40 +175,42 @@ public class UserDBO {
    * meetings scheduled for the users. It is s bidirectional relationship(!!), the counterpart denoted as Set<UserDBO>
    * called 'participants' in {@link MeetingDBO}.
    */
-  @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-  @JoinTable(name = "users_meetings",
-          joinColumns = @JoinColumn(name = "user_id"),
+  @ManyToMany
+  @JoinTable(name = "students_meetings",
+          joinColumns = @JoinColumn(name = "student_id"),
           inverseJoinColumns = @JoinColumn(name = "meeting_id")
   )
-  private Set<MeetingDBO> meetings;
+  @Builder.Default
+  private List<MeetingDBO> meetings= new ArrayList<MeetingDBO>();
 
   /**
    * Messages sent by a sender to receiver.
    *<p> Defines a one-to-many relationship with {@link MessageDBO}.
    * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
+   * TODO: check the orphan removal behavior with respect to archiving of messages.
    */
-  @OneToMany(mappedBy = "sender", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
-          orphanRemoval = false)
-  private List<MessageDBO> messages_sent;
+  @OneToMany(mappedBy = "sender", orphanRemoval = false)
+  @Builder.Default
+  private List<MessageDBO> messages_sent= new ArrayList<MessageDBO>();
 
   /**
    * Messages received by a receiver from a sender.
    * <p> Defines a one-to-many relationship with {@link MessageDBO}.
    * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
+   * TODO: check the orphan removal behavior with respect to archiving of messages.
    */
-  @OneToMany(mappedBy = "receiver", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},
-          orphanRemoval = false)
-  private List<MessageDBO> messages_received;
-
+  @OneToMany(mappedBy = "receiver", orphanRemoval = false)
+  @Builder.Default
+  private List<MessageDBO> messages_received = new ArrayList<MessageDBO>();
 
   /**
-   * Ratings given by a student to tutors.
-   *<p> Defines a one-to-many relationship with {@link RatingTutorDBO}.
-   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
-   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the student.
+   * The scores received by a student for the courses they attend.
+   *<p> Defines a one-to-many relationship with {@link UserDBO}.
+   * The {@code orphanRemoval} attribute ensures that scores are removed if they are no longer associated with the student.
    */
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ProgressDBO> receivedScores;
+  @OneToMany(mappedBy = "student", orphanRemoval = true)
+  @Builder.Default
+  private List<ProgressDBO> receivedScores = new ArrayList<ProgressDBO>();
 
 
   /**
@@ -209,13 +218,33 @@ public class UserDBO {
    * <p> Defines a one-to-many relationship with {@link CourseCategoryDBO}.
    */
   @OneToMany(mappedBy = "created_by")
-  private List<CourseCategoryDBO> courseCategories;
+  @Builder.Default
+  private List<CourseCategoryDBO> courseCategories= new ArrayList<CourseCategoryDBO>();
 
   /**
    * The list of meetings created by a user with tutor role.
    * <p> Defines a one-to-many relationship with {@link MeetingDBO}.
    */
   @OneToMany(mappedBy = "tutor")
-  private List<MeetingDBO> meetingsScheduled;
+  @Builder.Default
+  private List<MeetingDBO> meetingsScheduled= new ArrayList<MeetingDBO>();
+
+  /**
+   * Constructs a UserDBO with empty sets and lists for the fields.
+   */
+  public UserDBO(){
+    this.roles= new HashSet<RoleDBO>();
+    this.verifiers= new HashSet<UserDBO>();
+    this.courses= new HashSet<CourseDBO>();
+    this.givenTutorRatings= new ArrayList<RatingTutorDBO>();
+    this.receivedTutorRatings= new ArrayList<RatingTutorDBO>();
+    this.givenCourseRatings = new ArrayList<RatingCourseDBO>();
+    this.meetings= new ArrayList<MeetingDBO>();
+    this.messages_sent= new ArrayList<MessageDBO>();
+    this.messages_received= new ArrayList<MessageDBO>();
+    this.receivedScores= new ArrayList<ProgressDBO>();
+    this.courseCategories= new ArrayList<CourseCategoryDBO>();
+    this.meetingsScheduled= new ArrayList<MeetingDBO>();
+  }
 
 }

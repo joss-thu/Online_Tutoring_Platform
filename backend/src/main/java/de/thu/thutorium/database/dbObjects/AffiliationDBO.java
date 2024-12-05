@@ -51,7 +51,7 @@ public class AffiliationDBO {
    * Users affiliated with this affiliation.
    * <p>Defines a one-to-many relationship with {@link UserDBO}.
    */
-  @OneToMany(mappedBy = "affiliation", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "affiliation")
   private List<UserDBO> affiliatedUsers;
 }
 

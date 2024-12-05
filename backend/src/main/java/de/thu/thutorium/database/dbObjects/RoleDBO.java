@@ -39,7 +39,7 @@ public class RoleDBO {
      * Mapped by the roles attribute in the UserDBO entity.
      */
     @ManyToMany(mappedBy = "roles")
-    private Set<UserDBO> users = new HashSet<>();
+    private Set<UserDBO> users = new HashSet<UserDBO>();
 
     /**
      * Constructs a RoleDBO with an empty set of users.

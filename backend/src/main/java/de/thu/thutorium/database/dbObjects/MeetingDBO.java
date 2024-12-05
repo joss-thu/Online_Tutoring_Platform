@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 
@@ -36,7 +37,7 @@ public class MeetingDBO {
    * relationship with a user with 'TUTOR' role {@link UserDBO}. The counterpart is defined as a
    * List<MeetingDBO> meetingsScheduled in {@link UserDBO}
    */
-  @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+  @ManyToOne
   @JoinColumn(name = "created_by")
   private UserDBO tutor;
 
@@ -106,7 +107,6 @@ public class MeetingDBO {
    * <p>
    * Defines a many-to-many relationship with {@link UserDBO}, the participants in the meetings.
    */
-  @ManyToMany(mappedBy = "meetings",
-          cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-  private Set<UserDBO> participants;
+  @ManyToMany(mappedBy = "meetings")
+  private List<UserDBO> participants;
 }
