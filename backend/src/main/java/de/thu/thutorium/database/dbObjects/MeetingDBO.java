@@ -4,11 +4,14 @@ import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
 import de.thu.thutorium.database.dbObjects.enums.MeetingType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,10 +23,10 @@ import java.util.Set;
  * and is associated with a course and an address. The meeting also includes fields for date, type,
  * status, room number, duration of the meeting, and a link to the meeting.
  */
+@Builder
 @Entity
 @Table(name = "meeting")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class MeetingDBO {
   /** The unique identifier for the meeting. This ID is generated automatically. */
@@ -45,7 +48,7 @@ public class MeetingDBO {
    * The course to which this meeting is related. The association is managed as a many-to-one
    * relationship with {@link CourseDBO}. The counterpart is defined as a List<MeetingDBO> called 'meetings' in {@link CourseDBO}
    */
-  @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+  @ManyToOne
   @JoinColumn(name = "course_id")
   private CourseDBO course;
 
@@ -98,7 +101,7 @@ public class MeetingDBO {
   /** The address where the meeting is being held. This is managed as a bidirectional one-to-one relationship.
    * The counterpart is denoted by a MeetingDBO meeting in {@link AddressDBO}.
    */
-  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @OneToOne
   @JoinColumn(name = "address_id", unique = true)
   private AddressDBO address;
 
@@ -108,5 +111,11 @@ public class MeetingDBO {
    * Defines a many-to-many relationship with {@link UserDBO}, the participants in the meetings.
    */
   @ManyToMany(mappedBy = "meetings")
-  private List<UserDBO> participants;
+  @Builder.Default
+  private List<UserDBO> participants= new ArrayList<>();
+
+  public MeetingDBO() {
+    this.meetingTypes = new HashSet<>();
+    this.participants = new ArrayList<>();
+  }
 }
