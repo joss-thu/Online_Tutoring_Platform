@@ -211,4 +211,11 @@ public class UserDBO {
   @OneToMany(mappedBy = "created_by")
   private List<CourseCategoryDBO> courseCategories;
 
+  /**
+   * The list of meetings created by a user with tutor role.
+   * <p> Defines a one-to-many relationship with {@link MeetingDBO}.
+   */
+  @OneToMany(mappedBy = "tutor")
+  private List<MeetingDBO> meetingsScheduled;
+
 }

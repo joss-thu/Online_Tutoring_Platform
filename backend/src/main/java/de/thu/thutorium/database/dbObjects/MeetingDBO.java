@@ -32,6 +32,15 @@ public class MeetingDBO {
   private Long meetingId;
 
   /**
+   * Defines who created the meeting. The association is managed as a many-to-one
+   * relationship with a user with 'TUTOR' role {@link UserDBO}. The counterpart is defined as a
+   * List<MeetingDBO> meetingsScheduled in {@link UserDBO}
+   */
+  @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+  @JoinColumn(name = "created_by")
+  private UserDBO tutor;
+
+  /**
    * The course to which this meeting is related. The association is managed as a many-to-one
    * relationship with {@link CourseDBO}. The counterpart is defined as a List<MeetingDBO> called 'meetings' in {@link CourseDBO}
    */
