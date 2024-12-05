@@ -3,6 +3,8 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,10 +17,10 @@ import lombok.*;
  * <p> Lombok annotations are used to automatically generate boilerplate code like getters, setters, and constructors.
  * <p>
  */
+@Builder// If Builder is intended to be used
 @Entity
 @Table(name = "course")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class CourseDBO {
   /**
@@ -36,26 +38,13 @@ public class CourseDBO {
    * "user_course" denoting the courses and the users who enrol in them. The cascade types {@code PERSIST},
    * {@code MERGE}, and {@code REFRESH} ensure that these operations are propagated to the associated participants.
    */
-  @ManyToMany(mappedBy = "courses", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-  private Set<UserDBO> participants;
+  @ManyToMany(mappedBy = "courses")
+  @Builder.Default
+  private Set<UserDBO> students= new HashSet<>();
 
   /** The name of the course. This field is mandatory and cannot be null. */
   @Column(name = "course_name", nullable = false)
   private String courseName;
-
-//  /**
-//   * Categories associated with this course.
-//   * <p>Defines a many-to-many relationship with {@link CourseCategoryDBO} using the
-//   * join table "courses_categories". The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure
-//   * that these operations are propagated to the associated categories. The counterpart is denoted by a Set<CourseDBO> #
-//   * called 'courses' in {@link CourseCategoryDBO}.
-//   */
-//  @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-//  @JoinTable(name = "courses_categories",
-//          joinColumns = @JoinColumn(name = "course_id"),
-//          inverseJoinColumns = @JoinColumn(name = "category_id")
-//  )
-//  private Set<CourseCategoryDBO> courseCategories;
 
   /**
    * A short description of the course (1-2 sentences). This field is mandatory and cannot be null.
@@ -81,15 +70,14 @@ public class CourseDBO {
   @Column(name = "end_date")
   private LocalDate endDate;
 
-
   /**
    * Ratings received by a course from students.
    * <p> Defines a one-to-many relationship with {@link RatingCourseDBO}.
-   * The cascade type {@code ALL} ensures that all operations are propagated to the associated ratings.
    * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
    */
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<RatingCourseDBO> receivedCourseRatings;
+  @OneToMany(mappedBy = "course", orphanRemoval = true)
+  @Builder.Default
+  private List<RatingCourseDBO> receivedCourseRatings = new ArrayList<>();
 
   /**
    * Meetings received for a course.
@@ -97,8 +85,9 @@ public class CourseDBO {
    * The {@code orphanRemoval} attribute ensures that meetings are removed if they are no longer associated with
    * the course.
    */
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<MeetingDBO> meetings;
+  @OneToMany(mappedBy = "course", orphanRemoval = true)
+  @Builder.Default
+  private List<MeetingDBO> meetings = new ArrayList<>();
 
   /**
    * Progress recorded for a course.
@@ -106,7 +95,7 @@ public class CourseDBO {
    * The {@code orphanRemoval} attribute ensures that progress is removed if they are no longer associated with
    * the course.
    */
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "course", orphanRemoval = true)
   private List<ProgressDBO> progress;
 
   /**
@@ -114,4 +103,16 @@ public class CourseDBO {
    */
   @ManyToMany(mappedBy = "courses")
   private List<CourseCategoryDBO> courseCategories;
+
+
+  /**
+   * Constructs a CourseDBO object with default values.
+   */
+  public CourseDBO(){
+    this.students = new HashSet<>();
+    this.receivedCourseRatings= new ArrayList<>();
+    this.meetings= new ArrayList<>();
+    this.progress= new ArrayList<>();
+    this.courseCategories= new ArrayList<>();
+  }
 }

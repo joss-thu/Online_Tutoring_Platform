@@ -1,6 +1,5 @@
 package de.thu.thutorium.database.dbObjects;
 
-import de.thu.thutorium.database.dbObjects.enums.Role;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -64,7 +63,7 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
   @Builder.Default
-  private Set<RoleDBO> roles= new HashSet<RoleDBO>();
+  private Set<RoleDBO> roles= new HashSet<>();
 
   /**
    * Defines a many-to-one relationship between a user and their affiliation with respect to the university.
@@ -114,7 +113,7 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "verifier_id")
   )
   @Builder.Default
-  private Set<UserDBO> verifiers= new HashSet<UserDBO>();
+  private Set<UserDBO> verifiers= new HashSet<>();
 
   /**
    * Describes if the user is enabled or not. Default value: True.
@@ -137,7 +136,7 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
   @Builder.Default
-  private Set<CourseDBO> courses= new HashSet<CourseDBO>();
+  private Set<CourseDBO> courses= new HashSet<>();
 
   /**
    * Ratings given by a student to tutors.
@@ -156,7 +155,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "tutor", orphanRemoval = true)
   @Builder.Default
-  private List<RatingTutorDBO> receivedTutorRatings= new ArrayList<RatingTutorDBO>();
+  private List<RatingTutorDBO> receivedTutorRatings= new ArrayList<>();
 
   /**
    * Ratings given by this student to courses.
@@ -166,7 +165,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "student", orphanRemoval = true)
   @Builder.Default
-  private List<RatingCourseDBO> givenCourseRatings= new ArrayList<RatingCourseDBO>();
+  private List<RatingCourseDBO> givenCourseRatings= new ArrayList<>();
 
   /**
    * Meetings scheduled for the users.
@@ -181,7 +180,7 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "meeting_id")
   )
   @Builder.Default
-  private List<MeetingDBO> meetings= new ArrayList<MeetingDBO>();
+  private List<MeetingDBO> meetings= new ArrayList<>();
 
   /**
    * Messages sent by a sender to receiver.
@@ -191,7 +190,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "sender", orphanRemoval = false)
   @Builder.Default
-  private List<MessageDBO> messages_sent= new ArrayList<MessageDBO>();
+  private List<MessageDBO> messages_sent= new ArrayList<>();
 
   /**
    * Messages received by a receiver from a sender.
@@ -201,7 +200,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "receiver", orphanRemoval = false)
   @Builder.Default
-  private List<MessageDBO> messages_received = new ArrayList<MessageDBO>();
+  private List<MessageDBO> messages_received = new ArrayList<>();
 
   /**
    * The scores received by a student for the courses they attend.
@@ -210,7 +209,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "student", orphanRemoval = true)
   @Builder.Default
-  private List<ProgressDBO> receivedScores = new ArrayList<ProgressDBO>();
+  private List<ProgressDBO> receivedScores = new ArrayList<>();
 
 
   /**
@@ -219,7 +218,7 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "created_by")
   @Builder.Default
-  private List<CourseCategoryDBO> courseCategories= new ArrayList<CourseCategoryDBO>();
+  private List<CourseCategoryDBO> courseCategories= new ArrayList<>();
 
   /**
    * The list of meetings created by a user with tutor role.
@@ -227,24 +226,24 @@ public class UserDBO {
    */
   @OneToMany(mappedBy = "tutor")
   @Builder.Default
-  private List<MeetingDBO> meetingsScheduled= new ArrayList<MeetingDBO>();
+  private List<MeetingDBO> meetingsScheduled= new ArrayList<>();
 
   /**
-   * Constructs a UserDBO with empty sets and lists for the fields.
+   * Constructs a UserDBO object with default values.
    */
   public UserDBO(){
-    this.roles= new HashSet<RoleDBO>();
-    this.verifiers= new HashSet<UserDBO>();
-    this.courses= new HashSet<CourseDBO>();
-    this.givenTutorRatings= new ArrayList<RatingTutorDBO>();
-    this.receivedTutorRatings= new ArrayList<RatingTutorDBO>();
-    this.givenCourseRatings = new ArrayList<RatingCourseDBO>();
-    this.meetings= new ArrayList<MeetingDBO>();
-    this.messages_sent= new ArrayList<MessageDBO>();
-    this.messages_received= new ArrayList<MessageDBO>();
-    this.receivedScores= new ArrayList<ProgressDBO>();
-    this.courseCategories= new ArrayList<CourseCategoryDBO>();
-    this.meetingsScheduled= new ArrayList<MeetingDBO>();
+    this.roles= new HashSet<>();
+    this.verifiers= new HashSet<>();
+    this.courses= new HashSet<>();
+    this.givenTutorRatings= new ArrayList<>();
+    this.receivedTutorRatings= new ArrayList<>();
+    this.givenCourseRatings = new ArrayList<>();
+    this.meetings= new ArrayList<>();
+    this.messages_sent= new ArrayList<>();
+    this.messages_received= new ArrayList<>();
+    this.receivedScores= new ArrayList<>();
+    this.courseCategories= new ArrayList<>();
+    this.meetingsScheduled= new ArrayList<>();
   }
 
 }
