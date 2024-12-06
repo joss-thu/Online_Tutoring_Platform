@@ -2,6 +2,7 @@ package de.thu.thutorium.database.dbObjects;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
  * <p>The {@code Message} class includes attributes such as the sender, receiver, message content,
  * timestamps for sending and reading, and a flag indicating whether the message has been read.
  */
+@Builder
 @Entity
 @Table(name = "message")
 @Data

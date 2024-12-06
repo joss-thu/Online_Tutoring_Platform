@@ -3,6 +3,7 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,10 +14,10 @@ import java.util.List;
  * number, fax number, and email. It establishes a one-to-one relationship with the {@code Address}
  * entity.
  */
+@Builder
 @Entity
 @Table(name = "university")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class UniversityDBO {
   /**
@@ -32,29 +33,8 @@ public class UniversityDBO {
   /**
    * The name of the university. This field is required and has a maximum length of 255 characters.
    */
-  @Column(name = "university_name", nullable = false, length = 255)
+  @Column(name = "university_name", nullable = false)
   private String name;
-
-  /**
-   * The phone number of the university. This field is optional and has a maximum length of 255
-   * characters.
-   */
-  @Column(name = "phone_number", length = 255)
-  private String phoneNumber;
-
-  /**
-   * The fax number of the university. This field is optional and has a maximum length of 255
-   * characters.
-   */
-  @Column(name = "fax_number", length = 255)
-  private String faxNumber;
-
-  /**
-   * The email address of the university. This field is required and has a maximum length of 255
-   * characters.
-   */
-  @Column(name = "email_address", nullable = false, length = 255)
-  private String emailAddress;
 
   /**
    * The address of the university. This establishes a uni-directional(!!) one-to-one relationship with the {@code
@@ -71,6 +51,13 @@ public class UniversityDBO {
    * are propagated to the associated affiliations.
    * @see AffiliationDBO
    */
-  @OneToMany(mappedBy = "university", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "university", orphanRemoval = true)
   private List<AffiliationDBO> affiliations;
+
+  /**
+   * Constructs a UniversityDBO with an empty set of affiliations..
+   */
+  public UniversityDBO() {
+    this.affiliations = new ArrayList<>();
+  }
 }

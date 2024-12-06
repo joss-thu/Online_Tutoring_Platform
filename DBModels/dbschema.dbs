@@ -43,6 +43,9 @@
 			<column name="city" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="postal_code" type="smallint" jt="5" mandatory="y" />
 			<column name="country" type="varchar" length="255" jt="12" mandatory="y" />
+			<column name="phone_number" type="varchar" length="255" jt="12" />
+			<column name="fax_number" type="varchar" length="255" jt="12" />
+			<column name="email_address" type="varchar" length="100" jt="12" />
 			<index name="pk_address" unique="PRIMARY_KEY" >
 				<column name="address_id" />
 			</index>
@@ -220,9 +223,6 @@
 			<column name="university_id" type="integer" jt="4" mandatory="y" />
 			<column name="name" type="varchar" length="255" jt="12" mandatory="y" />
 			<column name="address_id" type="bigint" jt="-5" mandatory="y" />
-			<column name="phone_number" type="varchar" length="255" jt="12" mandatory="y" />
-			<column name="fax_number" type="varchar" length="255" jt="12" mandatory="y" />
-			<column name="email_addr" type="varchar" length="255" jt="12" mandatory="y" />
 			<index name="pk_university" unique="PRIMARY_KEY" >
 				<column name="university_id" />
 			</index>
@@ -293,23 +293,23 @@
 		</table>
 	</schema>
 	<layout name="Layout" id="Layout-194f" show_relation="columns" >
-		<entity schema="public" name="Meeting" color="3986C1" x="1120" y="400" />
-		<entity schema="public" name="address" color="C7F4BE" x="752" y="448" />
-		<entity schema="public" name="affiliation" color="C7F4BE" x="304" y="448" />
-		<entity schema="public" name="course" color="BED3F4" x="1104" y="128" />
-		<entity schema="public" name="coursecategory" color="C1D8EE" x="688" y="96" />
-		<entity schema="public" name="courses_categories" color="C1D8EE" x="832" y="96" />
-		<entity schema="public" name="courses_students" color="BED3F4" x="528" y="48" />
-		<entity schema="public" name="meeting_participants" color="BED3F4" x="48" y="368" />
-		<entity schema="public" name="meeting_types" color="C1D8EE" x="912" y="528" />
-		<entity schema="public" name="messages" color="BED3F4" x="64" y="176" />
-		<entity schema="public" name="progress" color="C1D8EE" x="112" y="64" />
-		<entity schema="public" name="rating_course" color="C1D8EE" x="880" y="304" />
-		<entity schema="public" name="rating_tutor" color="BED3F4" x="768" y="304" />
-		<entity schema="public" name="roles" color="C1D8EE" x="640" y="208" />
-		<entity schema="public" name="university" color="C7F4BE" x="544" y="448" />
-		<entity schema="public" name="user_account" color="BED3F4" x="288" y="64" />
-		<entity schema="public" name="users_roles" color="C1D8EE" x="496" y="192" />
-		<entity schema="public" name="users_verifiers" color="C1D8EE" x="496" y="288" />
+		<entity schema="public" name="Meeting" color="EEC1CE" x="1104" y="400" />
+		<entity schema="public" name="address" color="C7F4BE" x="704" y="480" />
+		<entity schema="public" name="affiliation" color="C7F4BE" x="288" y="480" />
+		<entity schema="public" name="course" color="F4DFBE" x="1056" y="96" />
+		<entity schema="public" name="coursecategory" color="F4DFBE" x="672" y="96" />
+		<entity schema="public" name="courses_categories" color="F4DFBE" x="816" y="96" />
+		<entity schema="public" name="courses_students" color="F4DFBE" x="512" y="48" />
+		<entity schema="public" name="meeting_participants" color="EEC1CE" x="128" y="384" />
+		<entity schema="public" name="meeting_types" color="EEC1CE" x="896" y="528" />
+		<entity schema="public" name="messages" color="D8BEF4" x="48" y="208" />
+		<entity schema="public" name="progress" color="EBEEC1" x="96" y="80" />
+		<entity schema="public" name="rating_course" color="BEF2F4" x="912" y="240" />
+		<entity schema="public" name="rating_tutor" color="BEF2F4" x="800" y="240" />
+		<entity schema="public" name="roles" color="C1D8EE" x="624" y="240" />
+		<entity schema="public" name="university" color="C7F4BE" x="496" y="480" />
+		<entity schema="public" name="user_account" color="BEC4F4" x="272" y="64" />
+		<entity schema="public" name="users_roles" color="C1D8EE" x="480" y="176" />
+		<entity schema="public" name="users_verifiers" color="C1D8EE" x="480" y="288" />
 	</layout>
 </project>

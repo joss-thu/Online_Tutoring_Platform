@@ -11,6 +11,7 @@ import lombok.*;
  * @see UserDBO
  * @see CourseDBO
  */
+@Builder
 @Entity
 @Table(name = "progess")
 @Data

@@ -66,6 +66,24 @@ public class AddressDBO {
   private String country;
 
   /**
+   * The phone number of the address.
+   */
+  @Column(name = "phone_number")
+  private String phoneNumber;
+
+  /**
+   * The fax number of the address.
+   */
+  @Column(name = "fax_number")
+  private String faxNumber;
+
+  /**
+   * The email address of the address.
+   */
+  @Column(name = "email_address")
+  private String emailAddress;
+
+  /**
    * The meeting associated with this address.
    * <p> Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
    */
