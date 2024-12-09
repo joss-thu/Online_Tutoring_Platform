@@ -5,6 +5,10 @@ import de.thu.thutorium.database.dbObjects.enums.Role;
 import de.thu.thutorium.database.repositories.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Transactional
 @Component
+@Slf4j
 public class DBInitializer {
     private final RoleRepository roleRepository;
 
@@ -33,7 +38,7 @@ public class DBInitializer {
      */
     @PostConstruct
     public void init() {
-
+        log.info("Initializing DB");
         // Check if all roles already exist
         if (roleRepository.existsByRole(Role.ADMIN) &&
             roleRepository.existsByRole(Role.VERIFIER) &&

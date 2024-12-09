@@ -35,16 +35,23 @@ public class CourseDBO {
   /**
    * Participants of this course.
    * <p>Defines a many-to-many relationship with {@link UserDBO} using the join table
-   * "user_course" denoting the courses and the users who enrol in them. The cascade types {@code PERSIST},
-   * {@code MERGE}, and {@code REFRESH} ensure that these operations are propagated to the associated participants.
+   * "user_course" denoting the courses and the users who enrol in them.
    */
-  @ManyToMany(mappedBy = "courses")
+  @ManyToMany(mappedBy = "studentCourses")
   @Builder.Default
   private Set<UserDBO> students= new HashSet<>();
 
   /** The name of the course. This field is mandatory and cannot be null. */
   @Column(name = "course_name", nullable = false)
   private String courseName;
+
+  /**
+   * Defines a many-to-one relationship between courses and the tutor who created the courses.
+   * The counterpart is denoted by a List<CourseDBO> tutorCourses in the {@link UserDBO}.
+   */
+  @ManyToOne
+  @JoinColumn(name="tutor_id")
+  private UserDBO tutor;
 
   /**
    * A short description of the course (1-2 sentences). This field is mandatory and cannot be null.

@@ -136,7 +136,7 @@ public class UserDBO {
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
   @Builder.Default
-  private Set<CourseDBO> courses= new HashSet<>();
+  private Set<CourseDBO> studentCourses = new HashSet<>();
 
   /**
    * Ratings given by a student to tutors.
@@ -229,12 +229,21 @@ public class UserDBO {
   private List<MeetingDBO> meetingsScheduled= new ArrayList<>();
 
   /**
+   * The list of courses created by a user with tutor role.
+   * <p> Defines a one-to-many relationship with {@link CourseDBO}.
+   */
+  @OneToMany(mappedBy = "tutor", orphanRemoval = true)
+  @Builder.Default
+  private List<CourseDBO> tutorCourses = new ArrayList<>();
+
+  /**
    * Constructs a UserDBO object with default values.
    */
   public UserDBO(){
     this.roles= new HashSet<>();
     this.verifiers= new HashSet<>();
-    this.courses= new HashSet<>();
+    this.studentCourses = new HashSet<>();
+    this.tutorCourses = new ArrayList<>();
     this.givenTutorRatings= new ArrayList<>();
     this.receivedTutorRatings= new ArrayList<>();
     this.givenCourseRatings = new ArrayList<>();
