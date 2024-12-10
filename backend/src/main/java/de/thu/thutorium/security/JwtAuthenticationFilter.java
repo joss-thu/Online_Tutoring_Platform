@@ -52,18 +52,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader= request.getHeader("Authorization");
         final String jwt;
         final String userEmail;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) { // missing authorization
+
+        // missing authorization, return
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+        //Get the payload
         jwt = authHeader.substring(7);
         try {
-            userEmail = jwtService.extractUsername(jwt); // extract username/email
+            // extract username/email
+            userEmail = jwtService.extractUsername(jwt);
         } catch (ExpiredJwtException e) {
+            //Token expired
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Token has expired");
             return;
         }
+        //Extract roles
         List<String> roles = jwtService.extractRoles(jwt);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (userEmail != null && authentication == null) {

@@ -5,6 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +25,8 @@ import java.util.function.Function;
  * Service class for handling JWT operations.
  */
 @Service
+@Getter
+@Setter
 @Slf4j
 public class JwtService {
     @Value("${security.jwt.secret-key}")
@@ -86,10 +91,8 @@ public class JwtService {
      */
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        log.info("Secret key is: ",SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
 
     /**
      * Generates a JWT token for the given user.
@@ -115,21 +118,6 @@ public class JwtService {
             Long userId,
             UserDetails userDetails
     ){
-
-//        extraClaims.put("roles", userDetails.getAuthorities().stream()
-//                // .map(GrantedAuthority::getAuthority)
-//                .map(grantedAuthority -> "ROLE_" + grantedAuthority.getAuthority())
-//                .toList());
-//
-//        return Jwts
-//                .builder()
-//                .setClaims(extraClaims)
-//                .setSubject(userDetails.getUsername())
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*24))
-//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-//                .compact();
-
         // Include user roles as a claim in the JWT
         extraClaims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -191,5 +179,14 @@ public class JwtService {
      */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    /**
+     * Retrieves the JWT expiration time.
+     *
+     * @return the JWT expiration time
+     */
+    public long getExpirationTime() {
+        return JWT_EXPIRATION;
     }
 }

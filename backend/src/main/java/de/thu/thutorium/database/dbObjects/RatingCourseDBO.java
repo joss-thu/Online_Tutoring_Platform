@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "rating_course")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class RatingCourseDBO {

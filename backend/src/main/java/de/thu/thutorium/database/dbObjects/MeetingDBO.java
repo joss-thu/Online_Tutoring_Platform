@@ -3,10 +3,7 @@ package de.thu.thutorium.database.dbObjects;
 import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
 import de.thu.thutorium.database.dbObjects.enums.MeetingType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,7 +23,8 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "meeting")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class MeetingDBO {
   /** The unique identifier for the meeting. This ID is generated automatically. */

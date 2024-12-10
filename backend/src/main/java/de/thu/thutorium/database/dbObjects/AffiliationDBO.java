@@ -15,7 +15,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "affiliation")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AffiliationDBO {

@@ -6,9 +6,6 @@ import de.thu.thutorium.database.repositories.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +35,11 @@ public class DBInitializer {
      */
     @PostConstruct
     public void init() {
-        log.info("Initializing DB");
         // Check if all roles already exist
-        if (roleRepository.existsByRole(Role.ADMIN) &&
-            roleRepository.existsByRole(Role.VERIFIER) &&
-            roleRepository.existsByRole(Role.TUTOR) &&
-            roleRepository.existsByRole(Role.STUDENT)) {
+        if (roleRepository.existsByRoleName(Role.ADMIN) &&
+            roleRepository.existsByRoleName(Role.VERIFIER) &&
+            roleRepository.existsByRoleName(Role.TUTOR) &&
+            roleRepository.existsByRoleName(Role.STUDENT)) {
                 return; // Exit if the roles already exist
         } else {
             // Create roles if they don't exist

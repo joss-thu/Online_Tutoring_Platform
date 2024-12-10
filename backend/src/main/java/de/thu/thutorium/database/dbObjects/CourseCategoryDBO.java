@@ -22,7 +22,8 @@ import java.util.Set;
 @Builder// If Builder is intended to be used
 @Entity
 @Table(name = "CourseCategory")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class CourseCategoryDBO {
 

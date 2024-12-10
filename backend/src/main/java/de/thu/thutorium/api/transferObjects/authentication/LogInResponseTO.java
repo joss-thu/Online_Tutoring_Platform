@@ -45,6 +45,10 @@ public class LogInResponseTO {
         this.expiresAt = formatDateTime(createdAt.plusSeconds(expiresIn / 1000));
     }
 
+    public LogInResponseTO(String token) {
+        this.token = token;
+    }
+
     /**
      * Formats a LocalDateTime object to a string with the pattern "yyyy-MM-dd HH:mm:ss".
      *

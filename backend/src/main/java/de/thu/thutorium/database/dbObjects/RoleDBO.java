@@ -13,7 +13,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "roles")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class RoleDBO {
 
@@ -32,14 +33,14 @@ public class RoleDBO {
      */
     @Enumerated(EnumType.STRING)
     @Column()
-    private Role role;
+    private Role roleName;
 
     /**
      * Set of users associated with the role.
      * Mapped by the roles attribute in the UserDBO entity.
      */
     @ManyToMany(mappedBy = "roles")
-    private Set<UserDBO> users = new HashSet<UserDBO>();
+    private Set<UserDBO> users = new HashSet<>();
 
     /**
      * Constructs a RoleDBO with an empty set of users.
@@ -50,9 +51,18 @@ public class RoleDBO {
 
     /**
      * Constructs a RoleDBO with the specified role name.
-     * @param role the name of the role
+     * @param roleName the name of the role
      */
-    public RoleDBO(Role role) {
-        this.role = role;
+    public RoleDBO(Role roleName) {
+        this.roleName = roleName;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RoleDBO{" +
+                "role_id=" + role_id +
+                ", role='" + roleName + '\'' +
+                '}';
     }
 }

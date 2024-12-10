@@ -20,7 +20,8 @@ import lombok.*;
 @Builder// If Builder is intended to be used
 @Entity
 @Table(name = "course")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class CourseDBO {
   /**

@@ -23,7 +23,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder// If Builder is intended to be used
 @Entity
 @Table(name = "user_account")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class UserDBO implements UserDetails {
   /**
@@ -58,13 +59,13 @@ public class UserDBO implements UserDetails {
    * The user roles are resolved as having many-to-many relations with the user.
    * The counterpart is a Set<UserDBO> called 'users' in {@link RoleDBO}
    */
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(name = "user_roles",
           joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
-  @Builder.Default
-  private Set<RoleDBO> roles= new HashSet<>();
+//  @Builder.Default
+  private Set<RoleDBO> roles = new HashSet<>();
 
   /**
    * Defines a many-to-one relationship between a user and their affiliation with respect to the university.
@@ -263,7 +264,7 @@ public class UserDBO implements UserDetails {
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles.stream()
-            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole().name())) // Ensure prefix 'ROLE_'
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name())) // Ensure prefix 'ROLE_'
             .collect(Collectors.toSet());
   }
 
@@ -319,5 +320,15 @@ public class UserDBO implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  @Override
+  public String toString() {
+    return "UserDBO{" +
+            "id=" + userId +
+            ", email='" + email + '\'' +
+            ", password='[PROTECTED]'" +
+            ", roles=" + roles +
+            '}';
   }
 }

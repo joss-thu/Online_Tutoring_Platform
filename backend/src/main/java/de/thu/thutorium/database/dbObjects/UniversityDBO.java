@@ -17,7 +17,8 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "university")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class UniversityDBO {
   /**

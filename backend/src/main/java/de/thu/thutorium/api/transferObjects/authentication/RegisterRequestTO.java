@@ -1,6 +1,7 @@
 package de.thu.thutorium.api.transferObjects.authentication;
 
 import de.thu.thutorium.database.dbObjects.RoleDBO;
+import de.thu.thutorium.database.dbObjects.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 /**
  * Transfer object for the user registration request.
+ * Contains first name, last name, email, password and role.
  */
 @Data
 @Builder
@@ -20,5 +22,5 @@ public class RegisterRequestTO {
     private String lastName;
     private String email;
     private String password;
-    private RoleDBO role;
+    private Role role;
 }

@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LogInRequestTO {
-    private String username;
+    private String email;
     private String password;
 }

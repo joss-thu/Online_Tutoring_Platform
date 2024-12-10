@@ -14,7 +14,8 @@ import lombok.*;
 @Builder
 @Entity
 @Table(name = "progess")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProgressDBO {

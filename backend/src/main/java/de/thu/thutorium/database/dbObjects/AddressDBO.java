@@ -26,7 +26,8 @@ import lombok.*;
  */
 @Entity
 @Table(name = "address")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class AddressDBO {

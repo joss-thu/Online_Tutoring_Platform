@@ -1,10 +1,12 @@
 package de.thu.thutorium.database.repositories;
 
+import de.thu.thutorium.database.dbObjects.RoleDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Repository interface for UserDBO entities.
@@ -27,4 +29,13 @@ public interface UserRepository extends JpaRepository<UserDBO, Integer> {
      * @return true if a user entity exists with the given username, false otherwise
      */
     boolean existsByEmail(String email);
+
+    /**
+     * Finds a user by their email and roles.
+     *
+     * @param email the email of the user to find
+     * @param roles the roles of the user to find
+     * @return the user with the specified email and roles, or {@code null} if no such user exists
+     */
+    UserDBO findByEmailAndRoles(String email, Set<RoleDBO> roles);
 }
