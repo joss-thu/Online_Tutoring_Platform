@@ -61,5 +61,5 @@ public class MessageDBO {
 
   /** Flag indicating whether the message has been read. */
   @Column(name = "is_read", nullable = false)
-  private Boolean isRead=false;
+  private Boolean isRead = false;
 }

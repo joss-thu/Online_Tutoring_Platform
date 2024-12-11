@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * This class initializes the database with default roles.
- *
  */
 @Transactional
 @Component
@@ -36,11 +35,11 @@ public class DBInitializer {
     @PostConstruct
     public void init() {
         // Check if all roles already exist
-        if (roleRepository.existsByRoleName(Role.ADMIN) &&
-            roleRepository.existsByRoleName(Role.VERIFIER) &&
-            roleRepository.existsByRoleName(Role.TUTOR) &&
-            roleRepository.existsByRoleName(Role.STUDENT)) {
-                return; // Exit if the roles already exist
+        if (roleRepository.existsByRoleName(Role.ADMIN)
+                && roleRepository.existsByRoleName(Role.VERIFIER)
+                && roleRepository.existsByRoleName(Role.TUTOR)
+                && roleRepository.existsByRoleName(Role.STUDENT)) {
+            return; // Exit if the roles already exist
         } else {
             // Create roles if they don't exist
             RoleDBO adminRole = new RoleDBO(Role.ADMIN);

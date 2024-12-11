@@ -5,7 +5,6 @@ import de.thu.thutorium.api.transferObjects.authentication.LogInResponseTO;
 import de.thu.thutorium.api.transferObjects.authentication.RegisterRequestTO;
 import de.thu.thutorium.services.implementations.AuthenticationServiceImpl;
 import de.thu.thutorium.services.interfaces.AuthenticationService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,8 +40,7 @@ public class AuthenticationController {
      * @return a ResponseEntity containing the login response transfer object
      */
     @PostMapping("/register")
-    public ResponseEntity<LogInResponseTO> register(@RequestBody RegisterRequestTO request)
-    {
+    public ResponseEntity<LogInResponseTO> register(@RequestBody RegisterRequestTO request) {
         return authService.register(request);
     }
 

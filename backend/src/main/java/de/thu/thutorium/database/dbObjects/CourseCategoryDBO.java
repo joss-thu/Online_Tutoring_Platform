@@ -6,7 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a course category entity within the system. This entity is mapped to the {@code category}
@@ -73,7 +72,7 @@ public class CourseCategoryDBO {
           inverseJoinColumns = @JoinColumn(name = "course_id")
   )
   @Builder.Default
-  private List<CourseDBO> courses= new ArrayList<>();
+  private List<CourseDBO> courses = new ArrayList<>();
 
   public CourseCategoryDBO() {
     this.courses = new ArrayList<>();

@@ -1,11 +1,5 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.api.transferObjects.authentication.LogInRequestTO;
-import de.thu.thutorium.api.transferObjects.authentication.LogInResponseTO;
-import de.thu.thutorium.api.transferObjects.authentication.RegisterRequestTO;
-import de.thu.thutorium.services.implementations.AuthenticationServiceImpl;
-import de.thu.thutorium.services.interfaces.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,26 +56,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoController {
 
     @PostMapping("/tutor/message")
-    public ResponseEntity<String> tutorMessage(@RequestBody final String msg)
-    {
+    public ResponseEntity<String> tutorMessage(@RequestBody final String msg) {
         return ResponseEntity.ok("Hello from tutor " + msg);
     }
 
     @PostMapping("/admin/message")
-    public ResponseEntity<String> adminMessage(@RequestBody final String msg)
-    {
+    public ResponseEntity<String> adminMessage(@RequestBody final String msg) {
         return ResponseEntity.ok("Hello from admin " + msg);
     }
 
     @PostMapping("/student/message")
-    public ResponseEntity<String> studentMessage(@RequestBody final String msg)
-    {
+    public ResponseEntity<String> studentMessage(@RequestBody final String msg) {
         return ResponseEntity.ok("Hello from student " + msg);
     }
 
     @PostMapping("/verifier/message")
-    public ResponseEntity<String> verifierMessage(@RequestBody final String msg)
-    {
+    public ResponseEntity<String> verifierMessage(@RequestBody final String msg) {
         return ResponseEntity.ok("Hello from verifier " + msg);
     }
 

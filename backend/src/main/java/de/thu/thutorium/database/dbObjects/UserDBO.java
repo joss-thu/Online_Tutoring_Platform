@@ -1,14 +1,14 @@
 package de.thu.thutorium.database.dbObjects;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Represents a user account entity within the system. This entity is mapped to the "user_account"
@@ -75,20 +75,20 @@ public class UserDBO implements UserDetails {
    * The counterpart is denoted by a List<UserDBO> called 'affiliatedUsers' in the {@link AffiliationDBO}.
    */
   @ManyToOne
-  @JoinColumn(name="affiliation_id")
+  @JoinColumn(name = "affiliation_id")
   private AffiliationDBO affiliation;
 
   /**
    * A textual description of the user.
    */
-  @Column(name="user_description", columnDefinition = "TEXT")
+  @Column(name = "user_description", columnDefinition = "TEXT")
   private String description;
 
   /**
    * The timestamp when the user account was created. This field is initialised with current time.
    */
   @Column(name = "created_at")
-  private LocalDateTime createdAt= LocalDateTime.now();
+  private LocalDateTime createdAt = LocalDateTime.now();
 
 
   /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
@@ -115,13 +115,13 @@ public class UserDBO implements UserDetails {
           inverseJoinColumns = @JoinColumn(name = "verifier_id")
   )
   @Builder.Default
-  private Set<UserDBO> verifiers= new HashSet<>();
+  private Set<UserDBO> verifiers = new HashSet<>();
 
   /**
    * Describes if the user is enabled or not. Default value: True.
    */
   @Column(name = "enabled")
-  private Boolean enabled= true;
+  private Boolean enabled = true;
 
   /**
    * Represents the list of courses associated with this user if they are a tutor.
@@ -157,7 +157,7 @@ public class UserDBO implements UserDetails {
    */
   @OneToMany(mappedBy = "tutor", orphanRemoval = true)
   @Builder.Default
-  private List<RatingTutorDBO> receivedTutorRatings= new ArrayList<>();
+  private List<RatingTutorDBO> receivedTutorRatings = new ArrayList<>();
 
   /**
    * Ratings given by this student to courses.
@@ -167,7 +167,7 @@ public class UserDBO implements UserDetails {
    */
   @OneToMany(mappedBy = "student", orphanRemoval = true)
   @Builder.Default
-  private List<RatingCourseDBO> givenCourseRatings= new ArrayList<>();
+  private List<RatingCourseDBO> givenCourseRatings = new ArrayList<>();
 
   /**
    * Meetings scheduled for the users.
@@ -182,7 +182,7 @@ public class UserDBO implements UserDetails {
           inverseJoinColumns = @JoinColumn(name = "meeting_id")
   )
   @Builder.Default
-  private List<MeetingDBO> meetings= new ArrayList<>();
+  private List<MeetingDBO> meetings = new ArrayList<>();
 
   /**
    * Messages sent by a sender to receiver.
@@ -192,7 +192,7 @@ public class UserDBO implements UserDetails {
    */
   @OneToMany(mappedBy = "sender", orphanRemoval = false)
   @Builder.Default
-  private List<MessageDBO> messages_sent= new ArrayList<>();
+  private List<MessageDBO> messages_sent = new ArrayList<>();
 
   /**
    * Messages received by a receiver from a sender.
@@ -220,7 +220,7 @@ public class UserDBO implements UserDetails {
    */
   @OneToMany(mappedBy = "created_by")
   @Builder.Default
-  private List<CourseCategoryDBO> courseCategories= new ArrayList<>();
+  private List<CourseCategoryDBO> courseCategories = new ArrayList<>();
 
   /**
    * The list of meetings created by a user with tutor role.
@@ -228,7 +228,7 @@ public class UserDBO implements UserDetails {
    */
   @OneToMany(mappedBy = "tutor")
   @Builder.Default
-  private List<MeetingDBO> meetingsScheduled= new ArrayList<>();
+  private List<MeetingDBO> meetingsScheduled = new ArrayList<>();
 
   /**
    * The list of courses created by a user with tutor role.
@@ -241,20 +241,20 @@ public class UserDBO implements UserDetails {
   /**
    * Constructs a UserDBO object with default values.
    */
-  public UserDBO(){
-    this.roles= new HashSet<>();
-    this.verifiers= new HashSet<>();
+  public UserDBO() {
+    this.roles = new HashSet<>();
+    this.verifiers = new HashSet<>();
     this.studentCourses = new HashSet<>();
     this.tutorCourses = new ArrayList<>();
-    this.givenTutorRatings= new ArrayList<>();
-    this.receivedTutorRatings= new ArrayList<>();
+    this.givenTutorRatings = new ArrayList<>();
+    this.receivedTutorRatings = new ArrayList<>();
     this.givenCourseRatings = new ArrayList<>();
-    this.meetings= new ArrayList<>();
-    this.messages_sent= new ArrayList<>();
-    this.messages_received= new ArrayList<>();
-    this.receivedScores= new ArrayList<>();
-    this.courseCategories= new ArrayList<>();
-    this.meetingsScheduled= new ArrayList<>();
+    this.meetings = new ArrayList<>();
+    this.messages_sent = new ArrayList<>();
+    this.messages_received = new ArrayList<>();
+    this.receivedScores = new ArrayList<>();
+    this.courseCategories = new ArrayList<>();
+    this.meetingsScheduled = new ArrayList<>();
   }
 
   /**
@@ -324,11 +324,11 @@ public class UserDBO implements UserDetails {
 
   @Override
   public String toString() {
-    return "UserDBO{" +
-            "id=" + userId +
-            ", email='" + email + '\'' +
-            ", password='[PROTECTED]'" +
-            ", roles=" + roles +
-            '}';
+    return "UserDBO {"
+            + "id=" + userId
+            + ", email='" + email + '\''
+            + ", password='[PROTECTED]'"
+            + ", roles=" + roles
+            + '}';
   }
 }

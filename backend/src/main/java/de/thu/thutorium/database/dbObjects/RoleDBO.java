@@ -57,12 +57,12 @@ public class RoleDBO {
         this.roleName = roleName;
     }
 
-
     @Override
     public String toString() {
-        return "RoleDBO{" +
-                "role_id=" + role_id +
-                ", role='" + roleName + '\'' +
-                '}';
+        return "RoleDBO {"
+                + "role_id=" + role_id
+                + ", role='" + roleName
+                + '\''
+                + '}';
     }
 }

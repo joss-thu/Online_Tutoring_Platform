@@ -1,14 +1,14 @@
 package de.thu.thutorium.database.dbObjects;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import lombok.*;
 
 /**
  * Represents a course entity. This entity is mapped to the {@code course} table in the database.
@@ -40,7 +40,7 @@ public class CourseDBO {
    */
   @ManyToMany(mappedBy = "studentCourses")
   @Builder.Default
-  private Set<UserDBO> students= new HashSet<>();
+  private Set<UserDBO> students = new HashSet<>();
 
   /** The name of the course. This field is mandatory and cannot be null. */
   @Column(name = "course_name", nullable = false)
@@ -51,7 +51,7 @@ public class CourseDBO {
    * The counterpart is denoted by a List<CourseDBO> tutorCourses in the {@link UserDBO}.
    */
   @ManyToOne
-  @JoinColumn(name="tutor_id")
+  @JoinColumn(name = "tutor_id")
   private UserDBO tutor;
 
   /**
@@ -116,11 +116,11 @@ public class CourseDBO {
   /**
    * Constructs a CourseDBO object with default values.
    */
-  public CourseDBO(){
+  public CourseDBO() {
     this.students = new HashSet<>();
-    this.receivedCourseRatings= new ArrayList<>();
-    this.meetings= new ArrayList<>();
-    this.progress= new ArrayList<>();
-    this.courseCategories= new ArrayList<>();
+    this.receivedCourseRatings = new ArrayList<>();
+    this.meetings = new ArrayList<>();
+    this.progress = new ArrayList<>();
+    this.courseCategories = new ArrayList<>();
   }
 }

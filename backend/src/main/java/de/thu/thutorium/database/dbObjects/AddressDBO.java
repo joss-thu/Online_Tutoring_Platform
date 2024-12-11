@@ -43,7 +43,7 @@ public class AddressDBO {
   private Long addressId;
 
   /** The campus name for the university. */
-  @Column(name="campus_name", length= 255)
+  @Column(name = "campus_name", length = 255)
   private String campusName;
 
   /** The house number for the address. This field is required and cannot be null. */

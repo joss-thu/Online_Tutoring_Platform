@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -63,8 +62,8 @@ public class JwtService {
      * @param <T> the type of the claim
      * @return the extracted claim
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
-        final Claims claims= extractAllClaims(token);
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
@@ -117,7 +116,7 @@ public class JwtService {
             Map<String, Object> extraClaims,
             Long userId,
             UserDetails userDetails
-    ){
+    ) {
         // Include user roles as a claim in the JWT
         extraClaims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

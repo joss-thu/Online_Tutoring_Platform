@@ -60,7 +60,7 @@ public class MeetingDBO {
 
   /** The duration of the meeting in minutes. This field cannot be null. */
   @Column(name = "duration_minutes", nullable = false)
-  private Integer duration=90;
+  private Integer duration = 90;
 
   /**
    * The type of the meeting as enumerated by the {@link MeetingType}. Multiple values of meeting types can be assigned
@@ -110,7 +110,7 @@ public class MeetingDBO {
    */
   @ManyToMany(mappedBy = "meetings")
   @Builder.Default
-  private List<UserDBO> participants= new ArrayList<>();
+  private List<UserDBO> participants = new ArrayList<>();
 
   public MeetingDBO() {
     this.meetingTypes = new HashSet<>();
