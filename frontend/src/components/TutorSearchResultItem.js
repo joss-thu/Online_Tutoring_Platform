@@ -7,7 +7,7 @@ function TutorSearchResultItem({ tutor }) {
     <li
       key={tutor.userId}
       onClick={() => navigate("/tutor?id=" + tutor.userId)}
-      className="col-span-2 cursor-pointer flex rounded-2xl shadow-gray-300 shadow-sm bg-gray-900 p-7 mt-5 hover:bg-gray-800"
+      className="col-span-2 cursor-pointer flex rounded-2xl shadow-gray-300 shadow-sm bg-gray-900 p-7 mt-1 hover:bg-gray-800"
     >
       <div>
         <div className="inline-flex items-center">

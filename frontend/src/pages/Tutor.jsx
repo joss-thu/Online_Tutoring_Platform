@@ -17,7 +17,7 @@ function Tutor() {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
-  const [tutor, setTutor] = useState({});
+  const [tutor, setTutor] = useState(false);
   const isLoggedIn = false;
   const fetchTutorDetails = async () => {
     const res = await fetch("http://localhost:8080/tutor?id=" + id);
@@ -169,7 +169,7 @@ function Tutor() {
           </div>
         </div>
       ) : (
-        <div className="flex flex-col mt-[150px]">Loading...</div>
+        <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans text-xl"></div>
       )}
     </div>
   );
