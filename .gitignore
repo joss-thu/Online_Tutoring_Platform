@@ -611,7 +611,9 @@ Temporary Items
 
 # add your custom gitignore here:
 .idea
-.vscode
 
-### database ###
-/database/
+
+
+
+.vscode/
+/database
