@@ -6,6 +6,7 @@ import lombok.*;
 
 /**
  * Represents the scores achieved by a student for a course.
+ *
  * <p>
  *
  * @see UserDBO
@@ -28,8 +29,9 @@ public class ProgressDBO {
 
   /**
    * The student whose progress is being tracked.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by a List<ProgressDBO>
-   * called 'receivedScores' in {@link UserDBO}.
+   *
+   * <p>Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by a
+   * List<ProgressDBO> called 'receivedScores' in {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "student_id", nullable = false)
@@ -37,17 +39,15 @@ public class ProgressDBO {
 
   /**
    * The course which received the rating.
-   * <p> Defines a many-to-one relationship with {@link CourseDBO}.The counterpart is denoted by
+   *
+   * <p>Defines a many-to-one relationship with {@link CourseDBO}.The counterpart is denoted by
    * List<ProgressDBO> called 'progress' in {@link CourseDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "course_id", nullable = false)
   private CourseDBO course;
 
-  /**
-   * The rating points given by the student.
-   */
+  /** The rating points given by the student. */
   @Column(name = "points", nullable = false)
   private Double points;
-
 }

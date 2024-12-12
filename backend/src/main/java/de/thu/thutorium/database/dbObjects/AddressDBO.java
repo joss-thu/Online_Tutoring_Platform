@@ -86,7 +86,8 @@ public class AddressDBO {
 
   /**
    * The meeting associated with this address.
-   * <p> Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
+   *
+   * <p>Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
    */
   @OneToOne(mappedBy = "address")
   private MeetingDBO meeting;

@@ -31,7 +31,8 @@ public class MessageDBO {
 
   /**
    * The sender of the message.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by a
+   *
+   * <p>Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by a
    * List<MessageDBO> called 'messages_sent' in {@link UserDBO}.
    */
   @ManyToOne
@@ -40,7 +41,8 @@ public class MessageDBO {
 
   /**
    * The receiver of the message.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by a
+   *
+   * <p>Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by a
    * List<MessageDBO> called 'messages_received' in {@link UserDBO}.
    */
   @ManyToOne

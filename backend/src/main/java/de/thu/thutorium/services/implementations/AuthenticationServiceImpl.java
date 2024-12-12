@@ -55,10 +55,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * Password encoder
      */
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository UserRepository;
     private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
 
     /**
      * Authenticates a user based on the provided login request.
