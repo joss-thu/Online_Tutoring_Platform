@@ -49,5 +49,6 @@ public class ProgressDBO {
 
   /** The rating points given by the student. */
   @Column(name = "points", nullable = false)
-  private Double points;
+  @Builder.Default
+  private Double points = 0.0;
 }

@@ -114,7 +114,7 @@ public class CourseDBO {
 
 
   /**
-   * Constructs a CourseDBO object with default values.
+   * Constructs a CourseDBO object with empty lists.
    */
   public CourseDBO() {
     this.students = new HashSet<>();

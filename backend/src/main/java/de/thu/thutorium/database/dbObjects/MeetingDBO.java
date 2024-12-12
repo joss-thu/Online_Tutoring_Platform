@@ -60,6 +60,7 @@ public class MeetingDBO {
 
   /** The duration of the meeting in minutes. This field cannot be null. */
   @Column(name = "duration_minutes", nullable = false)
+  @Builder.Default
   private Integer duration = 90;
 
   /**
@@ -96,10 +97,10 @@ public class MeetingDBO {
   @Column(name = "meeting_link", columnDefinition = "TEXT")
   private String meetingLink;
 
-  /** The address where the meeting is being held. This is managed as a bidirectional one-to-one relationship.
-   * The counterpart is denoted by a MeetingDBO meeting in {@link AddressDBO}.
+  /** The address where the meeting is being held. This is managed as a bidirectional many-to-one relationship.
+   * The counterpart is denoted by a List<MeetingDBO> meetings in {@link AddressDBO}.
    */
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "address_id", unique = true)
   private AddressDBO address;
 
@@ -112,6 +113,9 @@ public class MeetingDBO {
   @Builder.Default
   private List<UserDBO> participants = new ArrayList<>();
 
+  /**
+   * Constructs a MeetingDBO with an empty set of meeting types and participants.
+   */
   public MeetingDBO() {
     this.meetingTypes = new HashSet<>();
     this.participants = new ArrayList<>();

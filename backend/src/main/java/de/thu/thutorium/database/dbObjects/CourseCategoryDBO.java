@@ -74,6 +74,9 @@ public class CourseCategoryDBO {
   @Builder.Default
   private List<CourseDBO> courses = new ArrayList<>();
 
+  /**
+   * Constructs a CourseCategoryDBO with an empty list ofcourses.
+   */
   public CourseCategoryDBO() {
     this.courses = new ArrayList<>();
   }

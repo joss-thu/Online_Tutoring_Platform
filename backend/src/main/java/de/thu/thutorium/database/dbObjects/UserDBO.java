@@ -64,7 +64,7 @@ public class UserDBO implements UserDetails {
           joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
-//  @Builder.Default
+  @Builder.Default
   private Set<RoleDBO> roles = new HashSet<>();
 
   /**
@@ -88,11 +88,13 @@ public class UserDBO implements UserDetails {
    * The timestamp when the user account was created. This field is initialised with current time.
    */
   @Column(name = "created_at")
+  @Builder.Default
   private LocalDateTime createdAt = LocalDateTime.now();
 
 
   /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
   @Column(name = "is_verified")
+  @Builder.Default
   private Boolean isVerified = false;
 
   /**
@@ -121,6 +123,7 @@ public class UserDBO implements UserDetails {
    * Describes if the user is enabled or not. Default value: True.
    */
   @Column(name = "enabled")
+  @Builder.Default
   private Boolean enabled = true;
 
   /**

@@ -29,7 +29,7 @@ public class AffiliationDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "affiliation_id")
   @Setter(AccessLevel.NONE)
-  private Integer affiliationId;
+  private Long affiliationId;
 
   /**
    * The type of affiliation (e.g., faculty, student, etc.). This is an enum value, and is stored as

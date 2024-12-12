@@ -3,6 +3,9 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents an address entity in the database. This class is mapped to the "address" table in the
  * database using JPA annotations.
@@ -28,7 +31,7 @@ import lombok.*;
 @Table(name = "address")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class AddressDBO {
 
@@ -87,8 +90,16 @@ public class AddressDBO {
   /**
    * The meeting associated with this address.
    *
-   * <p>Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
+   * <p>Defines a bidirectional one-to-many relationship with {@link MeetingDBO}.
    */
-  @OneToOne(mappedBy = "address")
-  private MeetingDBO meeting;
+  @OneToMany(mappedBy = "address")
+  @Builder.Default
+  private List<MeetingDBO> meetings = new ArrayList<>();
+
+  /**
+   * Constructs an AddressDBO with an empty set of meetings .
+   */
+  public AddressDBO() {
+    this.meetings = new ArrayList<>();
+  }
 }
