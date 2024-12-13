@@ -15,19 +15,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AffiliationTO {
-    /**
-     * Unique identifier for the affiliation.
-     */
     @NotNull
-    private Long affiliationId;
-    /**
-     * Type of the affiliation.
-     */
+    private Long affiliationId1;
+
     @NotEmpty(message = "The affiliation type cannot be empty")
     private String affiliationType;
-    /**
-     * University associated with the affiliation.
-     */
+
     @NotEmpty(message = "The university cannot be empty")
     private UniversityTO university;
 }

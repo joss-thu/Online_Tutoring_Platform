@@ -25,7 +25,7 @@ public class ProgressDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "rating_id")
   @Setter(AccessLevel.NONE)
-  private Long ratingId;
+  private Long progressId;
 
   /**
    * The student whose progress is being tracked.

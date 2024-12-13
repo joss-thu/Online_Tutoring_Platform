@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.frontendMappers;
 
-import de.thu.thutorium.api.transferObjects.RatingCourseDTO;
+import de.thu.thutorium.api.transferObjects.common.RatingCourseTO;
 import de.thu.thutorium.database.dbObjects.RatingCourseDBO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 /**
  * A MapStruct mapper interface for converting between {@link RatingCourseDBO} (Rating Course
- * Database Object) and {@link RatingCourseDTO} (Rating Course Data Transfer Object).
+ * Database Object) and {@link RatingCourseTO} (Rating Course Data Transfer Object).
  *
  * <p>This interface defines the mapping logic to convert a {@code RatingCourseDBO} (representing a
  * course rating in the database) to a {@code RatingCourseDTO} and vice versa. MapStruct automates
@@ -28,16 +28,16 @@ import org.mapstruct.Mapping;
 public interface RatingCourseMapper {
   /**
    * Converts a {@link RatingCourseDBO} (representing a rating given by a student to a course) to a
-   * {@link RatingCourseDTO}.
+   * {@link RatingCourseTO}.
    *
    * @param dbo the {@code RatingCourseDBO} object representing the course rating to convert
    * @return a {@code RatingCourseDTO} object containing the course rating data
    */
   @Mapping(target = "student", source = "student") // Map UserDBO to UserBaseDTO
-  RatingCourseDTO toDTO(RatingCourseDBO dbo);
+  RatingCourseTO toDTO(RatingCourseDBO dbo);
 
   /**
-   * Converts a {@link RatingCourseDTO} (Data Transfer Object representing a rating) to a {@link
+   * Converts a {@link RatingCourseTO} (Data Transfer Object representing a rating) to a {@link
    * RatingCourseDBO} (Database Object).
    *
    * <p>This method inherits the inverse configuration from {@link #toDTO(RatingCourseDBO)} but adds
@@ -48,5 +48,5 @@ public interface RatingCourseMapper {
    */
   @InheritInverseConfiguration
   @Mapping(target = "course", ignore = true) // Explicitly ignore the course field
-  RatingCourseDBO toDBO(RatingCourseDTO dto);
+  RatingCourseDBO toDBO(RatingCourseTO dto);
 }

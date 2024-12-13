@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.transferObjects;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * Data Transfer Object (DTO) representing a student in the system.
@@ -9,7 +9,8 @@ import lombok.Data;
  * Currently, it inherits all fields from {@code UserBaseDTO} and does not contain additional
  * fields, but can be extended in the future to include student-specific attributes.
  */
-@Data
+@Getter
+@Setter
 public class StudentDTO extends UserBaseDTO {
   // student-specific fields
 }

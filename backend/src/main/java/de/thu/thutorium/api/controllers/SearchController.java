@@ -1,7 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.api.transferObjects.CourseDTO;
 import de.thu.thutorium.api.transferObjects.TutorDTO;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.services.implementations.SearchServiceImpl;
 import de.thu.thutorium.services.interfaces.SearchService;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/search")
 public class SearchController {
 
-  private SearchService searchService;
+  private final SearchService searchService;
 
   @Autowired
   public SearchController(SearchServiceImpl searchServiceImpl) {
@@ -53,7 +53,7 @@ public class SearchController {
 
     // If courseName is provided, search for courses and add to the results
     if (courseName != null && !courseName.isEmpty()) {
-      List<CourseDTO> courses = searchService.searchCourses(courseName);
+      List<CourseTO> courses = searchService.searchCourses(courseName);
       results.addAll(courses); // Add courses to the results list
     }
 
@@ -63,7 +63,7 @@ public class SearchController {
 
   /**
    * Converts a {@link CourseCategoryDBO} (representing a course category in the database) to a
-   * {@link de.thu.thutorium.api.transferObjects.CourseCategoryDTO}.
+   * {@link de.thu.thutorium.api.transferObjects.common.CourseCategoryTO}.
    *
    * <p>This method maps the {@code categoryName} field of the {@code CourseCategoryDBO} to the
    * {@code categoryName} field in the {@code CourseCategoryDTO}.

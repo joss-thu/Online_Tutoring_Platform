@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.frontendMappers;
 
-import de.thu.thutorium.api.transferObjects.CourseDTO;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import org.mapstruct.*;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * A MapStruct mapper interface for converting between {@link CourseDBO} (Course Database Object)
- * and {@link de.thu.thutorium.api.transferObjects.CourseDTO} (Course Data Transfer Object).
+ * and {@link CourseTO} (Course Data Transfer Object).
  *
  * <p>This interface defines the mapping logic to convert a {@code CourseDBO} (representing a course
  * in the database) to a {@code CourseDTO} and vice versa. MapStruct automates the mapping process,
@@ -35,10 +35,9 @@ public interface CourseMapper {
    * @param course The CourseDBO instance to map.
    * @return The mapped CourseDTO.
    */
-  @Mapping(target = "courseCategories", source = "courseCategories") // Map course categories
-  @Mapping(target = "receivedCourseRatings", source = "receivedCourseRatings") // Map received course ratings
-  @Mapping(target = "tutorId", source = "tutor.userId") // Map tutor ID
-  CourseDTO toDTO(CourseDBO course);
+  // Map received course ratings
+  @Mapping(target = "tutor", source = "tutor") // Map tutor ID
+  CourseTO toDTO(CourseDBO course);
 
   /**
    * Maps a list of CourseDBO instances to a list of CourseDTOs.
@@ -46,5 +45,5 @@ public interface CourseMapper {
    * @param courses The list of CourseDBO instances to map.
    * @return The mapped list of CourseDTOs.
    */
-  List<CourseDTO> toDTOList(List<CourseDBO> courses);
+  List<CourseTO> toDTOList(List<CourseDBO> courses);
 }

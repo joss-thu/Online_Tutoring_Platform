@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 /**
  * Data Transfer Object (DTO) that represents the base information of a user in the system.
  *
@@ -57,17 +55,6 @@ public class UserTO {
     @Email(message = "Email should be valid")
     @NotEmpty(message = "Email cannot be empty")
     private String email;
-
-
-    /**
-     * The roles assigned to the user (commented out in the current version).
-     *
-     * <p>This field is intended to represent the roles assigned to the user, such as "STUDENT" or
-     * "TUTOR". These roles help in determining the access level and permissions of the user in the
-     * system. It is currently commented out, but could be added in the future.
-     */
-    @NotEmpty(message = "The roles can not be null or empty")
-    private Set<String> roles;
 
     /**
      * The affiliation of the user.

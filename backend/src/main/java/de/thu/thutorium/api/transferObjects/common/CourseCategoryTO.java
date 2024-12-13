@@ -1,6 +1,8 @@
-package de.thu.thutorium.api.transferObjects;
+package de.thu.thutorium.api.transferObjects.common;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 /**
  * Data Transfer Object (DTO) for the CourseCategory entity.
@@ -10,8 +12,14 @@ import lombok.Data;
  * based on their interests or field of study.
  * </p>
  */
-@Data
-public class CourseCategoryDTO {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CourseCategoryTO {
+
+    @NotNull
+    private Long categoryId;
     /**
      * The name of the course category.
      * <p>
@@ -19,5 +27,7 @@ public class CourseCategoryDTO {
      * Categories help classify courses, making it easier for students to browse and search for courses in specific fields.
      * </p>
      */
+    @NotEmpty(message = "The category name cannot be empty")
     private String categoryName;
+
 }

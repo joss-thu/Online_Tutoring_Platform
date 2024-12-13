@@ -95,8 +95,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public ResponseEntity<LogInResponseTO> register(RegisterRequestTO registerRequestTO) {
         // Check if the email is already registered with the specified role
-        String email = registerRequestTO.getEmail();
-        RoleDBO requestedRole = roleRepository.findByRoleName(registerRequestTO.getRole());
+        String email = registerRequestTO.email();
+        RoleDBO requestedRole = roleRepository.findByRoleName(registerRequestTO.role());
         Set<RoleDBO> roles = new HashSet<>();
         roles.add(requestedRole);
         UserDBO existingUser = UserRepository.findByEmailAndRoles(email, roles);
@@ -107,10 +107,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         // Fetch existing user or create a new one
         UserDBO user = UserRepository.findByEmail(email).orElseGet(() -> UserDBO.builder()
-                .firstName(registerRequestTO.getFirstName())
-                .lastName(registerRequestTO.getLastName())
+                .firstName(registerRequestTO.firstName())
+                .lastName(registerRequestTO.lastName())
                 .email(email)
-                .password(passwordEncoder.encode(registerRequestTO.getPassword()))
+                .password(passwordEncoder.encode(registerRequestTO.password()))
                 .roles(new HashSet<>())
                 .build());
         // Add the new role to the user's roles

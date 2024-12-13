@@ -2,8 +2,8 @@ package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.frontendMappers.CourseMapper;
 import de.thu.thutorium.api.frontendMappers.TutorMapper;
-import de.thu.thutorium.api.transferObjects.CourseDTO;
 import de.thu.thutorium.api.transferObjects.TutorDTO;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
@@ -53,14 +53,14 @@ public class SearchServiceImpl implements SearchService {
    *
    * <p>This method fetches the list of courses whose names match the given {@code courseName}. The
    * search may support partial matches depending on the implementation. The result is mapped into a
-   * list of {@link CourseDTO} objects.
+   * list of {@link CourseTO} objects.
    *
    * @param courseName the name of the course (can be partial).
-   * @return a list of {@link CourseDTO} objects representing the courses that match the search
+   * @return a list of {@link CourseTO} objects representing the courses that match the search
    *     criteria. If no courses are found, an empty list is returned.
    */
   @Override
-  public List<CourseDTO> searchCourses(String courseName) {
+  public List<CourseTO> searchCourses(String courseName) {
     List<CourseDBO> courses = courseRepository.findCourseByName(courseName);
     return courseMapper.toDTOList(courses);
   }

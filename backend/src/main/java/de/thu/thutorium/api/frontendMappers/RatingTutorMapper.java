@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.frontendMappers;
 
-import de.thu.thutorium.api.transferObjects.RatingTutorDTO;
+import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.database.dbObjects.RatingTutorDBO;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 /**
  * A MapStruct mapper interface for converting between {@link RatingTutorDBO} (Rating Tutor Database
- * Object) and {@link RatingTutorDTO} (Rating Tutor Data Transfer Object).
+ * Object) and {@link RatingTutorTO} (Rating Tutor Data Transfer Object).
  *
  * <p>This interface defines the mapping logic to convert a {@code RatingTutorDBO} (representing a
  * tutor rating in the database) to a {@code RatingTutorDTO} and vice versa. MapStruct is used to
@@ -29,16 +29,16 @@ import org.mapstruct.Mapping;
 public interface RatingTutorMapper {
   /**
    * Converts a {@link RatingTutorDBO} (representing a rating given by a student to a tutor) to a
-   * {@link RatingTutorDTO}.
+   * {@link RatingTutorTO}.
    *
    * @param dbo the {@code RatingTutorDBO} object representing the tutor rating to convert
    * @return a {@code RatingTutorDTO} object containing the tutor rating data
    */
   @Mapping(target = "student", source = "student") // Map UserDBO to UserBaseDTO
-  RatingTutorDTO toDTO(RatingTutorDBO dbo);
+  RatingTutorTO toDTO(RatingTutorDBO dbo);
 
   /**
-   * Converts a {@link RatingTutorDTO} (Data Transfer Object representing a rating) to a {@link
+   * Converts a {@link RatingTutorTO} (Data Transfer Object representing a rating) to a {@link
    * RatingTutorDBO} (Database Object).
    *
    * <p>This method inherits the inverse configuration from {@link #toDTO(RatingTutorDBO)} but adds
@@ -50,5 +50,5 @@ public interface RatingTutorMapper {
   @InheritInverseConfiguration
   @Mapping(target = "student.givenTutorRatings", ignore = true) // Avoid infinite recursion
   @Mapping(target = "tutor.receivedTutorRatings", ignore = true) // Avoid infinite recursion
-  RatingTutorDBO toDBO(RatingTutorDTO dto);
+  RatingTutorDBO toDBO(RatingTutorTO dto);
 }

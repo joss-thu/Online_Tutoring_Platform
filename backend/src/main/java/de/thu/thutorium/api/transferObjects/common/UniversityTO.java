@@ -15,27 +15,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UniversityTO {
-
-    /**
-     * Unique identifier for the university.
-     */
     @NotNull
     private Long universityId;
 
-    /**
-     * Name of the university.
-     */
     @NotEmpty(message = "The university name cannot be empty")
     private String universityName;
 
-    /**
-     * Address of the university.
-     */
     @NotNull
     private AddressTO address;
 }
-
-
-
-
-

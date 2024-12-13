@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
  * Transfer object for authentication user response.
  * Contains the JWT token, creation time, and expiration time.
  */
+
 @Data
 @Builder
 @AllArgsConstructor

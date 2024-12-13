@@ -1,19 +1,23 @@
 package de.thu.thutorium.api.transferObjects.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 
 /**
  * Transfer object for Login Request
  * Contains username (email in this context) and password
  */
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class LogInRequestTO {
-    private String email;
-    private String password;
-}
+ @Getter
+ @Setter
+ @Builder
+ @AllArgsConstructor
+ public class LogInRequestTO {
+
+     @Email
+     @NotEmpty(message = "Email cannot be empty")
+     private String email;
+
+    @NotEmpty(message = "Password cannot be empty")
+     private String password;
+ }

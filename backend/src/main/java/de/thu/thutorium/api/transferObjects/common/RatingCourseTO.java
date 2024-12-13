@@ -1,8 +1,7 @@
-package de.thu.thutorium.api.transferObjects;
+package de.thu.thutorium.api.transferObjects.common;
 
-import lombok.Data;
-
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 /**
  * Data Transfer Object (DTO) representing a rating given to a course by a student.
@@ -11,14 +10,18 @@ import java.time.LocalDateTime;
  * points, review text, the timestamp when the rating was created, and basic information about the
  * student who provided the rating.
  */
-@Data
-public class RatingCourseDTO {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class RatingCourseTO {
   /**
    * The unique identifier for the rating.
    *
    * <p>This field represents the unique ID for the rating, which is typically used for identifying
    * and retrieving specific ratings from the system.
    */
+  @NotNull(message = "The rating id cannot be null")
   private Long ratingId;
 
   /**
@@ -27,6 +30,7 @@ public class RatingCourseDTO {
    * <p>This field stores the numeric value representing the rating points given by the student.
    * Typically, this might be a value between 1 and 5, depending on the rating system.
    */
+  @NotNull(message = "The points cannot be null")
   private Double points;
 
   /**
@@ -38,18 +42,10 @@ public class RatingCourseDTO {
   private String review;
 
   /**
-   * The timestamp when the rating was created.
-   *
-   * <p>This field stores the date and time when the rating was submitted by the student, allowing
-   * the system to track when the review was made.
-   */
-  private LocalDateTime createdAt;
-
-  /**
    * Basic information about the student who gave the rating.
    *
-   * <p>This field contains a {@code UserBaseDTO} object that represents the student who provided
+   * <p>This field contains a {@code UserDTO} object that represents the student who provided
    * the rating. The student's basic information (such as their name) is included in this object.
    */
-  private UserBaseDTO student;
+  private UserTO student;
 }

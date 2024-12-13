@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.api.transferObjects.CourseDTO;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +21,11 @@ public class CourseController {
    * @param firstName the first name of the tutor (optional).
    * @param lastName the last name of the tutor (optional).
    * @param tutorName the full name of the tutor (optional).
-   * @return a list of {@link CourseDTO} objects taught by the specified tutor.
+   * @return a list of {@link CourseTO} objects taught by the specified tutor.
    */
   @GetMapping("/courses/tutor")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-  public List<CourseDTO> getCoursesByTutor(
+  public List<CourseTO> getCoursesByTutor(
           @RequestParam(required = false) String firstName,
           @RequestParam(required = false) String lastName,
           @RequestParam(required = false) String tutorName) {
@@ -48,11 +48,11 @@ public class CourseController {
    * Retrieves a list of courses based on a partial name match.
    *
    * @param name The partial name of the course to search for.
-   * @return A list of {@link CourseDTO} objects that match the specified partial name.
+   * @return A list of {@link CourseTO} objects that match the specified partial name.
    */
   @GetMapping("/courses/search")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-  public List<CourseDTO> getCoursesByName(@RequestParam("name") String name) {
+  public List<CourseTO> getCoursesByName(@RequestParam("name") String name) {
     return courseService.findCoursesByName(name);
   } // works
 
@@ -60,11 +60,11 @@ public class CourseController {
    * Retrieves a course based on its ID.
    *
    * @param id The ID of the course to retrieve.
-   * @return The {@link CourseDTO} object representing the course.
+   * @return The {@link CourseTO} object representing the course.
    */
   @GetMapping("/course")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-  public CourseDTO getCourseById(@RequestParam Long id) {
+  public CourseTO getCourseById(@RequestParam Long id) {
     return courseService.findCourseById(id);
   } // works
 
@@ -74,11 +74,11 @@ public class CourseController {
    * for up to 3600 seconds.
    *
    * @param categoryName The name of the category for which courses are to be retrieved.
-   * @return A list of {@link CourseDTO} objects that belong to the specified category.
+   * @return A list of {@link CourseTO} objects that belong to the specified category.
    */
   @GetMapping("/search/category/{categoryName}")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-  public List<CourseDTO> getCoursesByCategory(@PathVariable String categoryName) {
+  public List<CourseTO> getCoursesByCategory(@PathVariable String categoryName) {
     return courseService.getCoursesByCategory(categoryName);
   }
 

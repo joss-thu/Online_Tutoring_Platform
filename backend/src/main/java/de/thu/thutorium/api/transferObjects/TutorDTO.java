@@ -1,5 +1,7 @@
 package de.thu.thutorium.api.transferObjects;
 
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import lombok.Data;
 
 import java.util.List;
@@ -28,7 +30,7 @@ public class TutorDTO extends UserBaseDTO {
    * tutor is teaching or has taught. This allows for easy retrieval of all the courses associated
    * with a tutor.
    */
-  private List<CourseDTO> tutorCourses;
+  private List<CourseTO> tutorCourses;
 
   /**
    * The list of ratings given to the tutor by students.
@@ -37,5 +39,5 @@ public class TutorDTO extends UserBaseDTO {
    * rating or review provided by a student for the tutor. The ratings help provide insights into
    * the tutor's teaching effectiveness and overall student satisfaction.
    */
-  private List<RatingTutorDTO> ratings;
+  private List<RatingTutorTO> ratings;
 }

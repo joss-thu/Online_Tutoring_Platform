@@ -1,10 +1,11 @@
-package de.thu.thutorium.api.transferObjects;
+package de.thu.thutorium.api.transferObjects.common;
 
-import lombok.Data;
+import de.thu.thutorium.database.dbObjects.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Data Transfer Object (DTO) representing a course in the system.
@@ -13,15 +14,29 @@ import java.util.List;
  * dates, the user who created the course, the associated category, and any ratings received for the
  * course.
  */
-@Data
-public class CourseDTO {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CourseTO {
+
+  @NotNull(message = "Course id cannot be null.")
+  private Long courseId;
+
   /**
    * The name of the course.
    *
    * <p>This field holds the name or title of the course, providing a quick reference to the course
    * content.
    */
+  @NotEmpty(message = "Course name cannot be empty.")
   private String courseName;
+
+  /**
+   * The tutor who created the course.
+   */
+  @NotEmpty(message = "Tutor cannot be empty.")
+  private UserDBO tutor;
 
   /**
    * A short description of the course.
@@ -40,14 +55,6 @@ public class CourseDTO {
   private String descriptionLong;
 
   /**
-   * The timestamp when the course was created.
-   *
-   * <p>This field records the date and time when the course was created, helping track the course's
-   * creation date within the system.
-   */
-  private LocalDateTime createdOn;
-
-  /**
    * The start date of the course.
    *
    * <p>This field indicates when the course will begin, which is important for students to know
@@ -62,23 +69,8 @@ public class CourseDTO {
    * the course to be completed or when the final assessments will take place.
    */
   private LocalDate endDate;
-
-  /**
-   * The category associated with the course.
-   *
-   * <p>This field contains a {@code CourseCategoryDTO} object, which represents the category or
-   * subject area the course falls under. Categories help organize courses and make it easier for
-   * students to find relevant courses.
-   */
-  private List<CourseCategoryDTO> courseCategories;
-  /**
-   * A list of ratings for the course.
-   *
-   * <p>This field contains a list of {@code RatingCourseDTO} objects, each representing a rating
-   * and review provided by a student for the course. The ratings can provide valuable feedback on
-   * the course content and the overall student experience.
-   */
-  private List<RatingCourseDTO> receivedCourseRatings;
-
-  private Long tutorId;
 }
+
+
+
+
