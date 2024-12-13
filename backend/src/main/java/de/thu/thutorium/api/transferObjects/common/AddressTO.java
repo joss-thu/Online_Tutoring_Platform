@@ -20,12 +20,6 @@ import lombok.Setter;
 public class AddressTO {
 
     /**
-     * Unique identifier for the address.
-     */
-    @NotNull
-    private long addressId;
-
-    /**
      * Name of the campus.
      */
     private String campusName;

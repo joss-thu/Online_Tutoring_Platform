@@ -38,10 +38,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/student/**").hasRole("STUDENT")
-                        .requestMatchers("/tutor/**").hasRole("TUTOR")
-                        .requestMatchers("/verifier/**").hasRole("VERIFIER")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/student/**").hasRole("STUDENT")
+//                        .requestMatchers("/tutor/**").hasRole("TUTOR")
+//                        .requestMatchers("/verifier/**").hasRole("VERIFIER")
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
