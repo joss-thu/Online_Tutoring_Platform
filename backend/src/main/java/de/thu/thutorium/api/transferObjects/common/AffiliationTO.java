@@ -15,8 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AffiliationTO {
-    @NotNull
-    private Long affiliationId1;
 
     @NotEmpty(message = "The affiliation type cannot be empty")
     private String affiliationType;
