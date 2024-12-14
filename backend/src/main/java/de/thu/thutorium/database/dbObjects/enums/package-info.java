@@ -7,6 +7,6 @@
  *
  * @since 1.0
  * @version 1.0
- * @author Jossin Anthony
+ * @author Jossin Antony
  */
 package de.thu.thutorium.database.dbObjects.enums;
