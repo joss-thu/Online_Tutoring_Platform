@@ -2,12 +2,18 @@ package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.frontendMappers.CourseMapper;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.database.databaseMappers.CourseDBMapper;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
+import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.CourseRepository;
+import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.interfaces.CourseService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -23,7 +29,11 @@ import java.util.List;
 public class CourseServiceImpl implements CourseService {
 
   private final CourseRepository courseRepository;
+  private final CourseDBMapper courseDBMapper;
   private final CourseMapper courseMapper;
+  private final UserRepository userRepository;
+
+
 
   /**
    * Finds a course by its unique ID.
@@ -122,5 +132,27 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public Long getTotalCountOfCourses() {
     return courseRepository.countAllCourses();
+  }
+
+  @Override
+  @Transactional
+  public void createCourse(CourseTO courseTO) {
+    // Fetch tutor from the repository using tutorId
+    UserDBO tutor =
+        userRepository
+            .findById(courseTO.getTutorId())
+            .orElseThrow(() -> new EntityNotFoundException("Tutor not found"));
+
+    // Create CourseDBO from CourseTO using the mapper
+    CourseDBO courseDBO = courseDBMapper.toEntity(courseTO);
+
+    // Set the tutor in the CourseDBO
+    courseDBO.setTutor(tutor);
+
+    // Set the createdOn timestamp to the current time
+    courseDBO.setCreatedOn(LocalDateTime.now());
+
+    // Save the new course entity to the database
+    courseRepository.save(courseDBO);
   }
 }

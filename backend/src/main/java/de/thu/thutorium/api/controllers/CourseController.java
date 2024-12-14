@@ -3,6 +3,8 @@ package de.thu.thutorium.api.controllers;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -93,4 +95,5 @@ public class CourseController {
   public Long getCoursesCount() {
     return courseService.getTotalCountOfCourses();
   } // works
+
 }

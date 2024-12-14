@@ -20,9 +20,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CourseTO {
 
-  @NotNull(message = "Course id cannot be null.")
-  private Long courseId;
-
   /**
    * The name of the course.
    *
@@ -32,11 +29,9 @@ public class CourseTO {
   @NotEmpty(message = "Course name cannot be empty.")
   private String courseName;
 
-  /**
-   * The tutor who created the course.
-   */
+  /** The tutor who created the course. */
   @NotEmpty(message = "Tutor cannot be empty.")
-  private UserDBO tutor;
+  private Long tutorId;
 
   /**
    * A short description of the course.
@@ -70,7 +65,3 @@ public class CourseTO {
    */
   private LocalDate endDate;
 }
-
-
-
-

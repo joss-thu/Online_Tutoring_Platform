@@ -90,4 +90,6 @@ public interface CourseService {
    * @return the total number of courses as a {@code Long} value.
    */
   Long getTotalCountOfCourses();
+
+  void createCourse(CourseTO courseTO);
 }

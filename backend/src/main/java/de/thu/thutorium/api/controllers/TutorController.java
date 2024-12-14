@@ -1,6 +1,8 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.MeetingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TutorController {
     private final MeetingService meetingService;
+    private final CourseService courseService;
+
 
     //Create Meeting
     @PostMapping("/create-meeting")
@@ -28,11 +32,19 @@ public class TutorController {
         return ResponseEntity.ok("Meeting deleted successfully");
     }
 
+    //Update Meeting
     @PutMapping("/update-meeting/{meetingId}")
     public ResponseEntity<String> updateMeeting(
             @PathVariable Long meetingId,
             @RequestBody @Valid MeetingTO meetingTO) {
         meetingService.updateMeeting(meetingId, meetingTO);
         return ResponseEntity.ok("Meeting updated successfully");
+    }
+
+    //Create Course
+    @PostMapping("/course/create")
+    public ResponseEntity<String> createCourse(@RequestBody CourseTO courseTO) {
+        courseService.createCourse(courseTO);
+        return ResponseEntity.ok("Course created successfully"); // Return HTTP 201 status
     }
 }

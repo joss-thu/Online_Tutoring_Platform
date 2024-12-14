@@ -36,7 +36,7 @@ public interface CourseMapper {
    * @return The mapped CourseDTO.
    */
   // Map received course ratings
-  @Mapping(target = "tutor", source = "tutor") // Map tutor ID
+  @Mapping(target = "tutorId", source = "tutor.userId") // Map tutor ID
   CourseTO toDTO(CourseDBO course);
 
   /**
