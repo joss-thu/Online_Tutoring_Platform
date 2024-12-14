@@ -1,7 +1,6 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
-import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
 import de.thu.thutorium.services.interfaces.MeetingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,4 +28,11 @@ public class TutorController {
         return ResponseEntity.ok("Meeting deleted successfully");
     }
 
+    @PutMapping("/update-meeting/{meetingId}")
+    public ResponseEntity<String> updateMeeting(
+            @PathVariable Long meetingId,
+            @RequestBody @Valid MeetingTO meetingTO) {
+        meetingService.updateMeeting(meetingId, meetingTO);
+        return ResponseEntity.ok("Meeting updated successfully");
+    }
 }

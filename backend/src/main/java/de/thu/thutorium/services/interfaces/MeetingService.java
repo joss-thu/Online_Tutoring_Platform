@@ -7,4 +7,5 @@ import org.springframework.stereotype.Service;
 public interface MeetingService {
     void createMeeting(MeetingTO meetingTO);
     void deleteMeeting(Long meetingId);
+    void updateMeeting(Long meetingId, MeetingTO meetingTO);
 }

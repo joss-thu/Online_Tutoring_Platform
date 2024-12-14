@@ -71,4 +71,52 @@ public class MeetingServiceImpl implements MeetingService {
     // Delete the meeting
     meetingRepository.deleteById(meetingId);
   }
+
+  @Transactional
+  public void updateMeeting(Long meetingId, MeetingTO meetingTO) {
+    // Fetch the existing meeting
+    MeetingDBO existingMeeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
+
+    // Update fields
+    existingMeeting.setMeetingDate(meetingTO.getMeetingDate());
+    existingMeeting.setMeetingTime(meetingTO.getMeetingTime());
+    existingMeeting.setDuration(meetingTO.getDuration());
+    existingMeeting.setMeetingType(meetingTO.getMeetingType());
+    existingMeeting.setMeetingStatus(meetingTO.getMeetingStatus());
+
+    // Update associated objects (tutor, course, and address)
+    UserDBO tutor =
+        userRepository
+            .findById(meetingTO.getTutorId())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Tutor not found with ID: " + meetingTO.getTutorId()));
+    existingMeeting.setTutor(tutor);
+
+    CourseDBO course =
+        courseRepository
+            .findById(meetingTO.getCourseId())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Course not found with ID: " + meetingTO.getCourseId()));
+    existingMeeting.setCourse(course);
+
+    AddressDBO address =
+        addressRepository
+            .findById(meetingTO.getAddressId())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Address not found with ID: " + meetingTO.getAddressId()));
+    existingMeeting.setAddress(address);
+
+    // Save the updated meeting
+    meetingRepository.save(existingMeeting);
+  }
 }
