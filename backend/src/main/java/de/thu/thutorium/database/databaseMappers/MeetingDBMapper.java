@@ -5,17 +5,13 @@ import de.thu.thutorium.database.dbObjects.MeetingDBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import org.springframework.stereotype.Component;
 
-@Component
-public class MeetingDBMapper {
-    public MeetingDBO toEntity(MeetingTO meetingTO) {
-        return MeetingDBO.builder()
-                .meetingDate(meetingTO.getMeetingDate())
-                .meetingTime(meetingTO.getMeetingTime())
-                .duration(meetingTO.getDuration())
-                .meetingType(meetingTO.getMeetingType())
-                .meetingStatus(meetingTO.getMeetingStatus())
-                .build();
-    }
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+public interface MeetingDBMapper {
+    @Mapping(target = "tutor", ignore = true)  // Will be set in service layer
+    @Mapping(target = "course", ignore = true) // Will be set in service layer
+    @Mapping(target = "address", ignore = true) // Will be set in service layer
+    @Mapping(target = "participants", ignore = true) // Default initialized in the constructor
+    @Mapping(target = "meetingId", ignore = true) // Auto-generated in the database
+    MeetingDBO toEntity(MeetingTO meetingTO);
 }
