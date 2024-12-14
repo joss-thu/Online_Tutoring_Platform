@@ -26,11 +26,11 @@ public class CourseTO {
    * <p>This field holds the name or title of the course, providing a quick reference to the course
    * content.
    */
-  @NotEmpty(message = "Course name cannot be empty.")
+  @NotNull(message = "Course name cannot be empty.")
   private String courseName;
 
   /** The tutor who created the course. */
-  @NotEmpty(message = "Tutor cannot be empty.")
+  @NotNull(message = "Tutor cannot be empty.")
   private Long tutorId;
 
   /**

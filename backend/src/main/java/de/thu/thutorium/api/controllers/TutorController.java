@@ -54,4 +54,13 @@ public class TutorController {
         courseService.deleteCourse(courseId);
         return ResponseEntity.ok("Course deleted successfully");
     }
+
+    //Update Meeting
+    @PutMapping("/update-course/{courseId}")
+    public ResponseEntity<String> updateCourse(
+            @PathVariable Long courseId,
+            @RequestBody @Valid CourseTO courseTO) {
+        courseService.updateCourse(courseId, courseTO);
+        return ResponseEntity.ok("Course updated successfully");
+    }
 }

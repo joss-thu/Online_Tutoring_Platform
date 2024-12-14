@@ -157,10 +157,40 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  @Transactional
   public void deleteCourse(Long courseId) {
     if (!courseRepository.existsById(courseId)) {
       throw new EntityNotFoundException("Course not found with ID: " + courseId);
     }
     courseRepository.deleteById(courseId);
+  }
+
+  @Override
+  public void updateCourse(Long courseId, CourseTO courseTO) {
+    CourseDBO existingCourse =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Course not found with ID: " + courseId));
+
+    // Update fields of the existing course
+    existingCourse.setCourseName(courseTO.getCourseName());
+    existingCourse.setDescriptionShort(courseTO.getDescriptionShort());
+    existingCourse.setDescriptionLong(courseTO.getDescriptionLong());
+    existingCourse.setStartDate(courseTO.getStartDate());
+    existingCourse.setEndDate(courseTO.getEndDate());
+
+    // Update associated tutor (use userRepository to get the tutor)
+    UserDBO tutor =
+        userRepository
+            .findById(courseTO.getTutorId())
+            .orElseThrow(
+                () ->
+                    new EntityNotFoundException(
+                        "Tutor not found with ID: " + courseTO.getTutorId()));
+    existingCourse.setTutor(tutor);
+
+    // Save the updated course
+    courseRepository.save(existingCourse);
   }
 }

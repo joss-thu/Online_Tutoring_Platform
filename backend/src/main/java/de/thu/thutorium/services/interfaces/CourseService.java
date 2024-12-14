@@ -1,6 +1,7 @@
 package de.thu.thutorium.services.interfaces;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -93,4 +94,5 @@ public interface CourseService {
 
   void createCourse(CourseTO courseTO);
   void deleteCourse(Long courseId);
+  void updateCourse(Long courseId, CourseTO courseTO);
 }
