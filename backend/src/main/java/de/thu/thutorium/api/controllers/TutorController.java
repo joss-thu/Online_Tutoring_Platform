@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tutor")
@@ -19,11 +16,17 @@ public class TutorController {
     private final MeetingService meetingService;
 
     //Create Meeting
-
     @PostMapping("/create-meeting")
     public ResponseEntity<String> createMeeting(@RequestBody @Valid MeetingTO meetingTO) {
         meetingService.createMeeting(meetingTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Meeting created successfully");
+    }
+
+    //Delete Meeting
+    @DeleteMapping("/delete-meeting/{meetingId}")
+    public ResponseEntity<String> deleteMeeting(@PathVariable Long meetingId) {
+        meetingService.deleteMeeting(meetingId);
+        return ResponseEntity.ok("Meeting deleted successfully");
     }
 
 }

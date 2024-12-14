@@ -60,4 +60,15 @@ public class MeetingServiceImpl implements MeetingService {
 
     meetingRepository.save(meetingDBO);
   }
+
+  @Override
+  @Transactional
+  public void deleteMeeting(Long meetingId){
+    if (!meetingRepository.existsById(meetingId)) {
+      throw new EntityNotFoundException("Meeting not found with ID: " + meetingId);
+    }
+
+    // Delete the meeting
+    meetingRepository.deleteById(meetingId);
+  }
 }
