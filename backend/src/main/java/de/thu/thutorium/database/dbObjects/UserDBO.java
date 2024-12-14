@@ -113,8 +113,8 @@ public class UserDBO implements UserDetails {
    */
   @ManyToMany
   @JoinTable(name = "users_verifiers",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "verifier_id")
+          joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "verifier_id", referencedColumnName = "user_id")
   )
   @Builder.Default
   private Set<UserDBO> verifiers = new HashSet<>();
@@ -135,10 +135,10 @@ public class UserDBO implements UserDetails {
    * cascading operations defined in this relationship.
    * The counterpart is denoted by a Set<UserDBO> called 'participants' in the {@link CourseDBO}.
    */
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "course_students",
-          joinColumns = @JoinColumn(name = "student_id"),
-          inverseJoinColumns = @JoinColumn(name = "course_id")
+          joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "course_id")
   )
   @Builder.Default
   private Set<CourseDBO> studentCourses = new HashSet<>();
