@@ -35,7 +35,7 @@ public class UniversityDBO {
    * The name of the university. This field is required and has a maximum length of 255 characters.
    */
   @Column(name = "university_name", nullable = false)
-  private String name;
+  private String universityName;
 
   /**
    * The address of the university. This establishes a uni-directional(!!) one-to-one relationship with the {@code

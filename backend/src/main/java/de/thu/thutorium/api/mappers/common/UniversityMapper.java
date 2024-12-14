@@ -1,6 +1,6 @@
-package de.thu.thutorium.api.Mappers.admin;
+package de.thu.thutorium.api.mappers.common;
 
-import de.thu.thutorium.api.transferObjects.admin.AdminUniversityTO;
+import de.thu.thutorium.api.transferObjects.common.UniversityTO;
 import de.thu.thutorium.database.dbObjects.UniversityDBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -8,7 +8,7 @@ import org.mapstruct.Mappings;
 
 /**
  * Mapper interface for converting between {@link UniversityDBO} and
- * {@link AdminUniversityTO}.
+ * {@link UniversityTO}.
  * This interface uses MapStruct to automatically generate the implementation
  * for mapping
  * between the database object (DBO) and the transfer object (TO).
@@ -18,7 +18,7 @@ import org.mapstruct.Mappings;
  * should be a Spring bean, allowing it to be injected into other Spring
  * components.
  * The {@code uses = {AdminAddressMapper.class}} attribute specifies that the
- * {@link AdminAddressMapper}
+ * {@link AddressMapper}
  * should be used for mapping nested address objects.
  * The {@code unmappedTargetPolicy = ReportingPolicy.IGNORE} attribute specifies
  * that
@@ -29,32 +29,32 @@ import org.mapstruct.Mappings;
  */
 @Mapper(
         componentModel = "spring",
-        uses = {AdminAddressMapper.class}
+        uses = {AddressMapper.class}
 )
-public interface AdminUniversitymapper {
+public interface UniversityMapper {
         /**
-         * Converts a {@link UniversityDBO} object to an {@link AdminUniversityTO}
+         * Converts a {@link UniversityDBO} object to an {@link UniversityTO}
          * object.
          *
          * @param universityDBO the {@code UniversityDBO} object to convert
          * @return an {@code toDTO} object containing the mapped data
          */
     @Mappings({
-            @Mapping(target = "universityName", source = "name"),
+            @Mapping(target = "universityName", source = "universityName"),
             @Mapping(target = "address", source = "address")
     })
-    AdminUniversityTO toDTO(UniversityDBO universityDBO);
+    UniversityTO toDTO(UniversityDBO universityDBO);
 
     /**
-     * Converts an {@link AdminUniversityTO} object to a {@link UniversityDBO}
+     * Converts an {@link UniversityTO} object to a {@link UniversityDBO}
      * object.
      *
-     * @param adminUniversityTO the {@code AdminUniversityTO} object to convert
+     * @param universityTO the {@code AdminUniversityTO} object to convert
      * @return a {@code toDBO} object containing the mapped data
      */
     @Mappings({
-                    @Mapping(target = "name", source = "universityName"),
+                    @Mapping(target = "universityName", source = "universityName"),
                     @Mapping(target = "address", source = "address")
     })
-    UniversityDBO toDBO(AdminUniversityTO adminUniversityTO);
+    UniversityDBO toDBO(UniversityTO universityTO);
 }

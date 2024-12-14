@@ -1,12 +1,12 @@
-package de.thu.thutorium.api.Mappers.admin;
+package de.thu.thutorium.api.mappers.common;
 
-import de.thu.thutorium.api.transferObjects.admin.AdminAddressTO;
+import de.thu.thutorium.api.transferObjects.common.AddressTO;
 import de.thu.thutorium.database.dbObjects.AddressDBO;
 import org.mapstruct.Mapper;
 
 /**
  * Mapper interface for converting between {@link AddressDBO} and
- * {@link AdminAddressTO}.
+ * {@link AddressTO}.
  * This interface uses MapStruct to automatically generate the implementation
  * for mapping
  * between the database object (DBO) and the transfer object (TO).
@@ -24,20 +24,20 @@ import org.mapstruct.Mapper;
  */
 @Mapper(
         componentModel = "spring")
-public interface AdminAddressMapper {
+public interface AddressMapper {
     /**
-     * Converts an {@link AddressDBO} object to an {@link AdminAddressTO} object.
+     * Converts an {@link AddressDBO} object to an {@link AddressTO} object.
      *
      * @param addressDBO the {@code AddressDBO} object to convert
      * @return an {@code AdminAddressTO} object containing the mapped data
      */
-    AdminAddressTO toDTO(AddressDBO addressDBO);
+    AddressTO toDTO(AddressDBO addressDBO);
 
     /**
-     * Converts an {@link AdminAddressTO} object to an {@link AddressDBO} object.
+     * Converts an {@link AddressTO} object to an {@link AddressDBO} object.
      *
-     * @param adminAddressTO the {@code AdminAddressTO} object to convert
+     * @param addressTO the {@code AdminAddressTO} object to convert
      * @return an {@code AddressDBO} object containing the mapped data
      */
-    AddressDBO toDBO(AdminAddressTO adminAddressTO);
+    AddressDBO toDBO(AddressTO addressTO);
 }

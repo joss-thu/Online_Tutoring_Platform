@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.transferObjects.admin;
+package de.thu.thutorium.api.transferObjects.common;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdminAddressTO {
+public class AddressTO {
     /**
      * Name of the campus.
      */
@@ -23,7 +23,7 @@ public class AdminAddressTO {
      * House number.
      */
     @NotNull
-    private Short houseNum;
+    private String houseNum;
 
     /**
      * Name of the street.
@@ -41,7 +41,7 @@ public class AdminAddressTO {
      * Postal code of the address.
      */
     @NotNull
-    private Short postalCode;
+    private String postalCode;
 
     /**
      * Country of the address.

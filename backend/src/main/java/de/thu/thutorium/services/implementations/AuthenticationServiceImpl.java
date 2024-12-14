@@ -72,7 +72,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         );
         // Load user details
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequestTO.getEmail());
-        log.info("Userdetails in login: {}", userDetails);
         // Retrieve the user ID from the userDetails object (assuming you have a method to get it)
         Long userId = ((UserDBO) userDetails).getUserId(); // Assuming CustomUserDetails implements UserDetails and has getId()
         // Generate JWT token
@@ -121,7 +120,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Long userId = savedUser.getUserId();
         // Load user details
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        log.info("Userdetails in register: {}", userDetails);
         // Generate JWT token
         String jwtToken = jwtService.generateToken(userId, userDetails);
         // Set expiration time (e.g., 24 hours)
