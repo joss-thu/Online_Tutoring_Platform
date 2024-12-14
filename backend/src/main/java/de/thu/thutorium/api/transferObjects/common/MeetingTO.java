@@ -1,13 +1,8 @@
 package de.thu.thutorium.api.transferObjects.common;
 
-import de.thu.thutorium.database.dbObjects.AddressDBO;
-import de.thu.thutorium.database.dbObjects.CourseDBO;
-import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
 import de.thu.thutorium.database.dbObjects.enums.MeetingType;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.time.LocalDate;

@@ -14,7 +14,6 @@ import de.thu.thutorium.services.interfaces.MeetingService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,7 +52,7 @@ public class MeetingServiceImpl implements MeetingService {
 
     MeetingDBO meetingDBO = meetingMapper.toEntity(meetingTO);
 
-    //Set References
+    // Set References
     meetingDBO.setTutor(tutor);
     meetingDBO.setCourse(course);
     meetingDBO.setAddress(address);
@@ -63,7 +62,7 @@ public class MeetingServiceImpl implements MeetingService {
 
   @Override
   @Transactional
-  public void deleteMeeting(Long meetingId){
+  public void deleteMeeting(Long meetingId) {
     if (!meetingRepository.existsById(meetingId)) {
       throw new EntityNotFoundException("Meeting not found with ID: " + meetingId);
     }

@@ -5,4 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RatingTutorRepository extends JpaRepository<RatingTutorDBO, Long> {}
+public interface RatingTutorRepository extends JpaRepository<RatingTutorDBO, Long> { }

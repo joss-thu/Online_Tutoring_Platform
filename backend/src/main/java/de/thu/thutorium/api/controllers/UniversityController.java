@@ -1,6 +1,5 @@
 package de.thu.thutorium.api.controllers;
 
-
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
 import de.thu.thutorium.database.dbObjects.UniversityDBO;
 import de.thu.thutorium.services.interfaces.UniversityService;
@@ -17,11 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin/universities")
 @RequiredArgsConstructor
 public class UniversityController {
-    private final UniversityService universityService;
+  private final UniversityService universityService;
 
-    @PostMapping
-    public ResponseEntity<UniversityDBO> createUniversity(@RequestBody @Valid UniversityTO university){
-        UniversityDBO created = universityService.createUniversity(university);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
+  @PostMapping
+  public ResponseEntity<UniversityDBO> createUniversity(
+      @RequestBody @Valid UniversityTO university) {
+    UniversityDBO created = universityService.createUniversity(university);
+    return ResponseEntity.status(HttpStatus.CREATED).body(created);
+  }
 }

@@ -5,6 +5,8 @@ import de.thu.thutorium.api.transferObjects.UserBaseDTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.interfaces.UserService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +88,16 @@ public class UserServiceImpl implements UserService {
       return userMapper.toDTO(user);
     }
     return null;
+  }
+
+  @Override
+  @Transactional
+  public void deleteUser(Long userId) {
+    // Check if the user exists before attempting to delete
+    UserDBO user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
+
+    // Delete the user from the repository
+    userRepository.delete(user);
   }
 }

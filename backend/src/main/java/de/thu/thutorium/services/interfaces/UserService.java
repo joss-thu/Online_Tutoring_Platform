@@ -35,4 +35,6 @@ public interface UserService {
    *     no such tutor is found
    */
   UserBaseDTO getTutorByID(Long tutorId);
+
+  void deleteUser(Long userId);
 }

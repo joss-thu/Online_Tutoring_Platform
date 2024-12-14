@@ -1,7 +1,6 @@
 package de.thu.thutorium.services.interfaces;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,13 +61,13 @@ public interface CourseService {
   /**
    * Finds courses by the given course name.
    *
-   * <p>This method will return a list of {@link CourseTO} objects that match the given course
-   * name. The search may support case-insensitivity and partial name matches depending on the
+   * <p>This method will return a list of {@link CourseTO} objects that match the given course name.
+   * The search may support case-insensitivity and partial name matches depending on the
    * implementation.
    *
    * @param name the name (or partial name) of the course to search for.
-   * @return a list of {@link CourseTO} objects representing courses that match the search
-   *     criteria. If no courses are found, an empty list is returned.
+   * @return a list of {@link CourseTO} objects representing courses that match the search criteria.
+   *     If no courses are found, an empty list is returned.
    */
   List<CourseTO> findCoursesByName(String name);
 
@@ -93,6 +92,8 @@ public interface CourseService {
   Long getTotalCountOfCourses();
 
   void createCourse(CourseTO courseTO);
+
   void deleteCourse(Long courseId);
+
   void updateCourse(Long courseId, CourseTO courseTO);
 }
