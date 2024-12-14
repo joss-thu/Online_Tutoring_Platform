@@ -64,16 +64,12 @@ public class MeetingDBO {
   private Integer duration = 90;
 
   /**
-   * The type of the meeting as enumerated by the {@link MeetingType}. Multiple values of meeting types can be assigned
-   * to the meetings.
-   * Note: This implementation is an alternate easy implementation instead of resolving the many-to-many relationships
-   * between meetings and types
+   * The type of the meeting as enumerated by the {@link MeetingType}.
+   * Represents whether the meeting is online or offline.
    */
-  @ElementCollection(targetClass = MeetingType.class)
   @Enumerated(EnumType.STRING)
-  @CollectionTable(name = "meeting_types", joinColumns = @JoinColumn(name = "meeting_id"))
   @Column(name = "meeting_type", nullable = false)
-  private Set<MeetingType> meetingTypes;
+  private MeetingType meetingType;
 
   /**
    * The current status of the meeting (e.g., confirmed, canceled, etc.). Must be a non-null string
@@ -117,7 +113,6 @@ public class MeetingDBO {
    * Constructs a MeetingDBO with an empty set of meeting types and participants.
    */
   public MeetingDBO() {
-    this.meetingTypes = new HashSet<>();
     this.participants = new ArrayList<>();
   }
 }

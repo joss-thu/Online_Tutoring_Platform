@@ -16,7 +16,7 @@ import java.util.Set;
  * Provides methods for performing CRUD operations on user data.
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserDBO, Integer> {
+public interface UserRepository extends JpaRepository<UserDBO, Long> {
     /**
      * Finds a user entity by its username; in this case, email.
      *

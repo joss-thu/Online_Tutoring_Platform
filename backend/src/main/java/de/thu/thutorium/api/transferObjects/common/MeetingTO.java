@@ -4,13 +4,11 @@ import de.thu.thutorium.database.dbObjects.AddressDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
+import de.thu.thutorium.database.dbObjects.enums.MeetingType;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,33 +17,37 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MeetingTO {
-    @NotNull(message = "Meeting ID cannot be null")
-    private Long meetingId;
+    /** The tutor who created the meeting. */
+    @NotNull(message = "Tutor cannot be null")
+    private Long tutorId;
 
-    @NotEmpty(message = "The tutor id cannot be null")
-    private UserDBO tutor;
+    /** The course to which this meeting is related. */
+    @NotNull(message = "Course ID cannot be null")
+    private Long courseId;
 
-    @NotEmpty(message = "The course id cannot be null")
-    private CourseDBO course;
-
+    /** The date of the meeting. */
     @NotNull(message = "Meeting date cannot be null")
     private LocalDate meetingDate;
 
+    /** The time of the meeting. */
     @NotNull(message = "Meeting time cannot be null")
     private LocalDateTime meetingTime;
 
+    /** The duration of the meeting in minutes. */
     @NotNull(message = "Duration cannot be null")
-    @Positive(message = "Duration must be a positive integer")
     private Integer duration;
 
+    /** The types of the meeting. */
+    @NotNull(message = "Meeting types cannot be null")
+    private MeetingType meetingType;
+
+    /** The status of the meeting. */
+    @NotNull(message = "Meeting status cannot be null")
     private MeetingStatus meetingStatus;
 
-    @NotNull(message = "Room number cannot be null")
-    private String roomNum;
-
-    private String meetingLink;
-
-    @NotNull(message = "Address cannot be null")
-    private AddressDBO address;
+    /** The address ID where the meeting is being held. */
+    @NotNull(message = "Address ID cannot be null")
+    private Long addressId;
 }
