@@ -41,10 +41,17 @@ public class TutorController {
         return ResponseEntity.ok("Meeting updated successfully");
     }
 
+    /** Course Operations */
     //Create Course
     @PostMapping("/course/create")
     public ResponseEntity<String> createCourse(@RequestBody CourseTO courseTO) {
         courseService.createCourse(courseTO);
         return ResponseEntity.ok("Course created successfully"); // Return HTTP 201 status
+    }
+
+    @DeleteMapping("/delete-course/{courseId}")
+    public ResponseEntity<String> deleteCourse(@PathVariable Long courseId) {
+        courseService.deleteCourse(courseId);
+        return ResponseEntity.ok("Course deleted successfully");
     }
 }

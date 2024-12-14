@@ -92,4 +92,5 @@ public interface CourseService {
   Long getTotalCountOfCourses();
 
   void createCourse(CourseTO courseTO);
+  void deleteCourse(Long courseId);
 }

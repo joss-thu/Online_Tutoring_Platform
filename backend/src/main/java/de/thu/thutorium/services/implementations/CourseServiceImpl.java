@@ -155,4 +155,12 @@ public class CourseServiceImpl implements CourseService {
     // Save the new course entity to the database
     courseRepository.save(courseDBO);
   }
+
+  @Override
+  public void deleteCourse(Long courseId) {
+    if (!courseRepository.existsById(courseId)) {
+      throw new EntityNotFoundException("Course not found with ID: " + courseId);
+    }
+    courseRepository.deleteById(courseId);
+  }
 }
