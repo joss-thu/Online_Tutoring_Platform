@@ -41,6 +41,10 @@ public class MessageDBO {
   @JoinColumn(name = "sender_id", nullable = false)
   private UserDBO sender;
 
+  @ManyToOne
+  @JoinColumn(name = "receiver_id", nullable = false)
+  private UserDBO receiver;
+
   /**
    * The content of the message.
    */

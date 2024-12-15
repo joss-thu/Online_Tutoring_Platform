@@ -19,20 +19,22 @@ public class MessageTO {
     /**
      * Unique identifier for the message.
      */
-    @NotNull(message = "Message ID cannot be null")
     private Long messageId;
 
     /**
      * The sender of the message.
      */
     @NotNull(message = "Sender cannot be null")
-    private UserDBO sender;
+    private Long senderId;
 
     /**
      * The receiver of the message.
      */
     @NotNull(message = "Receiver cannot be null")
-    private UserDBO receiver;
+    private Long receiverId;
+
+    @NotNull(message = "Receiver cannot be null")
+    private Long chatId;
 
     /**
      * The content of the message.
@@ -56,4 +58,5 @@ public class MessageTO {
      */
     @NotNull(message = "Read status cannot be null")
     private Boolean isRead = false;
+
 }

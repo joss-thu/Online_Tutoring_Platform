@@ -23,6 +23,7 @@ public class ChatServiceImpl implements ChatService {
     private final ChatDBMapper chatMapper;
 
     @Transactional
+    @Override
     public void createChat(ChatCreateTO requestDTO) {
         // Fetch participants from the database
         Set<UserDBO> participants = new HashSet<>(
@@ -42,6 +43,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
+    @Transactional
     public void deleteChat(Long chatId) {
         ChatDBO chatDBO = chatRepository.findById(chatId)
                 .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
