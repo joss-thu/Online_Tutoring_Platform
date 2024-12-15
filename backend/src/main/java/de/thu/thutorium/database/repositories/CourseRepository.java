@@ -69,11 +69,4 @@ public interface CourseRepository extends JpaRepository<CourseDBO, Long> {
           "SELECT c FROM CourseDBO c JOIN c.courseCategories cc WHERE LOWER(cc.categoryName) = LOWER(:categoryName)")
   List<CourseDBO> findCoursesByCategoryName(@Param("categoryName") String categoryName);
 
-  /**
-   * Retrieves the total number of courses in the database.
-   *
-   * @return the total count of courses as a {@code Long}.
-   */
-  @Query("SELECT COUNT(c) FROM CourseDBO c")
-  Long countAllCourses();
 }

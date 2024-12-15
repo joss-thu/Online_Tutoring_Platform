@@ -1,6 +1,6 @@
 package de.thu.thutorium.api.frontendMappers;
 
-import de.thu.thutorium.api.transferObjects.TutorDTO;
+import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,10 +10,10 @@ import java.util.List;
 
 /**
  * A MapStruct mapper interface for converting between {@link UserDBO} (User Database Object) and
- * {@link TutorDTO} (Tutor Data Transfer Object).
+ * {@link TutorTO} (Tutor Data Transfer Object).
  *
  * <p>This interface defines the mapping logic to convert a {@code UserDBO} (representing a tutor)
- * to a {@code TutorDTO}. It uses MapStruct to automate the conversion process, making the mapping
+ * to a {@code TutorTO}. It uses MapStruct to automate the conversion process, making the mapping
  * type-safe and efficient.
  *
  * <p>The {@code uses} attribute specifies other mappers that will be used for mapping related
@@ -34,13 +34,15 @@ import java.util.List;
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TutorMapper {
   /**
-   * Converts a {@link UserDBO} (representing a tutor) to a {@link TutorDTO}.
+   * Converts a {@link UserDBO} (representing a tutor) to a {@link TutorTO}.
    *
    * @param tutor the {@code UserDBO} object representing the tutor to convert
-   * @return a {@code TutorDTO} object containing the tutor's data
+   * @return a {@code TutorTO} object containing the tutor's data
    */
-  @Mapping(target = "tutorCourses", source = "tutorCourses") // Map Set<CourseDBO> to List<CourseDTO>
-  TutorDTO toDTO(UserDBO tutor);
+  @Mapping(
+      target = "tutorCourses",
+      source = "tutorCourses") // Map Set<CourseDBO> to List<CourseDTO>
+  TutorTO toDTO(UserDBO tutor);
 
-  List<TutorDTO> toDTOList(List<UserDBO> users);
+  List<TutorTO> toDTOList(List<UserDBO> users);
 }

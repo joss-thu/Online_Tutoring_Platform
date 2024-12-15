@@ -1,13 +1,13 @@
 package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.frontendMappers.UserMapper;
-import de.thu.thutorium.api.transferObjects.UserBaseDTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.database.dbObjects.enums.Role;
 import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.interfaces.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,13 +16,18 @@ import org.springframework.stereotype.Service;
  * by their unique identifiers.
  *
  * <p>This service interacts with the {@link UserRepository} to retrieve user data and utilizes
- * {@link UserMapper} to map data between {@link UserDBO} and {@link UserBaseDTO}.
+ * {@link UserMapper} to map data between {@link UserDBO} and {@link UserTO}.
  */
 @Service
 public class UserServiceImpl implements UserService {
 
-  @Autowired private UserRepository userRepository;
-  @Autowired private UserMapper userMapper;
+  private final UserRepository userRepository;
+  private final UserMapper userMapper;
+
+  public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    this.userRepository = userRepository;
+    this.userMapper = userMapper;
+  }
 
   /**
    * Returns the total number of students in the system.
@@ -33,7 +38,11 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public Long getStudentCount() {
-    return userRepository.countByRole("STUDENT");
+    return userRepository.findAll().stream()
+        .filter(
+            user ->
+                user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.STUDENT)))
+        .count();
   }
 
   /**
@@ -45,21 +54,25 @@ public class UserServiceImpl implements UserService {
    */
   @Override
   public Long getTutorCount() {
-    return userRepository.countByRole("TUTOR");
+    return userRepository.findAll().stream()
+        .filter(
+            user ->
+                user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.TUTOR)))
+        .count();
   }
 
   /**
    * Finds a user by their unique user ID.
    *
    * <p>This method fetches the {@link UserDBO} object from the {@link UserRepository} using the
-   * provided {@code userId} and maps it to a {@link UserBaseDTO} using the {@link UserMapper}. If
-   * no user is found, {@code null} is returned.
+   * provided {@code userId} and maps it to a {@link UserTO} using the {@link UserMapper}. If no
+   * user is found, {@code null} is returned.
    *
    * @param userId the unique ID of the user to retrieve.
-   * @return a {@link UserBaseDTO} representing the user, or {@code null} if no user is found.
+   * @return a {@link UserTO} representing the user, or {@code null} if no user is found.
    */
   @Override
-  public UserBaseDTO findByUserId(Long userId) {
+  public UserTO findByUserId(Long userId) {
     // Fetch UserDBO from the repository
     UserDBO user = userRepository.findByUserId(userId);
 
@@ -74,14 +87,14 @@ public class UserServiceImpl implements UserService {
    * Finds a tutor by their unique tutor ID.
    *
    * <p>This method fetches the {@link UserDBO} object from the {@link UserRepository} using the
-   * provided {@code tutorId} and maps it to a {@link UserBaseDTO} using the {@link UserMapper}. If
-   * no tutor is found, {@code null} is returned.
+   * provided {@code tutorId} and maps it to a {@link UserTO} using the {@link UserMapper}. If no
+   * tutor is found, {@code null} is returned.
    *
    * @param tutorId the unique ID of the tutor to retrieve.
-   * @return a {@link UserBaseDTO} representing the tutor, or {@code null} if no tutor is found.
+   * @return a {@link UserTO} representing the tutor, or {@code null} if no tutor is found.
    */
   @Override
-  public UserBaseDTO getTutorByID(Long tutorId) {
+  public UserTO getTutorByID(Long tutorId) {
     UserDBO user = userRepository.findByTutorId(tutorId);
 
     if (user != null) {
@@ -94,7 +107,9 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(Long userId) {
     // Check if the user exists before attempting to delete
-    UserDBO user = userRepository.findById(userId)
+    UserDBO user =
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
     // Delete the user from the repository

@@ -64,15 +64,6 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
     UserDBO findByTutorId(@Param("userId") Long userId);
 
     /**
-     * Counts the number of users with a specific role.
-     *
-     * @param roleName the name of the role (e.g., STUDENT, TUTOR)
-     * @return the total count of users with the specified role
-     */
-    @Query("SELECT COUNT(u) FROM UserDBO u JOIN u.roles r WHERE r.roleName = :roleName")
-    Long countByRole(@Param("roleName") String roleName);
-
-    /**
      * Finds tutors based on their full name or a partial match of their name.
      *
      * <p>This query retrieves all users with the role of "TUTOR" whose full name matches the given

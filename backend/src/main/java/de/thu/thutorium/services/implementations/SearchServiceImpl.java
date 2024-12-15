@@ -2,8 +2,8 @@ package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.frontendMappers.CourseMapper;
 import de.thu.thutorium.api.frontendMappers.TutorMapper;
-import de.thu.thutorium.api.transferObjects.TutorDTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
@@ -11,7 +11,6 @@ import de.thu.thutorium.database.repositories.CategoryRepository;
 import de.thu.thutorium.database.repositories.CourseRepository;
 import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.interfaces.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,25 +24,39 @@ import java.util.List;
  */
 @Service
 public class SearchServiceImpl implements SearchService {
-  @Autowired private CourseRepository courseRepository;
-  @Autowired private CourseMapper courseMapper;
-  @Autowired private UserRepository userRepository;
-  @Autowired private TutorMapper tutorMapper;
-  @Autowired private CategoryRepository categoryRepository;
+  private final CourseRepository courseRepository;
+  private final CourseMapper courseMapper;
+  private final UserRepository userRepository;
+  private final TutorMapper tutorMapper;
+  private final CategoryRepository categoryRepository;
+
+  public SearchServiceImpl(
+      CourseRepository courseRepository,
+      CourseMapper courseMapper,
+      UserRepository userRepository,
+      TutorMapper tutorMapper,
+      CategoryRepository categoryRepository) {
+    this.courseRepository = courseRepository;
+    this.courseMapper = courseMapper;
+    this.userRepository = userRepository;
+    this.tutorMapper = tutorMapper;
+    this.categoryRepository = categoryRepository;
+  }
 
   /**
    * Searches for tutors based on their full name.
    *
    * <p>This method fetches the list of tutors whose full name matches the given {@code tutorName}.
    * The search may support partial matches depending on the implementation. The result is mapped
-   * into a list of {@link de.thu.thutorium.api.transferObjects.UserBaseDTO} objects.
+   * into a list of {@link de.thu.thutorium.api.transferObjects.common.UserTO} objects.
    *
    * @param tutorName the full name of the tutor (can be partial).
-   * @return a list of {@link de.thu.thutorium.api.transferObjects.UserBaseDTO} objects representing the tutors that match the search
-   * criteria. If no tutors are found, an empty list is returned.
+   * @return a list of {@link de.thu.thutorium.api.transferObjects.common.UserTO} objects
+   *     representing the tutors that match the search criteria. If no tutors are found, an empty
+   *     list is returned.
    */
   @Override
-  public List<TutorDTO> searchTutors(String tutorName) {
+  public List<TutorTO> searchTutors(String tutorName) {
     List<UserDBO> tutors = userRepository.findByTutorFullName(tutorName);
     return tutorMapper.toDTOList(tutors);
   }

@@ -121,17 +121,10 @@ public class CourseServiceImpl implements CourseService {
     return courses.stream().map(courseMapper::toDTO).toList();
   }
 
-  /**
-   * Retrieves the total number of courses available.
-   *
-   * <p>This method returns the total count of courses stored in the database using the {@link
-   * CourseRepository}. The result is returned as a {@code Long}.
-   *
-   * @return the total number of courses available.
-   */
+//-----------------------------------------
   @Override
   public Long getTotalCountOfCourses() {
-    return courseRepository.countAllCourses();
+    return courseRepository.count(); // Default method from JpaRepository
   }
 
   @Override

@@ -1,26 +1,52 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.api.transferObjects.TutorDTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.services.implementations.SearchServiceImpl;
+import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.SearchService;
+import de.thu.thutorium.services.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** Controller for searching tutors and courses. */
+/**
+ * Controller for managing search functionalities for tutors, courses, and general information.
+ *
+ * <p>This controller provides endpoints that allow users to:
+ *
+ * <ul>
+ *   <li>Search for tutors by name
+ *   <li>Search for courses by name
+ *   <li>Retrieve a list of course categories
+ *   <li>Get a list of courses by category
+ *   <li>Retrieve the total count of students, tutors, and courses on the platform
+ * </ul>
+ *
+ * <p><b>Access:</b> This controller is publicly accessible, meaning it can be accessed without
+ * authentication. It is designed to provide search functionality and general platform information
+ * to both logged-in and not logged-in users.
+ *
+ * <p>All endpoints in this controller support cross-origin requests from "http://localhost:3000"
+ * and allow preflight request caching for up to 3600 seconds.
+ */
 @RestController
 @RequestMapping("/search")
 public class SearchController {
 
   private final SearchService searchService;
+  private final CourseService courseService;
+  private final UserService userService;
 
   @Autowired
-  public SearchController(SearchServiceImpl searchServiceImpl) {
+  public SearchController(
+      SearchServiceImpl searchServiceImpl, CourseService courseService, UserService userService) {
     this.searchService = searchServiceImpl;
+    this.courseService = courseService;
+    this.userService = userService;
   }
 
   /**
@@ -47,7 +73,7 @@ public class SearchController {
 
     // If tutorName is provided, search for tutors and add to the results
     if (tutorName != null && !tutorName.isEmpty()) {
-      List<TutorDTO> tutors = searchService.searchTutors(tutorName);
+      List<TutorTO> tutors = searchService.searchTutors(tutorName);
       results.addAll(tutors); // Add tutors to the results list
     }
 
@@ -70,9 +96,65 @@ public class SearchController {
    *
    * @return a {@code CourseCategoryDTO} object containing the course category data
    */
+  //TODO: JSON Serialisation problem with ROLES
   @GetMapping("/categories")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public List<CourseCategoryDBO> getCategories() {
     return searchService.getAllCategories();
+  }
+
+  /**
+   * Retrieves a list of courses based on the specified category name. This endpoint is cross-origin
+   * enabled for requests from "http://localhost:3000" and allows preflight requests to be cached
+   * for up to 3600 seconds.
+   *
+   * @param categoryName The name of the category for which courses are to be retrieved.
+   * @return A list of {@link CourseTO} objects that belong to the specified category.
+   */
+  @GetMapping("/category/{categoryName}")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public List<CourseTO> getCoursesByCategory(@PathVariable String categoryName) {
+    return courseService.getCoursesByCategory(categoryName);
+  }
+
+  // Count Functions (works)
+  /**
+   * Endpoint to get the total count of students.
+   *
+   * @return the total number of users with the role of 'student'
+   * @apiNote This endpoint can be accessed via a GET request to '/students/count'.
+   * @example GET /students/count
+   * @response 42
+   */
+  @GetMapping("students/count")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Long getStudentCount() {
+    return userService.getStudentCount();
+  }
+
+  /**
+   * Endpoint to get the total count of tutors.
+   *
+   * @return the total number of users with the role of 'tutor'
+   * @apiNote This endpoint can be accessed via a GET request to '/tutors/count'.
+   * @example GET /tutors/count
+   * @response 15
+   */
+  @GetMapping("tutors/count")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Long getTutorsCount() {
+    return userService.getTutorCount();
+  }
+
+  /**
+   * Handles a GET request to retrieve the total count of courses. Allows cross-origin requests from
+   * "http://localhost:3000" with a maximum age of 3600 seconds.
+   *
+   * @return the total number of courses as a {@code Long}.
+   */
+  @GetMapping("/courses/count")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public Long getCoursesCount() {
+    return courseService.getTotalCountOfCourses();
   }
 }

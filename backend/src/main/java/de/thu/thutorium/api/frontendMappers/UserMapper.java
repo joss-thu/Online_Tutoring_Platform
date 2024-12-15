@@ -1,13 +1,13 @@
 package de.thu.thutorium.api.frontendMappers;
 
-import de.thu.thutorium.api.transferObjects.*;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.*;
 import org.mapstruct.*;
 
 import java.util.List;
 
 /**
- * A MapStruct mapper interface for converting between {@link UserDBO} and {@link UserBaseDTO}.
+ * A MapStruct mapper interface for converting between {@link UserDBO} and {@link UserTO}.
  *
  * <p>This interface defines the mapping methods for converting a {@code UserDBO} (Database Object)
  * to a {@code UserBaseDTO} (Data Transfer Object), and vice versa. The mapper uses MapStruct to
@@ -25,18 +25,18 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
   /**
-   * Converts a {@link UserDBO} object to a {@link UserBaseDTO}.
+   * Converts a {@link UserDBO} object to a {@link UserTO}.
    *
    * @param user the {@code UserDBO} object to convert
    * @return a {@code UserBaseDTO} object containing the user data
    */
-  UserBaseDTO toDTO(UserDBO user);
+  UserTO toDTO(UserDBO user);
 
   /**
-   * Converts a list of {@link UserDBO} objects to a list of {@link UserBaseDTO} objects.
+   * Converts a list of {@link UserDBO} objects to a list of {@link UserTO} objects.
    *
    * @param users a list of {@code UserDBO} objects to convert
    * @return a list of {@code UserBaseDTO} objects containing the user data
    */
-  List<UserBaseDTO> toDTOList(List<UserDBO> users);
+  List<UserTO> toDTOList(List<UserDBO> users);
 }

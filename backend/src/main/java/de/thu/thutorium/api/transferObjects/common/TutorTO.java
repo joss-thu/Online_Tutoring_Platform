@@ -1,7 +1,5 @@
-package de.thu.thutorium.api.transferObjects;
+package de.thu.thutorium.api.transferObjects.common;
 
-import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +11,7 @@ import java.util.List;
  * as a description of the tutor, the list of courses they teach, and their ratings.
  */
 @Data
-public class TutorDTO extends UserBaseDTO {
+public class TutorTO extends UserTO {
   /**
    * A brief description or biography of the tutor.
    *
@@ -40,4 +38,6 @@ public class TutorDTO extends UserBaseDTO {
    * the tutor's teaching effectiveness and overall student satisfaction.
    */
   private List<RatingTutorTO> ratings;
+
+
 }

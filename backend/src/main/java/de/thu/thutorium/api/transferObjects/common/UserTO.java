@@ -61,4 +61,5 @@ public class UserTO {
      *
      */
     private AffiliationTO affiliation;
+
 }

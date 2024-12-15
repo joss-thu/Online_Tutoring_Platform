@@ -2,8 +2,10 @@ package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.MeetingService;
+import de.thu.thutorium.services.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 public class TutorController {
     private final MeetingService meetingService;
     private final CourseService courseService;
+    private final UserService userService;
 
 
     //Create Meeting
@@ -49,6 +52,7 @@ public class TutorController {
         return ResponseEntity.ok("Course created successfully"); // Return HTTP 201 status
     }
 
+    //Delete Course
     @DeleteMapping("/delete-course/{courseId}")
     public ResponseEntity<String> deleteCourse(@PathVariable Long courseId) {
         courseService.deleteCourse(courseId);
@@ -62,5 +66,14 @@ public class TutorController {
             @RequestBody @Valid CourseTO courseTO) {
         courseService.updateCourse(courseId, courseTO);
         return ResponseEntity.ok("Course updated successfully");
+    }
+
+
+    //--------
+    //Get tutor by ID
+    @GetMapping("tutor")
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    public UserTO getTutor(@RequestParam Long id) {
+        return userService.getTutorByID(id);
     }
 }

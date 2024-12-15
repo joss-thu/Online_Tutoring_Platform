@@ -1,18 +1,21 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.common.UniversityTO;
+import de.thu.thutorium.database.dbObjects.UniversityDBO;
+import de.thu.thutorium.services.interfaces.UniversityService;
 import de.thu.thutorium.services.interfaces.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;  // Service to interact with the User repository
+    private final UniversityService universityService;
 
     /**
      * Delete a user by their ID.
@@ -24,4 +27,12 @@ public class AdminController {
         userService.deleteUser(userId);  // Delegate the delete operation to the service
         return ResponseEntity.ok("User deleted successfully");
     }
+
+    @PostMapping("/create-university")
+    public ResponseEntity<UniversityDBO> createUniversity(
+            @RequestBody @Valid UniversityTO university) {
+        UniversityDBO created = universityService.createUniversity(university);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
 }

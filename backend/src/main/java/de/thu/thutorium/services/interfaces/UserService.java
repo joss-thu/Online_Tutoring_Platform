@@ -1,6 +1,6 @@
 package de.thu.thutorium.services.interfaces;
 
-import de.thu.thutorium.api.transferObjects.UserBaseDTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 
 public interface UserService {
 
@@ -25,7 +25,7 @@ public interface UserService {
    * @return the {@link de.thu.thutorium.database.dbObjects.UserDBO} object if found
    * @throws IllegalArgumentException if {@code userId} is null
    */
-  UserBaseDTO findByUserId(Long userId);
+  UserTO findByUserId(Long userId);
 
   /**
    * Retrieves a {@link de.thu.thutorium.database.dbObjects.UserDBO} entity representing a tutor by their unique identifier.
@@ -34,7 +34,7 @@ public interface UserService {
    * @return the {@link de.thu.thutorium.database.dbObjects.UserDBO} entity corresponding to the specified tutor ID, or {@code null} if
    *     no such tutor is found
    */
-  UserBaseDTO getTutorByID(Long tutorId);
+  UserTO getTutorByID(Long tutorId);
 
   void deleteUser(Long userId);
 }
