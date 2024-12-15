@@ -51,7 +51,7 @@ public class AddressDBO {
 
   /** The house number for the address. This field is required and cannot be null. */
   @Column(name = "house_number", nullable = false)
-  private int houseNum;
+  private String houseNum;
 
   /** The name of the street for the address. This field is required and cannot be null. */
   @Column(name = "street_name", nullable = false)

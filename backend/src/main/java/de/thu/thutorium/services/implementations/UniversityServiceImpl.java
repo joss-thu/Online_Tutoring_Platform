@@ -1,9 +1,11 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.mappers.common.AddressMapper;
 import de.thu.thutorium.api.mappers.common.UniversityMapper;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
 import de.thu.thutorium.database.dbObjects.UniversityDBO;
 import de.thu.thutorium.database.exceptions.ResourceAlreadyExistsException;
+import de.thu.thutorium.database.repositories.AddressRepository;
 import de.thu.thutorium.database.repositories.UniversityRepository;
 import de.thu.thutorium.services.interfaces.UniversityService;
 import jakarta.transaction.Transactional;
@@ -23,7 +25,10 @@ import java.util.Optional;
 @Service
 public class UniversityServiceImpl implements UniversityService {
     private final UniversityRepository universityRepository;
-    private final UniversityMapper universitymapper;
+    private final AddressRepository addressRepository;
+    private final UniversityMapper universityMapper;
+    private final AddressServiceImpl addressService;
+    private final AddressMapper addressMapper;
 
     /**
      * Creates a new university.
@@ -38,9 +43,9 @@ public class UniversityServiceImpl implements UniversityService {
         if (universityExists(university)) {
             throw new ResourceAlreadyExistsException("University with name " + university.getUniversityName() + " already exists");
         }
-        UniversityDBO universityDBO = universitymapper.toDBO(university);
+        UniversityDBO universityDBO = universityMapper.toDBO(university);
         universityRepository.save(universityDBO);
-        return universitymapper.toDTO(universityDBO);
+        return universityMapper.toDTO(universityDBO);
     }
 
     /**

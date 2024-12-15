@@ -226,7 +226,7 @@
 			<index name="unq_university" unique="UNIQUE_INDEX" >
 				<column name="address_id" />
 			</index>
-			<fk name="university_address_id_foreign" to_schema="public" to_table="address" options="" >
+			<fk name="fk_university_address" to_schema="public" to_table="address" >
 				<fk_column name="address_id" pk="address_id" />
 			</fk>
 		</table>

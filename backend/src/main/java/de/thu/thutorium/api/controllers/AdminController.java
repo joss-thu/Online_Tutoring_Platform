@@ -1,6 +1,8 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.common.AddressTO;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
+import de.thu.thutorium.services.implementations.AddressServiceImpl;
 import de.thu.thutorium.services.implementations.UniversityServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class AdminController {
     private final UniversityServiceImpl universityService;
+    private final AddressServiceImpl addressService;
 
     /**
      * Creates a new university.
@@ -35,6 +38,12 @@ public class AdminController {
     @PostMapping("create-university")
     public ResponseEntity<UniversityTO> createUniversity(@Valid @RequestBody UniversityTO university) {
         UniversityTO created = universityService.createUniversity(university);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping("create-address")
+    public ResponseEntity<AddressTO> createAddress(@Valid @RequestBody AddressTO address) {
+        AddressTO created = addressService.createAddress(address);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 }
