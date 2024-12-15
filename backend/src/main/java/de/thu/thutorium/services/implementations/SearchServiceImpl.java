@@ -1,10 +1,11 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.frontendMappers.CourseCategoryMapper;
 import de.thu.thutorium.api.frontendMappers.CourseMapper;
 import de.thu.thutorium.api.frontendMappers.TutorMapper;
+import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
-import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.CategoryRepository;
@@ -14,6 +15,7 @@ import de.thu.thutorium.services.interfaces.SearchService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the {@link SearchService} interface that provides methods for searching tutors,
@@ -29,18 +31,20 @@ public class SearchServiceImpl implements SearchService {
   private final UserRepository userRepository;
   private final TutorMapper tutorMapper;
   private final CategoryRepository categoryRepository;
+  private final CourseCategoryMapper courseCategoryMapper;
 
   public SearchServiceImpl(
-      CourseRepository courseRepository,
-      CourseMapper courseMapper,
-      UserRepository userRepository,
-      TutorMapper tutorMapper,
-      CategoryRepository categoryRepository) {
+          CourseRepository courseRepository,
+          CourseMapper courseMapper,
+          UserRepository userRepository,
+          TutorMapper tutorMapper,
+          CategoryRepository categoryRepository, CourseCategoryMapper courseCategoryMapper) {
     this.courseRepository = courseRepository;
     this.courseMapper = courseMapper;
     this.userRepository = userRepository;
     this.tutorMapper = tutorMapper;
     this.categoryRepository = categoryRepository;
+      this.courseCategoryMapper = courseCategoryMapper;
   }
 
   /**
@@ -82,14 +86,17 @@ public class SearchServiceImpl implements SearchService {
    * Retrieves all available course categories.
    *
    * <p>This method fetches the list of all course categories from the {@link CategoryRepository}.
-   * The result is a list of {@link CourseCategoryDBO} objects representing the available
+   * The result is a list of {@link CourseCategoryTO} objects representing the available
    * categories.
    *
-   * @return a list of {@link CourseCategoryDBO} objects representing all available categories. If
+   * @return a list of {@link CourseCategoryTO} objects representing all available categories. If
    *     no categories are found, an empty list is returned.
    */
-  @Override
-  public List<CourseCategoryDBO> getAllCategories() {
-    return categoryRepository.findAllCategories();
+  public List<CourseCategoryTO> getAllCategories() {
+    // Use repository's built-in `findAll` and map results to TOs
+    return categoryRepository.findAll()
+            .stream()
+            .map(courseCategoryMapper::toDTO)
+            .collect(Collectors.toList());
   }
 }

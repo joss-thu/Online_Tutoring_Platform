@@ -22,22 +22,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<CourseCategoryDBO, Long> {
 
   /**
-   * Retrieves all course categories from the database.
-   *
-   * <p>This method uses a custom JPQL query to select all instances of the {@link
-   * CourseCategoryDBO} entity. It returns a {@link List} of categories. If no categories are found,
-   * an empty list is returned.
-   *
-   * <p>Note that this method is an alternative to using {@link JpaRepository#findAll()}, allowing
-   * for additional customization if needed in the future.
-   *
-   * @return a {@link List} of {@link CourseCategoryDBO} objects representing all categories in the
-   *     database.
-   */
-  @Query("SELECT c FROM CourseCategoryDBO c")
-  List<CourseCategoryDBO> findAllCategories();
-
-  /**
    * Finds a category by its unique name.
    *
    * <p>This method retrieves a single {@link CourseCategoryDBO} entity based on its unique name.
