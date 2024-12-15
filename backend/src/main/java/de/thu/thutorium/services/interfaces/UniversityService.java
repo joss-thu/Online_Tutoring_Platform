@@ -16,4 +16,12 @@ public interface UniversityService {
      * @return the created {@code UniversityTO} object
      */
     UniversityTO createUniversity(UniversityTO university);
+
+    /**
+     * Checks if the university already exists.
+     *
+     * @param university the {@code UniversityTO} object containing the university data
+     * @return the boolean value corresponding to if the university already exists or not.
+     */
+    Boolean universityExists(UniversityTO university);
 }

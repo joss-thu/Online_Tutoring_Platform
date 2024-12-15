@@ -1,5 +1,6 @@
 package de.thu.thutorium;
 
+import de.thu.thutorium.database.exceptions.ResourceAlreadyExistsException;
 import de.thu.thutorium.database.exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,4 +70,39 @@ public class GlobalExceptionHandler {
         errorResponse.put("error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
+
+    /**
+     * Handles {@link ResourceAlreadyExistsException} exceptions thrown when a requested resource already exists.
+     * This method captures the exception and returns a {@link ResponseEntity} with a {@link HttpStatus#CONFLICT} status.
+     *
+     * @param ex the {@code ResourceAlreadyExistsException} exception
+     * @return a {@code ResponseEntity} containing the error message
+     */
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Resource already exists");
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handles {@link IllegalArgumentException} exceptions thrown when an illegal argument is passed.
+     * This method captures the exception and returns a {@link ResponseEntity} with a {@link HttpStatus#BAD_REQUEST} status.
+     *
+     * @param ex the {@code IllegalArgumentException} exception
+     * @return a {@code ResponseEntity} containing the error message
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Invalid argument");
+        errorResponse.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 }
+

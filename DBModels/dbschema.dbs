@@ -16,9 +16,6 @@
 			<index name="pk_meeting" unique="PRIMARY_KEY" >
 				<column name="meeting_id" />
 			</index>
-			<index name="unq_meeting" unique="UNIQUE_INDEX" >
-				<column name="address_id" />
-			</index>
 			<constraint name="cns_meeting_meeting_type" >
 				<string><![CDATA["meeting_type" IN('')]]></string>
 			</constraint>

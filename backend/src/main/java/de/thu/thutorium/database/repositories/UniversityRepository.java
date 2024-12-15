@@ -4,6 +4,8 @@ import de.thu.thutorium.database.dbObjects.UniversityDBO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Repository interface for accessing and managing {@link UniversityDBO}
  * entities in the database.
@@ -19,4 +21,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UniversityRepository extends JpaRepository<UniversityDBO, Long> {
+    /**
+     * Finds a university by its name.
+     *
+     * @param universityName the name of the university
+     * @return an {@code Optional} containing the found {@code UniversityDBO} or {@code Optional.empty()} if not found
+     */
+    Optional<UniversityDBO> findByUniversityName(String universityName);
 }
