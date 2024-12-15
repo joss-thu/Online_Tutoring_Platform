@@ -21,48 +21,49 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MessageDBO {
 
-  /**
-   * The unique identifier for the message. This is the primary key and is auto-generated using
-   * {@code GenerationType.IDENTITY}.
-   */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long messageId;
 
   /**
+   * The chat this message belongs to.
+   * Defines a many-to-one relationship with {@link ChatDBO}.
+   */
+  @ManyToOne
+  @JoinColumn(name = "chat_id", nullable = false)
+  private ChatDBO chat;
+
+  /**
    * The sender of the message.
-   *
-   * <p>Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by a
-   * List<MessageDBO> called 'messages_sent' in {@link UserDBO}.
+   * Defines a many-to-one relationship with {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "sender_id", nullable = false)
   private UserDBO sender;
 
   /**
-   * The receiver of the message.
-   *
-   * <p>Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by a
-   * List<MessageDBO> called 'messages_received' in {@link UserDBO}.
+   * The content of the message.
    */
-  @ManyToOne
-  @JoinColumn(name = "receiver_id", nullable = false)
-  private UserDBO receiver;
-
-  /** The content of the message. Stored as a TEXT column in the database. */
   @Column(name = "message_content", columnDefinition = "TEXT", nullable = false)
   private String messageContent;
 
-  /** The timestamp when the message was sent. */
+  /**
+   * The timestamp when the message was sent.
+   */
   @Column(name = "send_at", nullable = false)
   private LocalDateTime sendAt;
 
-  /** The timestamp when the message was read. This field is optional. */
-  @Column(name = "read_at")
-  private LocalDateTime readAt;
-
-  /** Flag indicating whether the message has been read. */
+  /**
+   * Indicates whether the message has been read.
+   */
   @Column(name = "is_read", nullable = false)
   @Builder.Default
   private Boolean isRead = false;
+
+  /**
+   * The timestamp when the message was read.
+   */
+  @Column(name = "read_at")
+  private LocalDateTime readAt;
 }
+

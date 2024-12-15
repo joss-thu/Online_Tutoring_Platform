@@ -1,7 +1,9 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
 import de.thu.thutorium.database.dbObjects.UniversityDBO;
+import de.thu.thutorium.services.interfaces.ChatService;
 import de.thu.thutorium.services.interfaces.UniversityService;
 import de.thu.thutorium.services.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
     private final UserService userService;  // Service to interact with the User repository
     private final UniversityService universityService;
+    private final ChatService chatService;
+
 
     /**
      * Delete a user by their ID.
@@ -33,6 +37,12 @@ public class AdminController {
             @RequestBody @Valid UniversityTO university) {
         UniversityDBO created = universityService.createUniversity(university);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping("/chat-create")
+    public ResponseEntity<String> createChat(@RequestBody @Valid ChatCreateTO requestDTO) {
+        chatService.createChat(requestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Chat created successfully!");
     }
 
 }

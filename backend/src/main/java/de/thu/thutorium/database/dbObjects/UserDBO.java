@@ -188,26 +188,6 @@ public class UserDBO implements UserDetails {
   private List<MeetingDBO> meetings = new ArrayList<>();
 
   /**
-   * Messages sent by a sender to receiver.
-   *<p> Defines a one-to-many relationship with {@link MessageDBO}.
-   * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
-   * TODO: check the orphan removal behavior with respect to archiving of messages.
-   */
-  @OneToMany(mappedBy = "sender", orphanRemoval = false)
-  @Builder.Default
-  private List<MessageDBO> messages_sent = new ArrayList<>();
-
-  /**
-   * Messages received by a receiver from a sender.
-   * <p> Defines a one-to-many relationship with {@link MessageDBO}.
-   * The {@code orphanRemoval} attribute is set to 'false' to archive the messages.
-   * TODO: check the orphan removal behavior with respect to archiving of messages.
-   */
-  @OneToMany(mappedBy = "receiver", orphanRemoval = false)
-  @Builder.Default
-  private List<MessageDBO> messages_received = new ArrayList<>();
-
-  /**
    * The scores received by a student for the courses they attend.
    *<p> Defines a one-to-many relationship with {@link UserDBO}.
    * The {@code orphanRemoval} attribute ensures that scores are removed if they are no longer associated with the student.
@@ -253,8 +233,6 @@ public class UserDBO implements UserDetails {
     this.receivedTutorRatings = new ArrayList<>();
     this.givenCourseRatings = new ArrayList<>();
     this.meetings = new ArrayList<>();
-    this.messages_sent = new ArrayList<>();
-    this.messages_received = new ArrayList<>();
     this.receivedScores = new ArrayList<>();
     this.courseCategories = new ArrayList<>();
     this.meetingsScheduled = new ArrayList<>();
