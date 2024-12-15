@@ -45,4 +45,10 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Chat created successfully!");
     }
 
+    @DeleteMapping("/chat-delete/{chatId}")
+    public ResponseEntity<String> deleteChat(@PathVariable Long chatId) {
+        chatService.deleteChat(chatId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Chat deleted successfully!");
+    }
+
 }

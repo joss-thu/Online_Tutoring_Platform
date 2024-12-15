@@ -8,6 +8,7 @@ import de.thu.thutorium.database.repositories.ChatRepository;
 import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.interfaces.ChatService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class ChatServiceImpl implements ChatService {
     private final UserRepository userRepository;
     private final ChatDBMapper chatMapper;
 
+    @Transactional
     public void createChat(ChatCreateTO requestDTO) {
         // Fetch participants from the database
         Set<UserDBO> participants = new HashSet<>(
@@ -37,5 +39,13 @@ public class ChatServiceImpl implements ChatService {
 
         // Save Chat Entity
         chatRepository.save(chatDBO);
+    }
+
+    @Override
+    public void deleteChat(Long chatId) {
+        ChatDBO chatDBO = chatRepository.findById(chatId)
+                .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
+
+        chatRepository.delete(chatDBO);
     }
 }
