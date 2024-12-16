@@ -3,7 +3,6 @@ import React from 'react';
 export default function SearchBar({ placeholder = "Search", onChange, className = '', ...props }) {
     return (
         <div className={`relative w-full max-w-3xl mx-auto ${className}`}>
-            {/* Input Field with Padding */}
             <input
                 type="text"
                 placeholder={placeholder}
@@ -12,7 +11,6 @@ export default function SearchBar({ placeholder = "Search", onChange, className 
                 {...props}
             />
 
-            {/* Input Field */}
             <img
                 src="/public/searchbar.svg"  // Ensure this path is correct
                 alt="Search Icon"

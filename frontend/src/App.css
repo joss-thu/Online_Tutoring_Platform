@@ -9,7 +9,28 @@
     --secondary_color3: #FFA000;
     --secondary_color4: #4A90E2;
 }
+html, body {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+    padding: 0;
+}
 
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9fafb; /* Light gray */
+}
+.form-wrapper {
+    width: 100%;
+    max-width: 1200px; /* Adjust to your screen size */
+    padding: 2rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 .app {
     text-align: center;
 }
