@@ -71,6 +71,7 @@ public class MeetingServiceImpl implements MeetingService {
     meetingRepository.deleteById(meetingId);
   }
 
+  @Override
   @Transactional
   public void updateMeeting(Long meetingId, MeetingTO meetingTO) {
     // Fetch the existing meeting

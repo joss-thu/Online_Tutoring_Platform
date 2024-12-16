@@ -16,22 +16,16 @@ import lombok.*;
 public class ProgressTO {
 
     /**
-     * Unique identifier for the rating.
-     */
-    @NotNull(message = "Rating ID cannot be null")
-    private Long ratingId;
-
-    /**
      * The student associated with the progress.
      */
-    @NotNull(message = "Student cannot be null")
-    private UserDBO student;
+    @NotNull(message = "Student ID cannot be null")
+    private Long studentId;
 
     /**
      * The course associated with the progress.
      */
-    @NotNull(message = "Course cannot be null")
-    private CourseDBO course;
+    @NotNull(message = "Course ID cannot be null")
+    private Long courseId;
 
     /**
      * The points scored by the student in the course.
