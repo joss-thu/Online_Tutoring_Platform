@@ -1,92 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Merriweather:wght@400;700&display=swap');
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 :root {
-    --primary_color: #003366;
-    --secondary_color1: #E0f7E9;
-    --secondary_color2: #333333;
-    --secondary_color3: #FFA000;
-    --secondary_color4: #4A90E2;
-}
-html, body {
-    height: 100%;
-    margin: 0;
-    width: 100%;
-    padding: 0;
+  --blue: #61dafb;
+  --white: #fff;
 }
 
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f9fafb; /* Light gray */
-}
-.form-wrapper {
-    width: 100%;
-    max-width: 1200px; /* Adjust to your screen size */
-    padding: 2rem;
-    background: #fff;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
 .app {
-    text-align: center;
+  text-align: center;
 }
 
 .app-logo {
-    height: 40vmin;
-    pointer-events: none;
+  height: 40vmin;
+  pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-    .app-logo {
-        animation: app-logo-spin infinite 20s linear;
-    }
+  .app-logo {
+    animation: app-logo-spin infinite 20s linear;
+  }
 }
 
 .app-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
 }
 
 .app-link {
-    color: #61dafb;
+  color: #61dafb;
 }
 
 .btn {
-    background-color: var(--primary_color);
-    color: white;
-    border: 2px solid var(--secondary_color2);
-    padding: 10px 20px;
-    font-size: 20px;
-    margin: 10px;
-    font-weight: bold;
+  background-color: var(--blue);
+  color: white;
+  border: 2px solid var(--blue);
+  padding: 10px 20px;
+  font-size: 20px;
+  margin: 10px;
+  font-weight: bold;
 }
 
 .btn-primary {
-    border-radius: 30px;
+  border-radius: 30px;
 }
 
 .btn:hover {
-    background-color: white;
-    color: var(--secondary_color2);
-    cursor: pointer;
+  background-color: white;
+  color: var(--blue);
+  cursor: pointer;
 }
 
 @keyframes app-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
 
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
