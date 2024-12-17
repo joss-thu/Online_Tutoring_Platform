@@ -4,10 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 
 /**
@@ -17,8 +14,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AddressTO {
-
     /**
      * Name of the campus.
      */
@@ -28,7 +25,7 @@ public class AddressTO {
      * House number.
      */
     @NotNull
-    private Short houseNum;
+    private String houseNum;
 
     /**
      * Name of the street.
@@ -46,7 +43,7 @@ public class AddressTO {
      * Postal code of the address.
      */
     @NotNull
-    private Short postalCode;
+    private String postalCode;
 
     /**
      * Country of the address.

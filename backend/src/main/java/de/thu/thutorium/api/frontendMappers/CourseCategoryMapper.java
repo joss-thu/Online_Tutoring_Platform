@@ -19,17 +19,17 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface CourseCategoryMapper {
-  /**
-   * Converts a {@link CourseCategoryDBO} (representing a course category in the database) to a
-   * {@link CourseCategoryTO}.
-   *
-   * <p>This method maps the {@code categoryName} field of the {@code CourseCategoryDBO} to the
-   * {@code categoryName} field in the {@code CourseCategoryDTO}.
-   *
-   * @param courseCategory the {@code CourseCategoryDBO} object representing the course category to
-   *     convert
-   * @return a {@code CourseCategoryDTO} object containing the course category data
-   */
-  @Mapping(source = "categoryName", target = "categoryName")
-  CourseCategoryTO toDTO(CourseCategoryDBO courseCategory);
+    /**
+     * Converts a {@link CourseCategoryDBO} (representing a course category in the database) to a
+     * {@link CourseCategoryTO}.
+     *
+     * <p>This method maps the {@code categoryName} field of the {@code CourseCategoryDBO} to the
+     * {@code categoryName} field in the {@code CourseCategoryDTO}.
+     *
+     * @param courseCategory the {@code CourseCategoryDBO} object representing the course category to
+     *     convert
+     * @return a {@code CourseCategoryDTO} object containing the course category data
+     */
+    @Mapping(source = "categoryName", target = "categoryName")
+    CourseCategoryTO toDTO(CourseCategoryDBO courseCategory);
 }

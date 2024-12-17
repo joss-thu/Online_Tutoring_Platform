@@ -4,7 +4,6 @@ import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
-import de.thu.thutorium.database.dbObjects.ProgressDBO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.MeetingService;
 import de.thu.thutorium.services.interfaces.ProgressService;

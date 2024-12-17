@@ -1,7 +1,5 @@
 package de.thu.thutorium.api.transferObjects.common;
 
-import de.thu.thutorium.database.dbObjects.CourseDBO;
-import de.thu.thutorium.database.dbObjects.UserDBO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;

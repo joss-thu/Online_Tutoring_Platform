@@ -38,7 +38,7 @@ public class CourseDBO {
    * <p>Defines a many-to-many relationship with {@link UserDBO} using the join table
    * "user_course" denoting the courses and the users who enrol in them.
    */
-  @ManyToMany(mappedBy = "studentCourses")
+  @ManyToMany(mappedBy = "studentCourses", fetch = FetchType.LAZY)
   @Builder.Default
   private Set<UserDBO> students = new HashSet<>();
 

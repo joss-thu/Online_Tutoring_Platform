@@ -7,9 +7,10 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ProgressService {
 
-    @Transactional
-    void createProgress(ProgressTO progressTO);
-    boolean deleteProgress(Long studentId, Long courseId);
+  @Transactional
+  void createProgress(ProgressTO progressTO);
 
-    boolean updateProgress(Long studentId, Long courseId, Double points);
+  boolean deleteProgress(Long studentId, Long courseId);
+
+  boolean updateProgress(Long studentId, Long courseId, Double points);
 }
