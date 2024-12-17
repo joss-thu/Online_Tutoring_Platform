@@ -51,7 +51,7 @@ const CourseForm = () => {
                 },
                 body: JSON.stringify(requestBody), // Convert to JSON string
             });
-
+//
             if (response.ok) {
                 const result = await response.json();
                 alert("Course successfully created!");
@@ -79,7 +79,7 @@ const CourseForm = () => {
 
 
 
-    const validateForm = () => {
+    /*const validateForm = () => {
         const { courseName, shortDescription, longDescription, category } =
             courseDetails;
         if (!courseName || !shortDescription || !longDescription || !category) {
@@ -88,7 +88,7 @@ const CourseForm = () => {
         }
         return true;
     };
-
+*/
     return (
 
         <div className="flex flex-col justify-center items-center w-full h-full">

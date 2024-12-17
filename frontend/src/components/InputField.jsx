@@ -1,5 +1,5 @@
 import React from "react";
-
+//
 const InputField = ({ label, placeholder, value, onChange, name, type = "text" }) => {
     return (
         <div className="mb-4">

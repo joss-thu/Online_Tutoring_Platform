@@ -1,5 +1,5 @@
 import React from 'react';
-
+//
 export default function SearchBar({ placeholder = "Search", onChange, className = '', ...props }) {
     return (
         <div className={`relative w-full max-w-3xl mx-auto ${className}`}>
