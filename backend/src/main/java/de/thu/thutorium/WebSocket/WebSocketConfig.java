@@ -35,7 +35,7 @@ public class WebSocketConfig
      * also sets allowed origins for CORS and adds SockJS fallback options for browsers that do not
      * support WebSockets.
      *
-     * @param registry the registry to configure WebSocket endpoints
+     * @param registry the registry to configure WebSocket endpoint
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
