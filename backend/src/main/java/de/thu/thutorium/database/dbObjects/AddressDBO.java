@@ -3,6 +3,9 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents an address entity in the database. This class is mapped to the "address" table in the
  * database using JPA annotations.
@@ -28,7 +31,7 @@ import lombok.*;
 @Table(name = "address")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class AddressDBO {
 
@@ -43,12 +46,12 @@ public class AddressDBO {
   private Long addressId;
 
   /** The campus name for the university. */
-  @Column(name="campus_name", length= 255)
+  @Column(name = "campus_name", length = 255)
   private String campusName;
 
   /** The house number for the address. This field is required and cannot be null. */
   @Column(name = "house_number", nullable = false)
-  private Short houseNum;
+  private String houseNum;
 
   /** The name of the street for the address. This field is required and cannot be null. */
   @Column(name = "street_name", nullable = false)
@@ -60,7 +63,7 @@ public class AddressDBO {
 
   /** The postal code for the address. This field is required and cannot be null. */
   @Column(name = "postal_code", nullable = false)
-  private Short postalCode;
+  private String postalCode;
 
   /** The country for the address. This field is required and cannot be null. */
   @Column(name = "country", nullable = false)
@@ -86,8 +89,17 @@ public class AddressDBO {
 
   /**
    * The meeting associated with this address.
-   * <p> Defines a bidirectional one-to-one relationship with {@link MeetingDBO}.
+   *
+   * <p>Defines a bidirectional one-to-many relationship with {@link MeetingDBO}.
    */
-  @OneToOne(mappedBy = "address")
-  private MeetingDBO meeting;
+  @OneToMany(mappedBy = "address")
+  @Builder.Default
+  private List<MeetingDBO> meetings = new ArrayList<>();
+
+  /**
+   * Constructs an AddressDBO with an empty set of meetings .
+   */
+  public AddressDBO() {
+    this.meetings = new ArrayList<>();
+  }
 }

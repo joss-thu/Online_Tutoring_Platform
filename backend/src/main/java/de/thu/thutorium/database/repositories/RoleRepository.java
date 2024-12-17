@@ -19,6 +19,7 @@ public interface RoleRepository extends JpaRepository<RoleDBO, Long> {
      * @return true if a role entity exists with the given name, false otherwise
      */
     boolean existsByRoleName(Role roleName);
+
     /**
      * Finds a role entity by its name.
      *

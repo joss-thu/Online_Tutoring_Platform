@@ -29,7 +29,7 @@ public class AffiliationDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "affiliation_id")
   @Setter(AccessLevel.NONE)
-  private Integer affiliationId;
+  private Long affiliationId;
 
   /**
    * The type of affiliation (e.g., faculty, student, etc.). This is an enum value, and is stored as
@@ -41,8 +41,8 @@ public class AffiliationDBO {
 
   /**
    * The university associated with the affiliation. This is a many-to-one relationship with the
-   * {@code University} entity. The counterpart is denoted by a List<AffiliationDBO> called 'affiliations'
-   * in {@code University}
+   * {@code University} entity. The counterpart is denoted by a List<AffiliationDBO> called
+   * 'affiliations' in {@code University}
    */
   @ManyToOne
   @JoinColumn(name = "university_id")
@@ -55,4 +55,3 @@ public class AffiliationDBO {
   @OneToMany(mappedBy = "affiliation")
   private List<UserDBO> affiliatedUsers;
 }
-

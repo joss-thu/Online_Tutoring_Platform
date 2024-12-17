@@ -29,13 +29,13 @@ public class UniversityDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "university_id")
   @Setter(AccessLevel.NONE)
-  private Integer universityId;
+  private Long universityId;
 
   /**
    * The name of the university. This field is required and has a maximum length of 255 characters.
    */
   @Column(name = "university_name", nullable = false)
-  private String name;
+  private String universityName;
 
   /**
    * The address of the university. This establishes a uni-directional(!!) one-to-one relationship with the {@code
@@ -56,7 +56,7 @@ public class UniversityDBO {
   private List<AffiliationDBO> affiliations;
 
   /**
-   * Constructs a UniversityDBO with an empty set of affiliations..
+   * Constructs a UniversityDBO with an empty set of affiliations.
    */
   public UniversityDBO() {
     this.affiliations = new ArrayList<>();

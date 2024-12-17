@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 /**
  * Represents a rating given by a student for a course.
+ *
  * <p>This entity stores the details of the rating, including the student who gave the rating, the
  * course being rated, the rating points (e.g., 1.0 to 5.0), and an optional review text.
  *
@@ -29,8 +30,9 @@ public class RatingCourseDBO {
 
   /**
    * The student who gave the rating.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by Set<RatingCourseDBO>
-   * 'givenCourseRatings' in {@link UserDBO}.
+   *
+   * <p>Defines a many-to-one relationship with {@link UserDBO}. The counterpart is denoted by
+   * Set<RatingCourseDBO> 'givenCourseRatings' in {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "student_id", nullable = false)
@@ -38,28 +40,23 @@ public class RatingCourseDBO {
 
   /**
    * The course which received the rating.
-   * <p> Defines a many-to-one relationship with {@link CourseDBO}.The counterpart is denoted by
+   *
+   * <p>Defines a many-to-one relationship with {@link CourseDBO}.The counterpart is denoted by
    * Set<RatingCourseDBO> 'receivedCourseRatings' in {@link CourseDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "course_id", nullable = false)
   private CourseDBO course;
 
-  /**
-   * The rating points given by the student.
-   */
+  /** The rating points given by the student. */
   @Column(name = "points", nullable = false)
   private Double points;
 
-  /**
-   * The review text provided by the student.
-   */
+  /** The review text provided by the student. */
   @Column(name = "review", columnDefinition = "TEXT")
   private String review;
 
-  /**
-   * The timestamp when the rating was created.
-   */
+  /** The timestamp when the rating was created. */
   @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt = LocalDateTime.now();
 }

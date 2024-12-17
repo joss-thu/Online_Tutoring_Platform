@@ -8,9 +8,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -60,19 +58,16 @@ public class MeetingDBO {
 
   /** The duration of the meeting in minutes. This field cannot be null. */
   @Column(name = "duration_minutes", nullable = false)
-  private Integer duration=90;
+  @Builder.Default
+  private Integer duration = 90;
 
   /**
-   * The type of the meeting as enumerated by the {@link MeetingType}. Multiple values of meeting types can be assigned
-   * to the meetings.
-   * Note: This implementation is an alternate easy implementation instead of resolving the many-to-many relationships
-   * between meetings and types
+   * The type of the meeting as enumerated by the {@link MeetingType}.
+   * Represents whether the meeting is online or offline.
    */
-  @ElementCollection(targetClass = MeetingType.class)
   @Enumerated(EnumType.STRING)
-  @CollectionTable(name = "meeting_types", joinColumns = @JoinColumn(name = "meeting_id"))
   @Column(name = "meeting_type", nullable = false)
-  private Set<MeetingType> meetingTypes;
+  private MeetingType meetingType;
 
   /**
    * The current status of the meeting (e.g., confirmed, canceled, etc.). Must be a non-null string
@@ -96,10 +91,10 @@ public class MeetingDBO {
   @Column(name = "meeting_link", columnDefinition = "TEXT")
   private String meetingLink;
 
-  /** The address where the meeting is being held. This is managed as a bidirectional one-to-one relationship.
-   * The counterpart is denoted by a MeetingDBO meeting in {@link AddressDBO}.
+  /** The address where the meeting is being held. This is managed as a bidirectional many-to-one relationship.
+   * The counterpart is denoted by a List<MeetingDBO> meetings in {@link AddressDBO}.
    */
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "address_id", unique = true)
   private AddressDBO address;
 
@@ -110,10 +105,12 @@ public class MeetingDBO {
    */
   @ManyToMany(mappedBy = "meetings")
   @Builder.Default
-  private List<UserDBO> participants= new ArrayList<>();
+  private List<UserDBO> participants = new ArrayList<>();
 
+  /**
+   * Constructs a MeetingDBO with an empty set of meeting types and participants.
+   */
   public MeetingDBO() {
-    this.meetingTypes = new HashSet<>();
     this.participants = new ArrayList<>();
   }
 }
