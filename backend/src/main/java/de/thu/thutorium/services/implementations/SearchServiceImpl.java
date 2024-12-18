@@ -8,6 +8,7 @@ import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.RatingCourseDBO;
+import de.thu.thutorium.database.dbObjects.RatingTutorDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.CategoryRepository;
 import de.thu.thutorium.database.repositories.CourseRepository;
@@ -63,8 +64,25 @@ public class SearchServiceImpl implements SearchService {
   @Override
   public List<TutorTO> searchTutors(String tutorName) {
     List<UserDBO> tutors = userRepository.findByTutorFullName(tutorName);
-    return tutorMapper.toDTOList(tutors);
+    return tutors.stream()
+            .map(this::mapWithAverageTutorRating)
+            .toList();
   }
+
+  private TutorTO mapWithAverageTutorRating(UserDBO tutor) {
+    TutorTO tutorTO = tutorMapper.toDTO(tutor);
+    // Calculate the average rating
+    if (tutor.getReceivedTutorRatings() != null && !tutor.getReceivedTutorRatings().isEmpty()) {
+      tutorTO.setAverageRating(tutor.getReceivedTutorRatings().stream()
+              .mapToDouble(RatingTutorDBO::getPoints)
+              .average()
+              .orElse(0.0));
+    } else {
+      tutorTO.setAverageRating(0.0); // Default to 0 if no ratings
+    }
+    return tutorTO;
+  }
+
 
   /**
    * Searches for courses based on the course name.

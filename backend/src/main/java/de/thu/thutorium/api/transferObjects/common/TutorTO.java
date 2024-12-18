@@ -37,7 +37,6 @@ public class TutorTO extends UserTO {
    * rating or review provided by a student for the tutor. The ratings help provide insights into
    * the tutor's teaching effectiveness and overall student satisfaction.
    */
-  private List<RatingTutorTO> ratings;
 
-
+  private Double averageRating;
 }
