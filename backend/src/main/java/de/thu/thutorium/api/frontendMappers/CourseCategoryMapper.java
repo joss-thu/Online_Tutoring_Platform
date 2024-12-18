@@ -32,4 +32,7 @@ public interface CourseCategoryMapper {
      */
     @Mapping(source = "categoryName", target = "categoryName")
     CourseCategoryTO toDTO(CourseCategoryDBO courseCategory);
+
+    @Mapping(source = "categoryName", target = "categoryName")
+    CourseCategoryDBO toEntity(CourseCategoryTO courseCategoryTO);
 }

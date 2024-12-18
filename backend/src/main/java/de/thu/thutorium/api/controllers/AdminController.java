@@ -2,11 +2,9 @@ package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.common.AddressTO;
 import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
+import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
-import de.thu.thutorium.services.interfaces.AddressService;
-import de.thu.thutorium.services.interfaces.ChatService;
-import de.thu.thutorium.services.interfaces.UniversityService;
-import de.thu.thutorium.services.interfaces.UserService;
+import de.thu.thutorium.services.interfaces.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +21,7 @@ public class AdminController {
   private final AddressService addressService;
   private final UserService userService; // Service to interact with the User repository
   private final ChatService chatService;
+  private final CategoryService categoryService;
 
   @PostMapping("create-university")
   public ResponseEntity<UniversityTO> createUniversity(
@@ -53,5 +52,11 @@ public class AdminController {
   public ResponseEntity<String> deleteChat(@PathVariable Long chatId) {
     chatService.deleteChat(chatId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Chat deleted successfully!");
+  }
+
+  @PostMapping("/categories/create")
+  @ResponseStatus(HttpStatus.CREATED)
+  public CourseCategoryTO createCategory(@RequestBody @Valid CourseCategoryTO courseCategoryTO) {
+    return categoryService.createCourseCategory(courseCategoryTO);
   }
 }

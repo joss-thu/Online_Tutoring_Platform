@@ -18,7 +18,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CourseCategoryTO {
 
-    @NotNull
+
     private Long categoryId;
     /**
      * The name of the course category.

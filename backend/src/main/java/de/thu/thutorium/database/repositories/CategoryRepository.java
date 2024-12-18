@@ -44,4 +44,7 @@ public interface CategoryRepository extends JpaRepository<CourseCategoryDBO, Lon
    */
   @Query("SELECT DISTINCT c FROM CourseCategoryDBO c JOIN c.courses courses")
   List<CourseCategoryDBO> findCategoriesWithCourses();
+
+  boolean existsByCategoryName(String categoryName);
+
 }
