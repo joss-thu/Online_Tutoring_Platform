@@ -62,4 +62,6 @@ public class CourseTO {
    * the course to be completed or when the final assessments will take place.
    */
   private LocalDate endDate;
+
+  private Double averageRating;
 }

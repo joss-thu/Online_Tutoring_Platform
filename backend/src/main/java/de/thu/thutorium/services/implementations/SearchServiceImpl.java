@@ -7,6 +7,7 @@ import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
+import de.thu.thutorium.database.dbObjects.RatingCourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.CategoryRepository;
 import de.thu.thutorium.database.repositories.CourseRepository;
@@ -79,7 +80,23 @@ public class SearchServiceImpl implements SearchService {
   @Override
   public List<CourseTO> searchCourses(String courseName) {
     List<CourseDBO> courses = courseRepository.findCourseByName(courseName);
-    return courseMapper.toDTOList(courses);
+    return courses.stream()
+            .map(this::mapWithAverageRating)
+            .toList();
+  }
+
+  private CourseTO mapWithAverageRating(CourseDBO course) {
+    CourseTO courseTO = courseMapper.toDTO(course);
+    // Calculate the average rating
+    if (course.getReceivedCourseRatings() != null && !course.getReceivedCourseRatings().isEmpty()) {
+      courseTO.setAverageRating(course.getReceivedCourseRatings().stream()
+              .mapToDouble(RatingCourseDBO::getPoints)
+              .average()
+              .orElse(0.0));
+    } else {
+      courseTO.setAverageRating(0.0); // Default to 0 if no ratings
+    }
+    return courseTO;
   }
 
   /**
