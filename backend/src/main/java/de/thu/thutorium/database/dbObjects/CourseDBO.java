@@ -12,12 +12,15 @@ import java.util.Set;
 
 /**
  * Represents a course entity. This entity is mapped to the {@code course} table in the database.
- * <p> It includes information such as the course name, description, start date, end
- * date, etc.
- * <p> Lombok annotations are used to automatically generate boilerplate code like getters, setters, and constructors.
+ *
+ * <p>It includes information such as the course name, description, start date, end date, etc.
+ *
+ * <p>Lombok annotations are used to automatically generate boilerplate code like getters, setters,
+ * and constructors.
+ *
  * <p>
  */
-@Builder// If Builder is intended to be used
+@Builder // If Builder is intended to be used
 @Entity
 @Table(name = "course")
 @Getter
@@ -35,8 +38,9 @@ public class CourseDBO {
 
   /**
    * Participants of this course.
-   * <p>Defines a many-to-many relationship with {@link UserDBO} using the join table
-   * "user_course" denoting the courses and the users who enrol in them.
+   *
+   * <p>Defines a many-to-many relationship with {@link UserDBO} using the join table "user_course"
+   * denoting the courses and the users who enrol in them.
    */
   @ManyToMany(mappedBy = "studentCourses", fetch = FetchType.LAZY)
   @Builder.Default
@@ -47,8 +51,8 @@ public class CourseDBO {
   private String courseName;
 
   /**
-   * Defines a many-to-one relationship between courses and the tutor who created the courses.
-   * The counterpart is denoted by a List<CourseDBO> tutorCourses in the {@link UserDBO}.
+   * Defines a many-to-one relationship between courses and the tutor who created the courses. The
+   * counterpart is denoted by a List<CourseDBO> tutorCourses in the {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "tutor_id")
@@ -80,8 +84,9 @@ public class CourseDBO {
 
   /**
    * Ratings received by a course from students.
-   * <p> Defines a one-to-many relationship with {@link RatingCourseDBO}.
-   * The {@code orphanRemoval} attribute ensures that ratings are removed if they are no longer associated with the tutor.
+   *
+   * <p>Defines a one-to-many relationship with {@link RatingCourseDBO}. The {@code orphanRemoval}
+   * attribute ensures that ratings are removed if they are no longer associated with the tutor.
    */
   @OneToMany(mappedBy = "course", orphanRemoval = true)
   @Builder.Default
@@ -89,9 +94,9 @@ public class CourseDBO {
 
   /**
    * Meetings received for a course.
-   * <p> Defines a one-to-many relationship with {@link MeetingDBO}.
-   * The {@code orphanRemoval} attribute ensures that meetings are removed if they are no longer associated with
-   * the course.
+   *
+   * <p>Defines a one-to-many relationship with {@link MeetingDBO}. The {@code orphanRemoval}
+   * attribute ensures that meetings are removed if they are no longer associated with the course.
    */
   @OneToMany(mappedBy = "course", orphanRemoval = true)
   @Builder.Default
@@ -99,23 +104,18 @@ public class CourseDBO {
 
   /**
    * Progress recorded for a course.
-   * <p> Defines a one-to-many relationship with {@link ProgressDBO}.
-   * The {@code orphanRemoval} attribute ensures that progress is removed if they are no longer associated with
-   * the course.
+   *
+   * <p>Defines a one-to-many relationship with {@link ProgressDBO}. The {@code orphanRemoval}
+   * attribute ensures that progress is removed if they are no longer associated with the course.
    */
   @OneToMany(mappedBy = "course", orphanRemoval = true)
   private List<ProgressDBO> progress;
 
-  /**
-   * The list of course categories for a course.
-   */
+  /** The list of course categories for a course. */
   @ManyToMany(mappedBy = "courses")
   private List<CourseCategoryDBO> courseCategories;
 
-
-  /**
-   * Constructs a CourseDBO object with empty lists.
-   */
+  /** Constructs a CourseDBO object with empty lists. */
   public CourseDBO() {
     this.students = new HashSet<>();
     this.receivedCourseRatings = new ArrayList<>();

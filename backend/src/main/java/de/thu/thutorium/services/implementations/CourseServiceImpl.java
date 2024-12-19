@@ -33,8 +33,6 @@ public class CourseServiceImpl implements CourseService {
   private final CourseMapper courseMapper;
   private final UserRepository userRepository;
 
-
-
   /**
    * Finds a course by its unique ID.
    *
@@ -121,12 +119,26 @@ public class CourseServiceImpl implements CourseService {
     return courses.stream().map(courseMapper::toDTO).toList();
   }
 
-//-----------------------------------------
+  /**
+   * Retrieves the total count of courses in the database.
+   *
+   * @return the total number of courses
+   */
   @Override
   public Long getTotalCountOfCourses() {
     return courseRepository.count(); // Default method from JpaRepository
   }
 
+  /**
+   * Creates a new course based on the provided {@link CourseTO}.
+   *
+   * <p>This method fetches the tutor from the database using the tutor ID from the provided course
+   * transfer object (DTO). It then maps the course DTO to a course entity (DBO), sets the tutor and
+   * creation timestamp, and saves the new course in the database.
+   *
+   * @param courseTO the transfer object containing the course data to be created
+   * @throws EntityNotFoundException if the tutor with the provided ID is not found
+   */
   @Override
   @Transactional
   public void createCourse(CourseTO courseTO) {
@@ -149,6 +161,15 @@ public class CourseServiceImpl implements CourseService {
     courseRepository.save(courseDBO);
   }
 
+  /**
+   * Deletes an existing course by its ID.
+   *
+   * <p>This method checks if a course with the provided ID exists in the database. If it does, the
+   * course is deleted; otherwise, an {@link EntityNotFoundException} is thrown.
+   *
+   * @param courseId the ID of the course to be deleted
+   * @throws EntityNotFoundException if the course with the provided ID does not exist
+   */
   @Override
   @Transactional
   public void deleteCourse(Long courseId) {
@@ -158,6 +179,18 @@ public class CourseServiceImpl implements CourseService {
     courseRepository.deleteById(courseId);
   }
 
+  /**
+   * Updates the details of an existing course.
+   *
+   * <p>This method fetches an existing course by its ID, updates its fields based on the provided
+   * {@link CourseTO}, and saves the updated course entity in the database. If the course or the
+   * tutor is not found, an {@link EntityNotFoundException} is thrown.
+   *
+   * @param courseId the ID of the course to be updated
+   * @param courseTO the transfer object containing the updated course data
+   * @throws EntityNotFoundException if the course with the provided ID or the tutor with the
+   *     provided ID is not found
+   */
   @Override
   public void updateCourse(Long courseId, CourseTO courseTO) {
     CourseDBO existingCourse =

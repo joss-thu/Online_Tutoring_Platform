@@ -3,7 +3,6 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 /**
  * Represents the scores achieved by a student for a course.
  *

@@ -23,5 +23,4 @@ public class CourseController {
   public CourseTO getCourseById(@RequestParam Long id) {
     return courseService.findCourseById(id);
   } // works
-
 }

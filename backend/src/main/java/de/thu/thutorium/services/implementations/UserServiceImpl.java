@@ -24,6 +24,13 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
+  /**
+   * Constructs a new instance of {@link UserServiceImpl}.
+   *
+   * @param userRepository the {@link UserRepository} instance used to access user data
+   * @param userMapper the {@link UserMapper} instance used for mapping between database and
+   *     transfer objects
+   */
   public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
@@ -33,6 +40,7 @@ public class UserServiceImpl implements UserService {
    * Returns the total number of students in the system.
    *
    * <p>This method queries the {@link UserRepository} to count all users with the role "STUDENT".
+   * The count is determined by checking the roles of the users stored in the system.
    *
    * @return the total number of students as a {@code Long}.
    */
@@ -48,7 +56,8 @@ public class UserServiceImpl implements UserService {
   /**
    * Returns the total number of tutors in the system.
    *
-   * <p>This method queries the {@link UserRepository} to count all users with the role "TUTOR".
+   * <p>This method queries the {@link UserRepository} to count all users with the role "TUTOR". The
+   * count is determined by checking the roles of the users stored in the system.
    *
    * @return the total number of tutors as a {@code Long}.
    */
@@ -103,6 +112,16 @@ public class UserServiceImpl implements UserService {
     return null;
   }
 
+  /**
+   * Deletes a user from the system by their unique user ID.
+   *
+   * <p>This method fetches the {@link UserDBO} from the {@link UserRepository} using the provided
+   * {@code userId}. If the user is found, it is deleted from the system. If the user does not
+   * exist, an {@link EntityNotFoundException} is thrown.
+   *
+   * @param userId the unique ID of the user to delete.
+   * @throws EntityNotFoundException if no user is found with the provided {@code userId}.
+   */
   @Override
   @Transactional
   public void deleteUser(Long userId) {

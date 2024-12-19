@@ -38,26 +38,25 @@ public class UniversityDBO {
   private String universityName;
 
   /**
-   * The address of the university. This establishes a uni-directional(!!) one-to-one relationship with the {@code
-   * Address} entity.
+   * The address of the university. This establishes a uni-directional(!!) one-to-one relationship
+   * with the {@code Address} entity.
    */
   @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
   @JoinColumn(name = "address_id", nullable = false, unique = true)
   private AddressDBO address;
 
   /**
-   * Defines a one-to-many relationship between an affiliation and its associated affiliations.
-   * This relationship is mapped by the {@code affiliation} field in the {@link AffiliationDBO} entity.
-   * The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure that these operations
-   * are propagated to the associated affiliations.
+   * Defines a one-to-many relationship between an affiliation and its associated affiliations. This
+   * relationship is mapped by the {@code affiliation} field in the {@link AffiliationDBO} entity.
+   * The cascade types {@code PERSIST}, {@code MERGE}, and {@code REFRESH} ensure that these
+   * operations are propagated to the associated affiliations.
+   *
    * @see AffiliationDBO
    */
   @OneToMany(mappedBy = "university", orphanRemoval = true)
   private List<AffiliationDBO> affiliations;
 
-  /**
-   * Constructs a UniversityDBO with an empty set of affiliations.
-   */
+  /** Constructs a UniversityDBO with an empty set of affiliations. */
   public UniversityDBO() {
     this.affiliations = new ArrayList<>();
   }

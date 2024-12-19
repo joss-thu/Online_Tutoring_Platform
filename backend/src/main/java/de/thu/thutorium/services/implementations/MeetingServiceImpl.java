@@ -16,6 +16,14 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service implementation for managing meetings.
+ *
+ * <p>This service provides methods for creating, updating, deleting, and retrieving meetings. It
+ * interacts with the {@link MeetingRepository}, {@link UserRepository}, {@link CourseRepository},
+ * and {@link AddressRepository} for database operations, and uses {@link MeetingDBMapper} for
+ * mapping between DTO and DBO.
+ */
 @Service
 @RequiredArgsConstructor
 public class MeetingServiceImpl implements MeetingService {
@@ -25,6 +33,17 @@ public class MeetingServiceImpl implements MeetingService {
   private final AddressRepository addressRepository;
   private final MeetingDBMapper meetingMapper;
 
+  /**
+   * Creates a new meeting based on the provided {@link MeetingTO}.
+   *
+   * <p>This method fetches the tutor, course, and address from the database using the provided IDs
+   * in the meeting transfer object (DTO). It then maps the meeting DTO to a meeting entity (DBO),
+   * associates the tutor, course, and address, and saves the new meeting in the database.
+   *
+   * @param meetingTO the transfer object containing the meeting data to be created
+   * @throws EntityNotFoundException if the tutor, course, or address with the provided IDs are not
+   *     found
+   */
   @Override
   @Transactional
   public void createMeeting(MeetingTO meetingTO) {
@@ -60,6 +79,15 @@ public class MeetingServiceImpl implements MeetingService {
     meetingRepository.save(meetingDBO);
   }
 
+  /**
+   * Deletes an existing meeting by its ID.
+   *
+   * <p>This method checks if a meeting with the provided ID exists in the database. If it does, the
+   * meeting is deleted; otherwise, an {@link EntityNotFoundException} is thrown.
+   *
+   * @param meetingId the ID of the meeting to be deleted
+   * @throws EntityNotFoundException if the meeting with the provided ID does not exist
+   */
   @Override
   @Transactional
   public void deleteMeeting(Long meetingId) {
@@ -71,6 +99,18 @@ public class MeetingServiceImpl implements MeetingService {
     meetingRepository.deleteById(meetingId);
   }
 
+  /**
+   * Updates the details of an existing meeting.
+   *
+   * <p>This method fetches an existing meeting by its ID, updates its fields based on the provided
+   * {@link MeetingTO}, and saves the updated meeting entity in the database. If the meeting, tutor,
+   * course, or address is not found, an {@link EntityNotFoundException} is thrown.
+   *
+   * @param meetingId the ID of the meeting to be updated
+   * @param meetingTO the transfer object containing the updated meeting data
+   * @throws EntityNotFoundException if the meeting, tutor, course, or address with the provided IDs
+   *     are not found
+   */
   @Override
   @Transactional
   public void updateMeeting(Long meetingId, MeetingTO meetingTO) {

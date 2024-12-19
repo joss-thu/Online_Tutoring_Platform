@@ -8,17 +8,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a course category entity within the system. This entity is mapped to the {@code category}
- * table in the database.
- * <p>The {@link CourseCategoryDBO} class defines a category, which is a way to organize and classify courses
- * within the system. Each category has a unique name that must be specified when creating a new
- * category.
+ * Represents a course category entity within the system. This entity is mapped to the {@code
+ * category} table in the database.
+ *
+ * <p>The {@link CourseCategoryDBO} class defines a category, which is a way to organize and
+ * classify courses within the system. Each category has a unique name that must be specified when
+ * creating a new category.
+ *
  * <p>Lombok annotations are used to automatically generate boilerplate code like getters, setters,
  * and constructors.
  *
  * @see CourseDBO
  */
-@Builder// If Builder is intended to be used
+@Builder // If Builder is intended to be used
 @Entity
 @Table(name = "CourseCategory")
 @Getter
@@ -43,15 +45,17 @@ public class CourseCategoryDBO {
   private String categoryName;
 
   /**
-   * The timestamp when the course category was created. This field is mandatory and cannot be {@code null}.
+   * The timestamp when the course category was created. This field is mandatory and cannot be
+   * {@code null}.
    */
   @Column(name = "created_on")
   private LocalDateTime createdOn;
 
   /**
    * The user (admin) who created the course category.
-   * <p> Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by
-   * a List<CourseCategoryDBO> courseCategories {@link UserDBO}.
+   *
+   * <p>Defines a many-to-one relationship with {@link UserDBO}.The counterpart is denoted by a
+   * List<CourseCategoryDBO> courseCategories {@link UserDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "created_by")
@@ -59,24 +63,22 @@ public class CourseCategoryDBO {
 
   /**
    * The courses for a course category.
-   * <p>
-   * Defines a many-to-many relationship with {@link CourseDBO} using the join table "courses_categories" for defining the
-   * courses associated with a category. The counterpart is denoted as a List<CourseCategoryDBO> called courseCategories
-   * in {@link CourseDBO}.
-   * TODO: The cascading action is not specified here because the course categories are set by the admin. Can the tutors
-   * also set their own course categories?
+   *
+   * <p>Defines a many-to-many relationship with {@link CourseDBO} using the join table
+   * "courses_categories" for defining the courses associated with a category. The counterpart is
+   * denoted as a List<CourseCategoryDBO> called courseCategories in {@link CourseDBO}. TODO: The
+   * cascading action is not specified here because the course categories are set by the admin. Can
+   * the tutors also set their own course categories?
    */
   @ManyToMany
-  @JoinTable(name = "courses_categories",
-          joinColumns = @JoinColumn(name = "category_id"),
-          inverseJoinColumns = @JoinColumn(name = "course_id")
-  )
+  @JoinTable(
+      name = "courses_categories",
+      joinColumns = @JoinColumn(name = "category_id"),
+      inverseJoinColumns = @JoinColumn(name = "course_id"))
   @Builder.Default
   private List<CourseDBO> courses = new ArrayList<>();
 
-  /**
-   * Constructs a CourseCategoryDBO with an empty list ofcourses.
-   */
+  /** Constructs a CourseCategoryDBO with an empty list ofcourses. */
   public CourseCategoryDBO() {
     this.courses = new ArrayList<>();
   }

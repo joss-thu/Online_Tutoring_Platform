@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Represents a meeting entity in the system, which includes details about a particular meeting such
  * as its date, type, status, related course, and more.
+ *
  * <p>This entity is mapped to the "meeting" table in the database. Each meeting has a unique ID,
  * and is associated with a course and an address. The meeting also includes fields for date, type,
  * status, room number, duration of the meeting, and a link to the meeting.
@@ -32,9 +32,9 @@ public class MeetingDBO {
   private Long meetingId;
 
   /**
-   * Defines who created the meeting. The association is managed as a many-to-one
-   * relationship with a user with 'TUTOR' role {@link UserDBO}. The counterpart is defined as a
-   * List<MeetingDBO> meetingsScheduled in {@link UserDBO}
+   * Defines who created the meeting. The association is managed as a many-to-one relationship with
+   * a user with 'TUTOR' role {@link UserDBO}. The counterpart is defined as a List<MeetingDBO>
+   * meetingsScheduled in {@link UserDBO}
    */
   @ManyToOne
   @JoinColumn(name = "created_by")
@@ -42,7 +42,8 @@ public class MeetingDBO {
 
   /**
    * The course to which this meeting is related. The association is managed as a many-to-one
-   * relationship with {@link CourseDBO}. The counterpart is defined as a List<MeetingDBO> called 'meetings' in {@link CourseDBO}
+   * relationship with {@link CourseDBO}. The counterpart is defined as a List<MeetingDBO> called
+   * 'meetings' in {@link CourseDBO}
    */
   @ManyToOne
   @JoinColumn(name = "course_id")
@@ -62,8 +63,8 @@ public class MeetingDBO {
   private Integer duration = 90;
 
   /**
-   * The type of the meeting as enumerated by the {@link MeetingType}.
-   * Represents whether the meeting is online or offline.
+   * The type of the meeting as enumerated by the {@link MeetingType}. Represents whether the
+   * meeting is online or offline.
    */
   @Enumerated(EnumType.STRING)
   @Column(name = "meeting_type", nullable = false)
@@ -91,8 +92,9 @@ public class MeetingDBO {
   @Column(name = "meeting_link", columnDefinition = "TEXT")
   private String meetingLink;
 
-  /** The address where the meeting is being held. This is managed as a bidirectional many-to-one relationship.
-   * The counterpart is denoted by a List<MeetingDBO> meetings in {@link AddressDBO}.
+  /**
+   * The address where the meeting is being held. This is managed as a bidirectional many-to-one
+   * relationship. The counterpart is denoted by a List<MeetingDBO> meetings in {@link AddressDBO}.
    */
   @ManyToOne
   @JoinColumn(name = "address_id", unique = true)
@@ -100,16 +102,14 @@ public class MeetingDBO {
 
   /**
    * Participants of this meeting.
-   * <p>
-   * Defines a many-to-many relationship with {@link UserDBO}, the participants in the meetings.
+   *
+   * <p>Defines a many-to-many relationship with {@link UserDBO}, the participants in the meetings.
    */
   @ManyToMany(mappedBy = "meetings")
   @Builder.Default
   private List<UserDBO> participants = new ArrayList<>();
 
-  /**
-   * Constructs a MeetingDBO with an empty set of meeting types and participants.
-   */
+  /** Constructs a MeetingDBO with an empty set of meeting types and participants. */
   public MeetingDBO() {
     this.participants = new ArrayList<>();
   }

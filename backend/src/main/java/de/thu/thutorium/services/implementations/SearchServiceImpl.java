@@ -6,10 +6,7 @@ import de.thu.thutorium.api.frontendMappers.TutorMapper;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
-import de.thu.thutorium.database.dbObjects.CourseDBO;
-import de.thu.thutorium.database.dbObjects.RatingCourseDBO;
-import de.thu.thutorium.database.dbObjects.RatingTutorDBO;
-import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.database.dbObjects.*;
 import de.thu.thutorium.database.repositories.CategoryRepository;
 import de.thu.thutorium.database.repositories.CourseRepository;
 import de.thu.thutorium.database.repositories.UserRepository;
@@ -35,18 +32,30 @@ public class SearchServiceImpl implements SearchService {
   private final CategoryRepository categoryRepository;
   private final CourseCategoryMapper courseCategoryMapper;
 
+  /**
+   * Constructor for initializing the service with necessary dependencies.
+   *
+   * @param courseRepository the repository for handling courses
+   * @param courseMapper the mapper to convert {@link CourseDBO} to {@link CourseTO}
+   * @param userRepository the repository for handling users (tutors)
+   * @param tutorMapper the mapper to convert {@link UserDBO} to {@link TutorTO}
+   * @param categoryRepository the repository for handling course categories
+   * @param courseCategoryMapper the mapper to convert {@link CourseCategoryDBO} to {@link
+   *     CourseCategoryTO}
+   */
   public SearchServiceImpl(
-          CourseRepository courseRepository,
-          CourseMapper courseMapper,
-          UserRepository userRepository,
-          TutorMapper tutorMapper,
-          CategoryRepository categoryRepository, CourseCategoryMapper courseCategoryMapper) {
+      CourseRepository courseRepository,
+      CourseMapper courseMapper,
+      UserRepository userRepository,
+      TutorMapper tutorMapper,
+      CategoryRepository categoryRepository,
+      CourseCategoryMapper courseCategoryMapper) {
     this.courseRepository = courseRepository;
     this.courseMapper = courseMapper;
     this.userRepository = userRepository;
     this.tutorMapper = tutorMapper;
     this.categoryRepository = categoryRepository;
-      this.courseCategoryMapper = courseCategoryMapper;
+    this.courseCategoryMapper = courseCategoryMapper;
   }
 
   /**
@@ -64,16 +73,22 @@ public class SearchServiceImpl implements SearchService {
   @Override
   public List<TutorTO> searchTutors(String tutorName) {
     List<UserDBO> tutors = userRepository.findByTutorFullName(tutorName);
-    return tutors.stream()
-            .map(this::mapWithAverageTutorRating)
-            .toList();
+    return tutors.stream().map(this::mapWithAverageTutorRating).toList();
   }
 
+  /**
+   * Maps a {@link UserDBO} (tutor) entity to a {@link TutorTO} transfer object, including the
+   * average rating of the tutor.
+   *
+   * @param tutor the {@link UserDBO} object representing the tutor
+   * @return a {@link TutorTO} object with the mapped data and the average rating
+   */
   private TutorTO mapWithAverageTutorRating(UserDBO tutor) {
     TutorTO tutorTO = tutorMapper.toDTO(tutor);
     // Calculate the average rating
     if (tutor.getReceivedTutorRatings() != null && !tutor.getReceivedTutorRatings().isEmpty()) {
-      tutorTO.setAverageRating(tutor.getReceivedTutorRatings().stream()
+      tutorTO.setAverageRating(
+          tutor.getReceivedTutorRatings().stream()
               .mapToDouble(RatingTutorDBO::getPoints)
               .average()
               .orElse(0.0));
@@ -82,7 +97,6 @@ public class SearchServiceImpl implements SearchService {
     }
     return tutorTO;
   }
-
 
   /**
    * Searches for courses based on the course name.
@@ -98,16 +112,22 @@ public class SearchServiceImpl implements SearchService {
   @Override
   public List<CourseTO> searchCourses(String courseName) {
     List<CourseDBO> courses = courseRepository.findCourseByName(courseName);
-    return courses.stream()
-            .map(this::mapWithAverageRating)
-            .toList();
+    return courses.stream().map(this::mapWithAverageRating).toList();
   }
 
+  /**
+   * Maps a {@link CourseDBO} entity to a {@link CourseTO} transfer object, including the average
+   * rating of the course.
+   *
+   * @param course the {@link CourseDBO} object representing the course
+   * @return a {@link CourseTO} object with the mapped data and the average rating
+   */
   private CourseTO mapWithAverageRating(CourseDBO course) {
     CourseTO courseTO = courseMapper.toDTO(course);
     // Calculate the average rating
     if (course.getReceivedCourseRatings() != null && !course.getReceivedCourseRatings().isEmpty()) {
-      courseTO.setAverageRating(course.getReceivedCourseRatings().stream()
+      courseTO.setAverageRating(
+          course.getReceivedCourseRatings().stream()
               .mapToDouble(RatingCourseDBO::getPoints)
               .average()
               .orElse(0.0));
@@ -121,17 +141,15 @@ public class SearchServiceImpl implements SearchService {
    * Retrieves all available course categories.
    *
    * <p>This method fetches the list of all course categories from the {@link CategoryRepository}.
-   * The result is a list of {@link CourseCategoryTO} objects representing the available
-   * categories.
+   * The result is a list of {@link CourseCategoryTO} objects representing the available categories.
    *
-   * @return a list of {@link CourseCategoryTO} objects representing all available categories. If
-   *     no categories are found, an empty list is returned.
+   * @return a list of {@link CourseCategoryTO} objects representing all available categories. If no
+   *     categories are found, an empty list is returned.
    */
   public List<CourseCategoryTO> getAllCategories() {
     // Use repository's built-in `findAll` and map results to TOs
-    return categoryRepository.findAll()
-            .stream()
-            .map(courseCategoryMapper::toDTO)
-            .collect(Collectors.toList());
+    return categoryRepository.findAll().stream()
+        .map(courseCategoryMapper::toDTO)
+        .collect(Collectors.toList());
   }
 }

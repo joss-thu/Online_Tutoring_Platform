@@ -25,18 +25,12 @@ public class MessageDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long messageId;
 
-  /**
-   * The chat this message belongs to.
-   * Defines a many-to-one relationship with {@link ChatDBO}.
-   */
+  /** The chat this message belongs to. Defines a many-to-one relationship with {@link ChatDBO}. */
   @ManyToOne
   @JoinColumn(name = "chat_id", nullable = false)
   private ChatDBO chat;
 
-  /**
-   * The sender of the message.
-   * Defines a many-to-one relationship with {@link UserDBO}.
-   */
+  /** The sender of the message. Defines a many-to-one relationship with {@link UserDBO}. */
   @ManyToOne
   @JoinColumn(name = "sender_id", nullable = false)
   private UserDBO sender;
@@ -45,29 +39,20 @@ public class MessageDBO {
   @JoinColumn(name = "receiver_id", nullable = false)
   private UserDBO receiver;
 
-  /**
-   * The content of the message.
-   */
+  /** The content of the message. */
   @Column(name = "message_content", columnDefinition = "TEXT", nullable = false)
   private String messageContent;
 
-  /**
-   * The timestamp when the message was sent.
-   */
+  /** The timestamp when the message was sent. */
   @Column(name = "send_at", nullable = false)
   private LocalDateTime sendAt;
 
-  /**
-   * Indicates whether the message has been read.
-   */
+  /** Indicates whether the message has been read. */
   @Column(name = "is_read", nullable = false)
   @Builder.Default
   private Boolean isRead = false;
 
-  /**
-   * The timestamp when the message was read.
-   */
+  /** The timestamp when the message was read. */
   @Column(name = "read_at")
   private LocalDateTime readAt;
 }
-

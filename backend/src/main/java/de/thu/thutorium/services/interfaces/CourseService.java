@@ -91,9 +91,32 @@ public interface CourseService {
    */
   Long getTotalCountOfCourses();
 
+  /**
+   * Creates a new course.
+   *
+   * <p>This method creates a new course in the system based on the provided {@link CourseTO}
+   * object.
+   *
+   * @param courseTO the {@link CourseTO} object containing the data for the course to be created.
+   */
   void createCourse(CourseTO courseTO);
 
+  /**
+   * Deletes a course by its ID.
+   *
+   * <p>This method deletes the course with the specified ID from the system.
+   *
+   * @param courseId the unique ID of the course to be deleted.
+   */
   void deleteCourse(Long courseId);
 
+  /**
+   * Updates the details of an existing course.
+   *
+   * <p>This method updates the course data based on the provided {@link CourseTO} object.
+   *
+   * @param courseId the unique ID of the course to be updated.
+   * @param courseTO the {@link CourseTO} object containing the new course data.
+   */
   void updateCourse(Long courseId, CourseTO courseTO);
 }

@@ -28,8 +28,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Implementation of the AuthenticationService interface. Provides methods to register and
- * authenticate users and generate JWT tokens.
+ * Implementation of the {@link AuthenticationService} interface. Provides methods to register and
+ * authenticate users, and to generate JWT tokens for authentication.
+ *
+ * <p>This service handles the authentication process, including logging in users, checking for
+ * existing registrations, registering new users, and generating JWT tokens for secure
+ * authentication. It interacts with the {@link UserRepository} and {@link RoleRepository} for user
+ * and role management, and uses the {@link JwtService} for generating JWT tokens.
+ *
+ * <p>The registration process includes checking if a user with the provided email and role already
+ * exists in the system. If the user does not exist, a new user is created, their roles are
+ * assigned, and their credentials are securely stored.
+ *
+ * <p>The authentication process includes validating the user's credentials, loading the user
+ * details, and generating a JWT token with an expiration time.
  */
 @Component
 @RequiredArgsConstructor
@@ -54,9 +66,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   /**
    * Authenticates a user based on the provided login request.
    *
-   * @param loginRequestTO the login request transfer object containing username and password
-   * @return a ResponseEntity containing the authentication response transfer object with the JWT
-   *     token and expiration time
+   * <p>This method authenticates a user by checking the provided email and password, generates a
+   * JWT token, and returns the token along with its expiration time.
+   *
+   * @param loginRequestTO the login request transfer object containing the user's email and
+   *     password
+   * @return a {@link ResponseEntity} containing the authentication response transfer object with
+   *     the JWT token and expiration time
    */
   @Override
   public ResponseEntity<LogInResponseTO> authenticate(@RequestBody LogInRequestTO loginRequestTO) {
@@ -81,13 +97,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   /**
-   * Registers a user based on the provided login request. The code checks if the username (email)
-   * is registered under the specified role. If a username does not exist with the specified role it
-   * is saved in the database
+   * Registers a new user based on the provided registration request.
    *
-   * @param registerRequestTO the register request transfer object containing username and password.
-   * @return a ResponseEntity containing the register response transfer object with the JWT token
-   *     and expiration time
+   * <p>This method checks if the email is already registered with the specified role. If the email
+   * is not already associated with the specified role, a new user is created, the password is
+   * encoded, and the user is saved in the database. After registration, a JWT token is generated
+   * for the new user, and the token along with its expiration time is returned.
+   *
+   * @param registerRequestTO the register request transfer object containing the user's details
+   *     (email, password, etc.)
+   * @return a {@link ResponseEntity} containing the registration response transfer object with the
+   *     JWT token and expiration time
    */
   @Override
   @Transactional

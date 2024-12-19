@@ -13,46 +13,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * AuthenticationController is a REST controller that handles authentication-related requests.
- * It provides endpoints for user login and other authentication operations.
+ * AuthenticationController is a REST controller that handles authentication-related requests. It
+ * provides endpoints for user login and other authentication operations.
  *
- * This controller uses the AuthenticationService to perform the actual authentication logic.
+ * <p>This controller uses the AuthenticationService to perform the actual authentication logic.
  */
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationController {
-    private final AuthenticationService authService;
+  private final AuthenticationService authService;
 
-    /**
-     * Constructs an AuthenticationController with the specified AuthenticationService implementation.
-     *
-     * @param authenticationServiceImpl the implementation of AuthenticationService to use
-     */
-    @Autowired
-    public AuthenticationController(AuthenticationServiceImpl authenticationServiceImpl) {
-        this.authService = authenticationServiceImpl;
-    }
+  /**
+   * Constructs an AuthenticationController with the specified AuthenticationService implementation.
+   *
+   * @param authenticationServiceImpl the implementation of AuthenticationService to use
+   */
+  @Autowired
+  public AuthenticationController(AuthenticationServiceImpl authenticationServiceImpl) {
+    this.authService = authenticationServiceImpl;
+  }
 
-    /**
-     * Registers a user based on the provided register request.
-     *
-     * @param request the register request transfer object containing user credentials and roles.
-     * @return a ResponseEntity containing the login response transfer object
-     */
-    @PostMapping("/register")
-    public ResponseEntity<LogInResponseTO> register(@RequestBody RegisterRequestTO request) {
-        return authService.register(request);
-    }
+  /**
+   * Registers a user based on the provided register request.
+   *
+   * @param request the register request transfer object containing user credentials and roles.
+   * @return a ResponseEntity containing the login response transfer object
+   */
+  @PostMapping("/register")
+  public ResponseEntity<LogInResponseTO> register(@RequestBody RegisterRequestTO request) {
+    return authService.register(request);
+  }
 
-    /**
-     * Authenticates a user based on the provided login request.
-     *
-     * @param request the login request transfer object containing user credentials
-     * @return a ResponseEntity containing the login response transfer object
-     */
-    @PostMapping("/login")
-    public ResponseEntity<LogInResponseTO> authenticate(@RequestBody LogInRequestTO request) {
-            return authService.authenticate(request);
-
-    }
+  /**
+   * Authenticates a user based on the provided login request.
+   *
+   * @param request the login request transfer object containing user credentials
+   * @return a ResponseEntity containing the login response transfer object
+   */
+  @PostMapping("/login")
+  public ResponseEntity<LogInResponseTO> authenticate(@RequestBody LogInRequestTO request) {
+    return authService.authenticate(request);
+  }
 }
