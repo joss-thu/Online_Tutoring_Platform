@@ -54,7 +54,7 @@ function Search() {
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
-      <NavBar isLoggedIn={false} currentPage="/" />
+      <NavBar currentPage="/" />
       {loading && (
         <div className="mt-[150px] font-merriweather_sans text-xl">
           Loading...

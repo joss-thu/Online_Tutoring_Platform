@@ -1,4 +1,3 @@
-import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 function TutorSearchResultItem({ tutor }) {
@@ -28,19 +27,15 @@ function TutorSearchResultItem({ tutor }) {
         <div className="font-merriweather_sans text-xl mt-[5px] text-white">
           {tutor.firstName} {tutor.lastName}
         </div>
-        {tutor.courses.length > 1 ? (
+        {tutor.tutorCourses.length > 1 ? (
           <div className="font-merriweather_sans text-sm text-white">
-            {tutor.courses.length} Courses
+            {tutor.tutorCourses.length} Courses
           </div>
         ) : (
           <div className="font-merriweather_sans text-md text-white">
-            {tutor.courses.length} Course
+            {tutor.tutorCourses.length} Course
           </div>
         )}
-        <div className="font-merriweather_sans text-sm text-gray-400">
-          Since{" "}
-          {formatDistanceToNow(new Date(tutor.createdAt), { addSuffix: false })}
-        </div>
       </div>
       <div className="flex flex-col justify-center ml-auto items-end font-merriweather_sans text-sm text-white"></div>
     </li>

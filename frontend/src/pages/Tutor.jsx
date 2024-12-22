@@ -30,7 +30,7 @@ function Tutor() {
   });
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
-      <NavBar isLoggedIn={false} currentPage="/" />
+      <NavBar currentPage="/" />
       {tutor ? (
         <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans mb-10">
           <div className="flex items-center">
