@@ -1,8 +1,8 @@
 package de.thu.thutorium.services.implementations;
 
-import de.thu.thutorium.api.frontendMappers.CourseMapper;
+import de.thu.thutorium.api.TOMappers.CourseTOMapper;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import de.thu.thutorium.database.databaseMappers.CourseDBMapper;
+import de.thu.thutorium.database.DBOMappers.CourseDBOMapper;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.repositories.CourseRepository;
@@ -21,7 +21,7 @@ import java.util.List;
  * retrieving courses based on different search criteria and getting overall course statistics.
  *
  * <p>This service interacts with the {@link CourseRepository} to fetch course data from the
- * database and uses {@link CourseMapper} to convert the {@link CourseDBO} (database object) into
+ * database and uses {@link CourseTOMapper} to convert the {@link CourseDBO} (database object) into
  * {@link CourseTO} (data transfer object) for use in the application.
  */
 @Service
@@ -29,15 +29,15 @@ import java.util.List;
 public class CourseServiceImpl implements CourseService {
 
   private final CourseRepository courseRepository;
-  private final CourseDBMapper courseDBMapper;
-  private final CourseMapper courseMapper;
+  private final CourseDBOMapper courseDBMapper;
+  private final CourseTOMapper courseMapper;
   private final UserRepository userRepository;
 
   /**
    * Finds a course by its unique ID.
    *
    * <p>This method retrieves the course with the given {@code id} from the {@link CourseRepository}
-   * and maps it to a {@link CourseTO} object using the {@link CourseMapper}. If no course is found
+   * and maps it to a {@link CourseTO} object using the {@link CourseTOMapper}. If no course is found
    * for the provided ID, it returns {@code null}.
    *
    * @param id the unique ID of the course to retrieve.
@@ -51,63 +51,11 @@ public class CourseServiceImpl implements CourseService {
   }
 
   /**
-   * Finds courses taught by a tutor with the specified first and last name.
-   *
-   * <p>This method retrieves a list of courses that are taught by a tutor with the provided first
-   * and last name from the {@link CourseRepository}. The result is mapped into a list of {@link
-   * CourseTO} objects using the {@link CourseMapper}.
-   *
-   * @param firstName the first name of the tutor.
-   * @param lastName the last name of the tutor.
-   * @return a list of {@link CourseTO} objects representing courses taught by the specified tutor.
-   *     If no courses are found, an empty list is returned.
-   */
-  @Override
-  public List<CourseTO> findCoursesByTutorName(String firstName, String lastName) {
-    List<CourseDBO> courses = courseRepository.findByTutorFirstNameAndLastName(firstName, lastName);
-    return courseMapper.toDTOList(courses);
-  }
-
-  /**
-   * Finds courses taught by a tutor with the specified full name.
-   *
-   * <p>This method retrieves a list of courses taught by a tutor whose full name matches the given
-   * {@code tutorName} from the {@link CourseRepository}. The result is mapped into a list of {@link
-   * CourseTO} objects using the {@link CourseMapper}.
-   *
-   * @param tutorName the full name of the tutor.
-   * @return a list of {@link CourseTO} objects representing courses taught by the specified tutor.
-   *     If no courses are found, an empty list is returned.
-   */
-  @Override
-  public List<CourseTO> findCoursesByFullTutorName(String tutorName) {
-    List<CourseDBO> courses = courseRepository.findByTutorFullName(tutorName);
-    return courseMapper.toDTOList(courses);
-  }
-
-  /**
-   * Finds courses by their name.
-   *
-   * <p>This method retrieves a list of courses whose names match the given {@code name} from the
-   * {@link CourseRepository}. The result is mapped into a list of {@link CourseTO} objects using
-   * the {@link CourseMapper}.
-   *
-   * @param name the name of the course to search for.
-   * @return a list of {@link CourseTO} objects representing courses that match the given name. If
-   *     no courses are found, an empty list is returned.
-   */
-  @Override
-  public List<CourseTO> findCoursesByName(String name) {
-    List<CourseDBO> courses = courseRepository.findCourseByName(name);
-    return courseMapper.toDTOList(courses);
-  }
-
-  /**
    * Retrieves courses that belong to a specific category.
    *
    * <p>This method retrieves a list of courses that are associated with the specified {@code
    * categoryName}. The result is mapped into a list of {@link CourseTO} objects using the {@link
-   * CourseMapper}.
+   * CourseTOMapper}.
    *
    * @param categoryName the name of the category to search for.
    * @return a list of {@link CourseTO} objects representing courses in the specified category. If
@@ -149,7 +97,7 @@ public class CourseServiceImpl implements CourseService {
             .orElseThrow(() -> new EntityNotFoundException("Tutor not found"));
 
     // Create CourseDBO from CourseTO using the mapper
-    CourseDBO courseDBO = courseDBMapper.toEntity(courseTO);
+    CourseDBO courseDBO = courseDBMapper.toDBO(courseTO);
 
     // Set the tutor in the CourseDBO
     courseDBO.setTutor(tutor);

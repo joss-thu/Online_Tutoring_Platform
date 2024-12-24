@@ -1,4 +1,4 @@
-package de.thu.thutorium.database.exceptions;
+package de.thu.thutorium.exceptions;
 
 /**
  * Exception thrown when a requested resource already exists.

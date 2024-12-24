@@ -1,8 +1,11 @@
 package de.thu.thutorium.database.repositories;
 
 import de.thu.thutorium.database.dbObjects.AffiliationDBO;
+import de.thu.thutorium.database.dbObjects.enums.AffiliationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /**
  * Repository interface for {@link AffiliationDBO} entities.
@@ -18,4 +21,6 @@ import org.springframework.stereotype.Repository;
  * mechanism.
  */
 @Repository
-public interface AffiliationRepository extends JpaRepository<AffiliationDBO, Long> { }
+public interface AffiliationRepository extends JpaRepository<AffiliationDBO, Long> {
+    Optional<AffiliationDBO> findByAffiliationTypeAndUniversity_UniversityName(AffiliationType affiliationType, String universityName);
+}

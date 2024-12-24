@@ -1,4 +1,4 @@
-package de.thu.thutorium.database.exceptions;
+package de.thu.thutorium.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
     private static final String MESSAGE = "Resource not found";

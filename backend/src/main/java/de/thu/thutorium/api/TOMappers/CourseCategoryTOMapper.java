@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
@@ -18,7 +18,7 @@ import org.mapstruct.*;
  * services.
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CourseCategoryMapper {
+public interface CourseCategoryTOMapper {
     /**
      * Converts a {@link CourseCategoryDBO} (representing a course category in the database) to a
      * {@link CourseCategoryTO}.
@@ -34,5 +34,5 @@ public interface CourseCategoryMapper {
     CourseCategoryTO toDTO(CourseCategoryDBO courseCategory);
 
     @Mapping(source = "categoryName", target = "categoryName")
-    CourseCategoryDBO toEntity(CourseCategoryTO courseCategoryTO);
+    CourseCategoryDBO toDBO(CourseCategoryTO courseCategoryTO);
 }

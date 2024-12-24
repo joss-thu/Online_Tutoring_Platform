@@ -1,8 +1,8 @@
 package de.thu.thutorium.services.implementations;
 
-import de.thu.thutorium.api.frontendMappers.CourseCategoryMapper;
-import de.thu.thutorium.api.frontendMappers.CourseMapper;
-import de.thu.thutorium.api.frontendMappers.TutorMapper;
+import de.thu.thutorium.api.TOMappers.CourseCategoryTOMapper;
+import de.thu.thutorium.api.TOMappers.CourseTOMapper;
+import de.thu.thutorium.api.TOMappers.TutorTOMapper;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
@@ -26,11 +26,26 @@ import java.util.stream.Collectors;
 @Service
 public class SearchServiceImpl implements SearchService {
   private final CourseRepository courseRepository;
-  private final CourseMapper courseMapper;
+  private final CourseTOMapper courseTOMapper;
   private final UserRepository userRepository;
-  private final TutorMapper tutorMapper;
+  private final TutorTOMapper tutorTOMapper;
   private final CategoryRepository categoryRepository;
-  private final CourseCategoryMapper courseCategoryMapper;
+  private final CourseCategoryTOMapper courseCategoryTOMapper;
+
+  public SearchServiceImpl(
+      CourseRepository courseRepository,
+      CourseTOMapper courseTOMapper,
+      UserRepository userRepository,
+      TutorTOMapper tutorTOMapper,
+      CategoryRepository categoryRepository,
+      CourseCategoryTOMapper courseCategoryTOMapper) {
+    this.courseRepository = courseRepository;
+    this.courseTOMapper = courseTOMapper;
+    this.userRepository = userRepository;
+    this.tutorTOMapper = tutorTOMapper;
+    this.categoryRepository = categoryRepository;
+    this.courseCategoryTOMapper = courseCategoryTOMapper;
+  }
 
   /**
    * Constructor for initializing the service with necessary dependencies.
@@ -40,23 +55,9 @@ public class SearchServiceImpl implements SearchService {
    * @param userRepository the repository for handling users (tutors)
    * @param tutorMapper the mapper to convert {@link UserDBO} to {@link TutorTO}
    * @param categoryRepository the repository for handling course categories
-   * @param courseCategoryMapper the mapper to convert {@link CourseCategoryDBO} to {@link
+   * @param courseCategoryTOMapper the mapper to convert {@link CourseCategoryDBO} to {@link
    *     CourseCategoryTO}
    */
-  public SearchServiceImpl(
-      CourseRepository courseRepository,
-      CourseMapper courseMapper,
-      UserRepository userRepository,
-      TutorMapper tutorMapper,
-      CategoryRepository categoryRepository,
-      CourseCategoryMapper courseCategoryMapper) {
-    this.courseRepository = courseRepository;
-    this.courseMapper = courseMapper;
-    this.userRepository = userRepository;
-    this.tutorMapper = tutorMapper;
-    this.categoryRepository = categoryRepository;
-    this.courseCategoryMapper = courseCategoryMapper;
-  }
 
   /**
    * Searches for tutors based on their full name.
@@ -84,7 +85,7 @@ public class SearchServiceImpl implements SearchService {
    * @return a {@link TutorTO} object with the mapped data and the average rating
    */
   private TutorTO mapWithAverageTutorRating(UserDBO tutor) {
-    TutorTO tutorTO = tutorMapper.toDTO(tutor);
+    TutorTO tutorTO = tutorTOMapper.toDTO(tutor);
     // Calculate the average rating
     if (tutor.getReceivedTutorRatings() != null && !tutor.getReceivedTutorRatings().isEmpty()) {
       tutorTO.setAverageRating(
@@ -123,7 +124,7 @@ public class SearchServiceImpl implements SearchService {
    * @return a {@link CourseTO} object with the mapped data and the average rating
    */
   private CourseTO mapWithAverageRating(CourseDBO course) {
-    CourseTO courseTO = courseMapper.toDTO(course);
+    CourseTO courseTO = courseTOMapper.toDTO(course);
     // Calculate the average rating
     if (course.getReceivedCourseRatings() != null && !course.getReceivedCourseRatings().isEmpty()) {
       courseTO.setAverageRating(
@@ -149,7 +150,7 @@ public class SearchServiceImpl implements SearchService {
   public List<CourseCategoryTO> getAllCategories() {
     // Use repository's built-in `findAll` and map results to TOs
     return categoryRepository.findAll().stream()
-        .map(courseCategoryMapper::toDTO)
+        .map(courseCategoryTOMapper::toDTO)
         .collect(Collectors.toList());
   }
 }

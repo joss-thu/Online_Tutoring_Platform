@@ -45,11 +45,12 @@ public class AffiliationDBO {
    * 'affiliations' in {@code University}
    */
   @ManyToOne
-  @JoinColumn(name = "university_id")
+  @JoinColumn(name = "university")
   private UniversityDBO university;
 
   /**
    * Users affiliated with this affiliation.
+   *
    * <p>Defines a one-to-many relationship with {@link UserDBO}.
    */
   @OneToMany(mappedBy = "affiliation")

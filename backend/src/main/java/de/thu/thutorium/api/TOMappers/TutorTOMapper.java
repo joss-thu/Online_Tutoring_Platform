@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
@@ -20,9 +20,9 @@ import java.util.List;
  * objects, including:
  *
  * <ul>
- *   <li>{@link CourseMapper} for mapping courses associated with the tutor
- *   <li>{@link RatingTutorMapper} for mapping ratings associated with the tutor
- *   <li>{@link UserMapper} for mapping general user data to the base DTO
+ *   <li>{@link CourseTOMapper} for mapping courses associated with the tutor
+ *   <li>{@link RatingTutorTOMapper} for mapping ratings associated with the tutor
+ *   <li>{@link UserTOMapper} for mapping general user data to the base DTO
  * </ul>
  *
  * <p>Note: The {@code componentModel = "spring"} annotation indicates that MapStruct will generate
@@ -30,9 +30,9 @@ import java.util.List;
  */
 @Mapper(
     componentModel = "spring",
-    uses = {CourseMapper.class, RatingTutorMapper.class, UserMapper.class},
+    uses = {CourseTOMapper.class, RatingTutorTOMapper.class, UserTOMapper.class},
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface TutorMapper {
+public interface TutorTOMapper {
   /**
    * Converts a {@link UserDBO} (representing a tutor) to a {@link TutorTO}.
    *

@@ -3,6 +3,7 @@ package de.thu.thutorium.api.transferObjects.authentication;
 import de.thu.thutorium.database.dbObjects.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Transfer object for the user registration request.
@@ -11,7 +12,7 @@ import jakarta.validation.constraints.NotEmpty;
 public record RegisterRequestTO(@Email(message = "Email should be valid")
                                 @NotEmpty(message = "Email cannot be empty")
                                 String email,
-                                @NotEmpty(message = "Role cannot be empty")
+                                @NotNull(message = "Role cannot be empty")
                                 Role role,
                                 @NotEmpty(message = "First name cannot be empty")
                                 String firstName,

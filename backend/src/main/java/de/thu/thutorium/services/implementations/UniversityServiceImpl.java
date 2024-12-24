@@ -1,12 +1,12 @@
 package de.thu.thutorium.services.implementations;
 
-import de.thu.thutorium.api.mappers.common.AddressMapper;
-import de.thu.thutorium.api.mappers.common.UniversityMapper;
+
+import de.thu.thutorium.api.TOMappers.UniversityTOMapper;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
+import de.thu.thutorium.database.DBOMappers.UniversityDBOMapper;
 import de.thu.thutorium.database.dbObjects.UniversityDBO;
-import de.thu.thutorium.database.exceptions.ResourceAlreadyExistsException;
-import de.thu.thutorium.database.repositories.AddressRepository;
 import de.thu.thutorium.database.repositories.UniversityRepository;
+import de.thu.thutorium.exceptions.ResourceAlreadyExistsException;
 import de.thu.thutorium.services.interfaces.UniversityService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,10 @@ import java.util.Optional;
 /**
  * Service implementation for managing universities. This class provides methods for creating and
  * managing university entities. It uses {@link UniversityRepository} for database operations and
- * {@link UniversityMapper} for mapping between transfer objects and database objects.
+ * {@link } for mapping between transfer objects and database objects.
  *
  * <p>The service handles the creation of universities and checks if a university already exists
- * based on its name. It also utilizes {@link AddressServiceImpl} and {@link AddressMapper} to
+ * based on its name. It also utilizes {@link AddressServiceImpl} and {@link de.thu.thutorium.api.TOMappers.AddressTOMapper} to
  * manage and map the address of the university.
  */
 @RequiredArgsConstructor
@@ -28,10 +28,8 @@ import java.util.Optional;
 public class UniversityServiceImpl implements UniversityService {
 
   private final UniversityRepository universityRepository;
-  private final AddressRepository addressRepository;
-  private final UniversityMapper universityMapper;
-  private final AddressServiceImpl addressService;
-  private final AddressMapper addressMapper;
+  private final UniversityTOMapper universityTOMapper;
+  private final UniversityDBOMapper universityDBOMapper;
 
   /**
    * Creates a new university.
@@ -52,9 +50,9 @@ public class UniversityServiceImpl implements UniversityService {
       throw new ResourceAlreadyExistsException(
           "University with name " + university.getUniversityName() + " already exists");
     }
-    UniversityDBO universityDBO = universityMapper.toDBO(university);
+    UniversityDBO universityDBO = universityDBOMapper.toDBO(university);
     universityRepository.save(universityDBO);
-    return universityMapper.toDTO(universityDBO);
+    return universityTOMapper.toDTO(universityDBO);
   }
 
   /**

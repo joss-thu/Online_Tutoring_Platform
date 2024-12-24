@@ -1,6 +1,7 @@
 package de.thu.thutorium.database.repositories;
 
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
+import jakarta.validation.constraints.NotEmpty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -47,4 +48,5 @@ public interface CategoryRepository extends JpaRepository<CourseCategoryDBO, Lon
 
   boolean existsByCategoryName(String categoryName);
 
+  CourseCategoryDBO findCourseCategoryDBOByCategoryName(@NotEmpty(message = "The category name cannot be empty") String categoryName);
 }

@@ -1,4 +1,4 @@
-package de.thu.thutorium.database.databaseMappers;
+package de.thu.thutorium.database.DBOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
@@ -24,7 +24,7 @@ import org.mapstruct.ReportingPolicy;
  * </ul>
  */
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CourseDBMapper {
+public interface CourseDBOMapper {
   /**
    * Maps a {@link CourseTO} object to a {@link CourseDBO} object.
    *
@@ -42,5 +42,5 @@ public interface CourseDBMapper {
   @Mapping(target = "tutor", ignore = true) // Will be set in the service layer
   @Mapping(target = "students", ignore = true) // Default initialized in the constructor
   @Mapping(target = "courseId", ignore = true) // Auto-generated in the database
-  CourseDBO toEntity(CourseTO courseTO);
+  CourseDBO toDBO(CourseTO courseTO);
 }

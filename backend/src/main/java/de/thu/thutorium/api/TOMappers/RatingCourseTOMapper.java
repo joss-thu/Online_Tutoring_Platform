@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.RatingCourseTO;
 import de.thu.thutorium.database.dbObjects.RatingCourseDBO;
@@ -14,7 +14,7 @@ import org.mapstruct.Mapping;
  * course rating in the database) to a {@code RatingCourseDTO} and vice versa. MapStruct automates
  * the mapping process, providing type-safe and efficient conversion between these two objects.
  *
- * <p>The {@code uses} attribute specifies that the {@link UserMapper} will be used to map the
+ * <p>The {@code uses} attribute specifies that the {@link UserTOMapper} will be used to map the
  * {@code student} field of {@link RatingCourseDBO} to {@link de.thu.thutorium.api.transferObjects.common.UserTO} in the {@code
  * RatingCourseDTO}.
  *
@@ -24,8 +24,8 @@ import org.mapstruct.Mapping;
  */
 @Mapper(
     componentModel = "spring",
-    uses = {UserMapper.class})
-public interface RatingCourseMapper {
+    uses = {UserTOMapper.class})
+public interface RatingCourseTOMapper {
   /**
    * Converts a {@link RatingCourseDBO} (representing a rating given by a student to a course) to a
    * {@link RatingCourseTO}.

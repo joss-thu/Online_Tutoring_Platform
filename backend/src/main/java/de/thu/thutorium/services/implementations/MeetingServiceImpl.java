@@ -1,7 +1,7 @@
 package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
-import de.thu.thutorium.database.databaseMappers.MeetingDBMapper;
+import de.thu.thutorium.database.DBOMappers.MeetingDBMapper;
 import de.thu.thutorium.database.dbObjects.AddressDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.MeetingDBO;

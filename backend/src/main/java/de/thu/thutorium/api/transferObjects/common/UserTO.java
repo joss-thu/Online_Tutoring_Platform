@@ -2,7 +2,6 @@ package de.thu.thutorium.api.transferObjects.common;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +25,6 @@ public class UserTO {
    * <p>This field holds the ID of the user, which is typically used to identify the user in the
    * system.
    */
-  @NotNull(message = "User id cannot be null")
   private Long userId;
 
   /**
@@ -58,4 +56,6 @@ public class UserTO {
 
   /** The affiliation of the user. */
   private AffiliationTO affiliation;
+
+  private String description;
 }

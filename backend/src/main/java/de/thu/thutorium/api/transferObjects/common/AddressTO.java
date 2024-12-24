@@ -6,16 +6,21 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-
-/**
- * Transfer object representing an address.
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class AddressTO {
+
+    private Long addressId;
+
+    /**
+     * Name of the campus.
+     */
+    @NotNull
+    private UniversityTO university;
+
     /**
      * Name of the campus.
      */

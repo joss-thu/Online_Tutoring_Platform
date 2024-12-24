@@ -59,4 +59,14 @@ public interface UserService {
    * @throws IllegalArgumentException if {@code userId} is {@code null}.
    */
   void deleteUser(Long userId);
+
+  /**
+   * Updates an existing user.
+   *
+   * @param id the id of the user
+   * @param user the {@code UserTO} object containing the user data
+   * @return the created {@code UserTO} object
+   */
+  UserTO updateUser(Long id, UserTO user);
+
 }

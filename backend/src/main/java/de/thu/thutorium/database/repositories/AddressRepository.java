@@ -1,6 +1,8 @@
 package de.thu.thutorium.database.repositories;
 
 import de.thu.thutorium.database.dbObjects.AddressDBO;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -18,4 +20,12 @@ import java.util.Optional;
 public interface AddressRepository extends JpaRepository<AddressDBO, Long> {
   Optional<AddressDBO> findByHouseNumAndStreetNameAndPostalCodeAndCountryContainsIgnoreCase(
       String houseNum, String streetName, String postalCode, String country);
+
+  Optional<AddressDBO>
+      findByHouseNumAndStreetNameIgnoreCaseAndPostalCodeAndCountryIgnoreCaseAndUniversity_UniversityNameIgnoreCase(
+          @NotNull String houseNum,
+          @NotEmpty(message = "The street name cannot be empty") String streetName,
+          @NotNull String postalCode,
+          @NotEmpty(message = "The country cannot be empty") String country,
+          @NotEmpty(message = "The university name cannot be empty") String universityName);
 }

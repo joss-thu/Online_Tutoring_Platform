@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.*;
@@ -22,8 +22,8 @@ import java.util.List;
  * a Spring bean for this mapper, allowing it to be injected into other components or services
  * within the application.
  */
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface UserMapper {
+@Mapper(componentModel = "spring", uses = {AffiliationTOMapper.class})
+public interface UserTOMapper {
   /**
    * Converts a {@link UserDBO} object to a {@link UserTO}.
    *

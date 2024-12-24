@@ -11,4 +11,4 @@
  * @author Jossin Anthony
  * @author Nikolai Ivanov
  */
-package de.thu.thutorium.database.exceptions;
+package de.thu.thutorium.exceptions;

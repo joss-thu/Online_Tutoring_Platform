@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.database.dbObjects.RatingTutorDBO;
@@ -15,7 +15,7 @@ import org.mapstruct.Mapping;
  * automate the mapping process, ensuring type-safe and efficient conversion between these two
  * objects.
  *
- * <p>The {@code uses} attribute specifies that the {@link UserMapper} will be used to map the
+ * <p>The {@code uses} attribute specifies that the {@link UserTOMapper} will be used to map the
  * {@code student} field of {@link RatingTutorDBO} to {@link de.thu.thutorium.api.transferObjects.common.UserTO} in the {@code
  * RatingTutorDTO}.
  *
@@ -25,8 +25,8 @@ import org.mapstruct.Mapping;
  */
 @Mapper(
         componentModel = "spring",
-        uses = {UserMapper.class})
-public interface RatingTutorMapper {
+        uses = {UserTOMapper.class})
+public interface RatingTutorTOMapper {
     /**
      * Converts a {@link RatingTutorDBO} (representing a rating given by a student to a tutor) to a
      * {@link RatingTutorTO}.

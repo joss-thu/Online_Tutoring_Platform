@@ -37,13 +37,9 @@ public class UniversityDBO {
   @Column(name = "university_name", nullable = false)
   private String universityName;
 
-  /**
-   * The address of the university. This establishes a uni-directional(!!) one-to-one relationship
-   * with the {@code Address} entity.
-   */
-  @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-  @JoinColumn(name = "address_id", nullable = false, unique = true)
-  private AddressDBO address;
+  /** The addresses of the university. */
+  @OneToMany(mappedBy = "university", orphanRemoval = true)
+  private List<AddressDBO> addresses;
 
   /**
    * Defines a one-to-many relationship between an affiliation and its associated affiliations. This
@@ -56,8 +52,14 @@ public class UniversityDBO {
   @OneToMany(mappedBy = "university", orphanRemoval = true)
   private List<AffiliationDBO> affiliations;
 
-  /** Constructs a UniversityDBO with an empty set of affiliations. */
+  /** Constructs a UniversityDBO. */
   public UniversityDBO() {
     this.affiliations = new ArrayList<>();
+    this.addresses = new ArrayList<>();
+  }
+
+  public UniversityDBO(String universityName) {
+    super();
+    this.universityName = universityName;
   }
 }

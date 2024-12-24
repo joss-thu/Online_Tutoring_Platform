@@ -3,6 +3,7 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,10 @@ public class AddressDBO {
   @Setter(AccessLevel.NONE)
   private Long addressId;
 
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @JoinColumn(name = "university")
+  private UniversityDBO university;
+
   /** The campus name for the university. */
   @Column(name = "campus_name", length = 255)
   private String campusName;
@@ -69,21 +74,15 @@ public class AddressDBO {
   @Column(name = "country", nullable = false)
   private String country;
 
-  /**
-   * The phone number of the address.
-   */
+  /** The phone number of the address. */
   @Column(name = "phone_number")
   private String phoneNumber;
 
-  /**
-   * The fax number of the address.
-   */
+  /** The fax number of the address. */
   @Column(name = "fax_number")
   private String faxNumber;
 
-  /**
-   * The email address of the address.
-   */
+  /** The email address of the address. */
   @Column(name = "email_address")
   private String emailAddress;
 
@@ -96,10 +95,31 @@ public class AddressDBO {
   @Builder.Default
   private List<MeetingDBO> meetings = new ArrayList<>();
 
-  /**
-   * Constructs an AddressDBO with an empty set of meetings .
-   */
+  /** Constructs an AddressDBO with an empty set of meetings . */
   public AddressDBO() {
     this.meetings = new ArrayList<>();
+  }
+
+  /**
+   * Ensure all {@code String} fields are trimmed of leading and trailing whitespaces and converted
+   * to lowercase before being persisted in the database.
+   */
+  @PrePersist
+  @PreUpdate
+  private void preprocessFields() {
+    Field[] fields = this.getClass().getDeclaredFields();
+    for (Field field : fields) {
+      if (field.getType().equals(String.class)) {
+        field.setAccessible(true);
+        try {
+          String value = (String) field.get(this);
+          if (value != null) {
+            field.set(this, value.trim().toLowerCase());
+          }
+        } catch (IllegalAccessException e) {
+          throw new RuntimeException();
+        }
+      }
+    }
   }
 }

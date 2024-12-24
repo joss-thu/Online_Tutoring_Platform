@@ -12,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -190,33 +188,5 @@ public class TutorController {
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Progress record not found");
     }
-  }
-
-  /**
-   * Deletes the currently authenticated user's account.
-   *
-   * @return a success message.
-   */
-  @DeleteMapping("/delete-my-account")
-  public ResponseEntity<String> deleteMyAccount() {
-    // Retrieve the currently authenticated user's ID
-    Long authenticatedUserId = getAuthenticatedUserId();
-    userService.deleteUser(authenticatedUserId);
-    return ResponseEntity.ok("Your account has been deleted successfully");
-  }
-
-  /**
-   * Retrieves the authenticated user's ID.
-   *
-   * @return the ID of the authenticated user.
-   * @throws SecurityException if the user is not authenticated.
-   */
-  private Long getAuthenticatedUserId() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated()) {
-      throw new SecurityException("User is not authenticated");
-    }
-    // Assuming the user's ID is stored as the principal or can be derived from it
-    return (Long) authentication.getPrincipal(); // Adjust based on your authentication setup
   }
 }

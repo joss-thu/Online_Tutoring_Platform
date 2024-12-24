@@ -33,43 +33,6 @@ public interface CourseService {
    */
   CourseTO findCourseById(Long id);
 
-  /**
-   * Finds courses taught by a tutor with the specified first and last name.
-   *
-   * <p>This method will return a list of {@link CourseTO} objects that match the provided tutor's
-   * first and last name. The search may be case-insensitive and can return partial matches.
-   *
-   * @param firstName the first name of the tutor.
-   * @param lastName the last name of the tutor.
-   * @return a list of {@link CourseTO} objects representing the courses taught by the specified
-   *     tutor. If no courses are found, an empty list is returned.
-   */
-  List<CourseTO> findCoursesByTutorName(String firstName, String lastName);
-
-  /**
-   * Finds courses taught by a tutor with the specified full name.
-   *
-   * <p>This method will return a list of {@link CourseTO} objects that match the provided full
-   * tutor's name. The search may be case-insensitive and can return partial matches.
-   *
-   * @param tutorName the full name of the tutor.
-   * @return a list of {@link CourseTO} objects representing the courses taught by the tutor with
-   *     the specified name. If no courses are found, an empty list is returned.
-   */
-  List<CourseTO> findCoursesByFullTutorName(String tutorName);
-
-  /**
-   * Finds courses by the given course name.
-   *
-   * <p>This method will return a list of {@link CourseTO} objects that match the given course name.
-   * The search may support case-insensitivity and partial name matches depending on the
-   * implementation.
-   *
-   * @param name the name (or partial name) of the course to search for.
-   * @return a list of {@link CourseTO} objects representing courses that match the search criteria.
-   *     If no courses are found, an empty list is returned.
-   */
-  List<CourseTO> findCoursesByName(String name);
 
   /**
    * Retrieves courses that belong to a specific category.

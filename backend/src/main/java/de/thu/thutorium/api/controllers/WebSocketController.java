@@ -1,13 +1,15 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
+import de.thu.thutorium.services.interfaces.ChatService;
 import de.thu.thutorium.services.interfaces.MessageService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * WebSocketController handles WebSocket messaging and facilitates real-time message sending through
@@ -18,14 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class WebSocketController {
 
   private final MessageService messageService;
+  private final ChatService chatService;
 
   /**
    * Constructor for initializing the WebSocketController with the MessageService.
    *
    * @param messageService the service responsible for handling message operations
    */
-  public WebSocketController(MessageService messageService) {
+  public WebSocketController(MessageService messageService, ChatService chatService) {
     this.messageService = messageService;
+      this.chatService = chatService;
   }
 
   /**
@@ -54,5 +58,29 @@ public class WebSocketController {
   public ResponseEntity<MessageTO> PostsendMessage(@RequestBody MessageTO messageTO) {
     MessageTO savedMessage = messageService.saveMessage(messageTO);
     return ResponseEntity.ok(savedMessage);
+  }
+
+  /**
+   * Creates a new chat.
+   *
+   * @param requestDTO the {@link ChatCreateTO} object containing chat details.
+   * @return a success message.
+   */
+  @PostMapping("/chat-create")
+  public ResponseEntity<String> createChat(@RequestBody @Valid ChatCreateTO requestDTO) {
+    chatService.createChat(requestDTO);
+    return ResponseEntity.status(HttpStatus.CREATED).body("Chat created successfully!");
+  }
+
+  /**
+   * Deletes a chat by its ID.
+   *
+   * @param chatId the ID of the chat to delete.
+   * @return a success message.
+   */
+  @DeleteMapping("/chat-delete/{chatId}")
+  public ResponseEntity<String> deleteChat(@PathVariable Long chatId) {
+    chatService.deleteChat(chatId);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Chat deleted successfully!");
   }
 }

@@ -49,7 +49,7 @@ public class CourseCategoryDBO {
    * {@code null}.
    */
   @Column(name = "created_on")
-  private LocalDateTime createdOn;
+  private LocalDateTime createdOn = LocalDateTime.now();
 
   /**
    * The user (admin) who created the course category.

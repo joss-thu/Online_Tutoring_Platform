@@ -1,7 +1,7 @@
 package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
-import de.thu.thutorium.database.databaseMappers.ProgressDBMapper;
+import de.thu.thutorium.database.DBOMappers.ProgressDBMapper;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.ProgressDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;

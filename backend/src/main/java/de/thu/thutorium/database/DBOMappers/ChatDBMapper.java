@@ -1,4 +1,4 @@
-package de.thu.thutorium.database.databaseMappers;
+package de.thu.thutorium.database.DBOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.database.dbObjects.ChatDBO;

@@ -1,4 +1,4 @@
-package de.thu.thutorium.api.frontendMappers;
+package de.thu.thutorium.api.TOMappers;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
@@ -14,8 +14,8 @@ import java.util.List;
  * in the database) to a {@code CourseDTO} and vice versa. MapStruct automates the mapping process,
  * ensuring type-safe and efficient conversion between these two objects.
  *
- * <p>The {@code uses} attribute specifies that the {@link UserMapper} and {@link
- * CourseCategoryMapper} will be used to map the {@code createdBy} field (which is a {@code
+ * <p>The {@code uses} attribute specifies that the {@link UserTOMapper} and {@link
+ * CourseCategoryTOMapper} will be used to map the {@code createdBy} field (which is a {@code
  * UserDBO}) to a {@code UserBaseDTO} in the {@code CourseDTO}, and the {@code category} field
  * (which is a {@code CourseCategoryDBO}) to a {@code CourseCategoryDTO} in the {@code CourseDTO}.
  *
@@ -25,9 +25,9 @@ import java.util.List;
  */
 @Mapper(
     componentModel = "spring",
-    uses = {UserMapper.class, CourseCategoryMapper.class},
+    uses = {UserTOMapper.class, CourseCategoryTOMapper.class},
     unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface CourseMapper {
+public interface CourseTOMapper {
 
   /**
    * Maps a single CourseDBO to a CourseDTO.

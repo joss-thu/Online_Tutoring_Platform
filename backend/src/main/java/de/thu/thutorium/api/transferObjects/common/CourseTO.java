@@ -18,6 +18,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CourseTO {
 
+  private Long courseId;
+
   /**
    * The name of the course.
    *
