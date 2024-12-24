@@ -4,6 +4,11 @@ import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.services.interfaces.ChatService;
 import de.thu.thutorium.services.interfaces.MessageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +45,7 @@ public class WebSocketController {
    * @param messageTO the message data transfer object containing the message details
    * @return the saved message as a MessageDTO, which will be sent to all subscribers
    */
+
   @MessageMapping("/sendMessage")
   @SendTo("/topic/messages")
   public MessageTO sendMessage(MessageTO messageTO) {
@@ -54,6 +60,16 @@ public class WebSocketController {
    * @param messageTO the message transfer object containing the message details
    * @return the created message wrapped in a ResponseEntity
    */
+  @Operation(
+          summary = "Send a new message",
+          description = "Persists a new message in the database and sends it to the recipient.",
+          tags = {"Message Operations"}
+  )
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "Message sent successfully",
+                  content = @Content(schema = @Schema(implementation = MessageTO.class))),
+          @ApiResponse(responseCode = "400", description = "Invalid message data")
+  })
   @PostMapping("/message/send")
   public ResponseEntity<MessageTO> PostsendMessage(@RequestBody MessageTO messageTO) {
     MessageTO savedMessage = messageService.saveMessage(messageTO);
@@ -66,6 +82,15 @@ public class WebSocketController {
    * @param requestDTO the {@link ChatCreateTO} object containing chat details.
    * @return a success message.
    */
+  @Operation(
+          summary = "Create a new chat",
+          description = "Creates a new chat session based on the provided chat details.",
+          tags = {"Chat Operations"}
+  )
+  @ApiResponses({
+          @ApiResponse(responseCode = "201", description = "Chat created successfully"),
+          @ApiResponse(responseCode = "400", description = "Invalid chat data")
+  })
   @PostMapping("/chat-create")
   public ResponseEntity<String> createChat(@RequestBody @Valid ChatCreateTO requestDTO) {
     chatService.createChat(requestDTO);
@@ -78,6 +103,15 @@ public class WebSocketController {
    * @param chatId the ID of the chat to delete.
    * @return a success message.
    */
+  @Operation(
+          summary = "Delete a chat by ID",
+          description = "Deletes an existing chat by its unique ID.",
+          tags = {"Chat Operations"}
+  )
+  @ApiResponses({
+          @ApiResponse(responseCode = "204", description = "Chat deleted successfully"),
+          @ApiResponse(responseCode = "404", description = "Chat not found")
+  })
   @DeleteMapping("/chat-delete/{chatId}")
   public ResponseEntity<String> deleteChat(@PathVariable Long chatId) {
     chatService.deleteChat(chatId);

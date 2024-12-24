@@ -7,6 +7,12 @@ import de.thu.thutorium.services.implementations.SearchServiceImpl;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.SearchService;
 import de.thu.thutorium.services.interfaces.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +41,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/search")
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class SearchController {
 
   private final SearchService searchService;
@@ -63,8 +70,19 @@ public class SearchController {
    *     or both, depending on the provided parameters. Results may include duplicates if multiple
    *     entities match the search criteria.
    */
+  @Operation(
+          summary = "Search tutors or courses",
+          description = "Search for tutors by name or courses by name.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Search results returned successfully",
+                  content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object.class)))),
+          @ApiResponse(responseCode = "400", description = "Invalid query parameters provided"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public List<Object> search(
       @RequestParam(required = false) String tutorName,
       @RequestParam(required = false) String courseName) {
@@ -96,9 +114,18 @@ public class SearchController {
    *
    * @return a {@code CourseCategoryDTO} object containing the course category data
    */
-  //TODO: JSON Serialisation problem with ROLES
+  @Operation(
+          summary = "Retrieve all course categories",
+          description = "Fetches a list of all available course categories in the system.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Categories retrieved successfully",
+                  content = @Content(array = @ArraySchema(schema = @Schema(implementation = CourseCategoryTO.class)))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("/categories")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public List<CourseCategoryTO> getCategories() {
     return searchService.getAllCategories();
   }
@@ -111,8 +138,19 @@ public class SearchController {
    * @param categoryName The name of the category for which courses are to be retrieved.
    * @return A list of {@link CourseTO} objects that belong to the specified category.
    */
+  @Operation(
+          summary = "Retrieve courses by category",
+          description = "Fetches courses that belong to a specific category.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Courses retrieved successfully",
+                  content = @Content(array = @ArraySchema(schema = @Schema(implementation = CourseTO.class)))),
+          @ApiResponse(responseCode = "404", description = "Category not found"),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("/category/{categoryName}")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public List<CourseTO> getCoursesByCategory(@PathVariable String categoryName) {
     return courseService.getCoursesByCategory(categoryName);
   }
@@ -126,8 +164,18 @@ public class SearchController {
    * @example GET /students/count
    * @response 42
    */
+  @Operation(
+          summary = "Get total student count",
+          description = "Retrieves the total number of students registered in the system.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Student count retrieved successfully",
+                  content = @Content(schema = @Schema(implementation = Long.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("students/count")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public Long getStudentCount() {
     return userService.getStudentCount();
   }
@@ -140,8 +188,18 @@ public class SearchController {
    * @example GET /tutors/count
    * @response 15
    */
+  @Operation(
+          summary = "Get total tutor count",
+          description = "Retrieves the total number of tutors registered in the system.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Tutor count retrieved successfully",
+                  content = @Content(schema = @Schema(implementation = Long.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("tutors/count")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public Long getTutorsCount() {
     return userService.getTutorCount();
   }
@@ -152,8 +210,18 @@ public class SearchController {
    *
    * @return the total number of courses as a {@code Long}.
    */
+  @Operation(
+          summary = "Get total course count",
+          description = "Retrieves the total number of courses available in the system.",
+          tags = {"Search Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Course count retrieved successfully",
+                  content = @Content(schema = @Schema(implementation = Long.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("/courses/count")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
   public Long getCoursesCount() {
     return courseService.getTotalCountOfCourses();
   }

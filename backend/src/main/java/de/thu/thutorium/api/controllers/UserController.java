@@ -5,6 +5,10 @@ import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -107,6 +111,30 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("An error occurred while deleting the account.");
     }
+  }
+
+  /** User Operations */
+
+  /**
+   * Retrieves a tutor by their ID.
+   *
+   * @param id the ID of the tutor to retrieve.
+   * @return the {@link UserTO} object containing tutor details.
+   */
+  @Operation(
+          summary = "Retrieve tutor by ID",
+          description = "Fetches tutor details by their unique ID.",
+          tags = {"User Operations"}
+  )
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "Tutor retrieved successfully",
+                  content = @Content(schema = @Schema(implementation = UserTO.class))),
+          @ApiResponse(responseCode = "404", description = "Tutor not found")
+  })
+  @GetMapping("tutor")
+  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+  public UserTO getTutor(@RequestParam Long id) {
+    return userService.getTutorByID(id);
   }
 
   /**
