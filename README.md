@@ -26,7 +26,7 @@ To run both the backend and frontend applications using Docker Compose, follow t
 
 ### Running Backend, Frontend, or Database Individually
 
-- **Running only the Backend** (will start the database as a dependency):
+- **Running only the Backend** (will start the database and webrtc server as dependencies):
    ```bash
    docker-compose up --build --detach backend
    ```
@@ -39,6 +39,11 @@ To run both the backend and frontend applications using Docker Compose, follow t
 - **Running only the Database**:
    ```bash
    docker-compose up --build --detach database
+   ```
+
+- **Running only the webrtc server**:
+   ```bash
+   docker-compose up --build --detach webrtc-server
    ```
 
 ### Stopping Containers
@@ -62,6 +67,11 @@ To run both the backend and frontend applications using Docker Compose, follow t
    ```bash
    docker-compose stop database
    ```
+  
+- **Stopping only the webrtc server**:
+   ```bash
+   docker-compose stop webrtc-server
+   ```
 
 ### Running the code
 
@@ -83,3 +93,4 @@ Identical environment variables should be set in the IDE to match those in Docke
 - **Backend**: Available at [http://localhost:8080](http://localhost:8080)
 - **Frontend**: Available at [http://localhost](http://localhost) on port 80 (served by Nginx, not React's development server).
 - **Database**: Available at [http://localhost:5431](http://localhost:5431) (Ensure match with parameters in .env file)
+- **Webrtc server**: Available at [http://localhost:5000](http://localhost:5000)
