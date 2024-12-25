@@ -49,7 +49,7 @@ services:
       context: ./webrtc
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5001:5000"
     restart: no
     volumes:
       - ./webrtc:/app

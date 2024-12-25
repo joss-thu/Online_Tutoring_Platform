@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -66,6 +68,8 @@ public class SecurityConfig {
     return http.build();
   }
 
+
+
   /**
    * Configures Cross-Origin Resource Sharing (CORS) settings for the application, allowing specific
    * origins, HTTP methods, and headers to be used in cross-origin requests.
@@ -112,6 +116,27 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/v3/api-docs/**", swaggerConfiguration);
     source.registerCorsConfiguration("/v3/api-docs.yaml", swaggerConfiguration);
 
+    //chat
+    CorsConfiguration chatCorsConfig = new CorsConfiguration();
+    chatCorsConfig.setAllowedOrigins(List.of("*"));
+    chatCorsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+    chatCorsConfig.setAllowedHeaders(List.of("*"));
+    chatCorsConfig.setAllowCredentials(true);
+    source.registerCorsConfiguration("/chat/**", chatCorsConfig);
+
     return source;
   }
+
+  @Bean
+  public SecurityFilterChain websocketSecurity(HttpSecurity http) throws Exception {
+    http
+            .securityMatcher("/chat/**")  // Apply only to WebSocket paths
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/chat/**").permitAll())
+            .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for WebSockets
+            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));  // Updated way to disable frame options
+    return http.build();
+  }
+
+
 }
