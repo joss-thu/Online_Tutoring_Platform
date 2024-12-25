@@ -73,7 +73,7 @@ public class UserDBO implements UserDetails {
    * belongs. The counterpart is denoted by a List<UserDBO> called 'affiliatedUsers' in the {@link
    * AffiliationDBO}.
    */
-  @ManyToOne
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinColumn(name = "affiliation_id")
   private AffiliationDBO affiliation;
 
