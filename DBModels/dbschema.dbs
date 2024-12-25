@@ -34,6 +34,7 @@
 		</table>
 		<table name="address" spec="" >
 			<column name="address_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="university" type="bigint" jt="-5" />
 			<column name="campus_name" type="varchar" length="100" jt="12" />
 			<column name="house_num" type="smallint" jt="5" mandatory="y" />
 			<column name="street_name" type="varchar" length="255" jt="12" mandatory="y" />
@@ -46,6 +47,9 @@
 			<index name="pk_address" unique="PRIMARY_KEY" >
 				<column name="address_id" />
 			</index>
+			<fk name="fk_address_university" to_schema="public" to_table="university" >
+				<fk_column name="university" pk="university_id" />
+			</fk>
 		</table>
 		<table name="affiliation" spec="" >
 			<column name="affiliation_id" type="integer" jt="4" mandatory="y" />
@@ -59,6 +63,31 @@
 			</constraint>
 			<fk name="affiliation_university_id_foreign" to_schema="public" to_table="university" options="" >
 				<fk_column name="university_id" pk="university_id" />
+			</fk>
+		</table>
+		<table name="chat" prior="tbl" >
+			<column name="chat_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="created_at" type="timestamp" jt="93" mandatory="y" />
+			<column name="is_group" type="boolean" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
+			<column name="chat_title" type="varchar" jt="12" />
+			<index name="pk_chat" unique="PRIMARY_KEY" >
+				<column name="chat_id" />
+			</index>
+		</table>
+		<table name="chat_participants" prior="chat_0" >
+			<column name="chat_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="user_id" prior="created_at" type="bigint" jt="-5" mandatory="y" />
+			<index name="pk_chat_0" unique="PRIMARY_KEY" >
+				<column name="chat_id" />
+				<column name="user_id" />
+			</index>
+			<fk name="fk_chat_0_chat" to_schema="public" to_table="chat" >
+				<fk_column name="chat_id" pk="chat_id" />
+			</fk>
+			<fk name="fk_chat_0_user_account" to_schema="public" to_table="user_account" >
+				<fk_column name="user_id" pk="user_id" />
 			</fk>
 		</table>
 		<table name="course" spec="" >
@@ -138,12 +167,10 @@
 				<column name="meeting_id" />
 				<column name="meeting_type" />
 			</index>
-			<fk name="fk_meeting_types_meeting" to_schema="public" to_table="Meeting" >
-				<fk_column name="meeting_id" pk="meeting_id" />
-			</fk>
 		</table>
 		<table name="messages" prior="Message" spec="" >
 			<column name="message_id" type="bigint" jt="-5" mandatory="y" />
+			<column name="chat_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="sender_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="receiver_id" type="bigint" jt="-5" mandatory="y" />
 			<column name="message_content" type="text" jt="12" mandatory="y" />
@@ -158,6 +185,9 @@
 			</fk>
 			<fk name="message_receiver_id_foreign" to_schema="public" to_table="user_account" options="" >
 				<fk_column name="receiver_id" pk="user_id" />
+			</fk>
+			<fk name="fk_messages_chat" to_schema="public" to_table="chat" >
+				<fk_column name="chat_id" pk="chat_id" />
 			</fk>
 		</table>
 		<table name="progress" prior="tbl" >
@@ -219,16 +249,9 @@
 		<table name="university" spec="" >
 			<column name="university_id" type="integer" jt="4" mandatory="y" />
 			<column name="name" type="varchar" length="255" jt="12" mandatory="y" />
-			<column name="address_id" type="bigint" jt="-5" mandatory="y" />
 			<index name="pk_university" unique="PRIMARY_KEY" >
 				<column name="university_id" />
 			</index>
-			<index name="unq_university" unique="UNIQUE_INDEX" >
-				<column name="address_id" />
-			</index>
-			<fk name="fk_university_address" to_schema="public" to_table="address" >
-				<fk_column name="address_id" pk="address_id" />
-			</fk>
 		</table>
 		<table name="user_account" prior="User" spec="" >
 			<column name="user_id" type="bigint" jt="-5" mandatory="y" />
@@ -290,23 +313,24 @@
 		</table>
 	</schema>
 	<layout name="Layout" id="Layout-194f" show_relation="columns" >
-		<entity schema="public" name="Meeting" color="EEC1CE" x="1104" y="400" />
-		<entity schema="public" name="address" color="C7F4BE" x="704" y="480" />
-		<entity schema="public" name="affiliation" color="C7F4BE" x="288" y="480" />
-		<entity schema="public" name="course" color="F4DFBE" x="1056" y="96" />
-		<entity schema="public" name="coursecategory" color="F4DFBE" x="672" y="96" />
-		<entity schema="public" name="courses_categories" color="F4DFBE" x="816" y="96" />
-		<entity schema="public" name="courses_students" color="F4DFBE" x="512" y="48" />
-		<entity schema="public" name="meeting_participants" color="EEC1CE" x="128" y="384" />
-		<entity schema="public" name="meeting_types" color="EEC1CE" x="896" y="528" />
-		<entity schema="public" name="messages" color="D8BEF4" x="48" y="208" />
-		<entity schema="public" name="progress" color="EBEEC1" x="96" y="80" />
-		<entity schema="public" name="rating_course" color="BEF2F4" x="912" y="240" />
-		<entity schema="public" name="rating_tutor" color="BEF2F4" x="800" y="240" />
-		<entity schema="public" name="roles" color="C1D8EE" x="624" y="240" />
-		<entity schema="public" name="university" color="C7F4BE" x="496" y="480" />
-		<entity schema="public" name="user_account" color="BEC4F4" x="272" y="64" />
-		<entity schema="public" name="users_roles" color="C1D8EE" x="480" y="176" />
-		<entity schema="public" name="users_verifiers" color="C1D8EE" x="480" y="288" />
+		<entity schema="public" name="Meeting" color="EEC1CE" x="1152" y="400" />
+		<entity schema="public" name="address" color="C7F4BE" x="752" y="480" />
+		<entity schema="public" name="affiliation" color="C7F4BE" x="336" y="480" />
+		<entity schema="public" name="chat" color="D8BEF4" x="48" y="480" />
+		<entity schema="public" name="chat_participants" color="D8BEF4" x="192" y="544" />
+		<entity schema="public" name="course" color="F4DFBE" x="1104" y="96" />
+		<entity schema="public" name="coursecategory" color="F4DFBE" x="720" y="96" />
+		<entity schema="public" name="courses_categories" color="F4DFBE" x="864" y="96" />
+		<entity schema="public" name="courses_students" color="F4DFBE" x="560" y="48" />
+		<entity schema="public" name="meeting_participants" color="EEC1CE" x="176" y="384" />
+		<entity schema="public" name="messages" color="D8BEF4" x="96" y="192" />
+		<entity schema="public" name="progress" color="EBEEC1" x="144" y="80" />
+		<entity schema="public" name="rating_course" color="BEF2F4" x="960" y="240" />
+		<entity schema="public" name="rating_tutor" color="BEF2F4" x="848" y="240" />
+		<entity schema="public" name="roles" color="C1D8EE" x="672" y="240" />
+		<entity schema="public" name="university" color="C7F4BE" x="544" y="480" />
+		<entity schema="public" name="user_account" color="BEC4F4" x="320" y="64" />
+		<entity schema="public" name="users_roles" color="C1D8EE" x="528" y="176" />
+		<entity schema="public" name="users_verifiers" color="C1D8EE" x="528" y="288" />
 	</layout>
 </project>

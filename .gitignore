@@ -612,7 +612,8 @@ Temporary Items
 # add your custom gitignore here:
 .idea
 
-
+# Ignore package-lock.json
+package-lock.json
 
 
 .vscode/

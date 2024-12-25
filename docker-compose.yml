@@ -32,6 +32,8 @@ services:
     depends_on:
       database:
         condition: service_started
+      webrtc-server: # Add dependency on webrtc-server
+        condition: service_started
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -40,3 +42,16 @@ services:
     restart: no
     env_file:
       - ./.env
+
+  webrtc-server:
+    container_name: otp-webrtc-server
+    build:
+      context: ./webrtc
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    restart: no
+    volumes:
+      - ./webrtc:/app
+    environment:
+      - NODE_ENV=development
