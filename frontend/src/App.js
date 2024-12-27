@@ -12,13 +12,12 @@ import Course from "./pages/Course";
 import Tutor from "./pages/Tutor";
 import CourseForm from "./components/CourseForm";
 
-
 export default function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-          <Route path="/createcourse" element={<CourseForm />} />
+        <Route path="/createcourse" element={<CourseForm />} />
         <Route path="/my-courses" element={<MyCourses />} />
         <Route path="/tutor-centre" element={<TutorCentre />} />
         <Route path="/messages" element={<Messages />} />
