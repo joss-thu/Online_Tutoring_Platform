@@ -1,4 +1,6 @@
 import React from "react";
+import SearchIcon from '@mui/icons-material/Search';
+
 //
 export default function SearchBar({
   placeholder = "Search",
@@ -16,12 +18,11 @@ export default function SearchBar({
         {...props}
       />
 
-      <img
-        src="/public/searchbar.svg" // Ensure this path is correct
-        alt="Search Icon"
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500"
+
+        <SearchIcon
+        className="absolute left-4 top-1/2 transform -translate-y-1/2"
         style={{ left: "10px", width: "20px", height: "20px" }}
-      />
+        />
     </div>
   );
 }
