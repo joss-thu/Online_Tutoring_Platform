@@ -1,6 +1,12 @@
 import React from "react";
 
-function ChatHistoryItem({ message, selectedChat, setSelectedChat }) {
+function ChatHistoryItem({
+  message,
+  selectedChatId,
+  setSelectedChatId,
+  setSelectedChatObject,
+  readChat,
+}) {
   const {
     receiver,
     lastMessage,
@@ -26,9 +32,13 @@ function ChatHistoryItem({ message, selectedChat, setSelectedChat }) {
 
   return (
     <div
-      onClick={() => setSelectedChat(chatId)}
+      onClick={() => {
+        setSelectedChatId(chatId);
+        setSelectedChatObject(message);
+        readChat(chatId);
+      }}
       className={`flex items-center p-3 border-b border-gray-200 cursor-pointer transition-all ${
-        selectedChat === chatId ? "bg-gray-100" : "bg-white"
+        selectedChatId === chatId ? "bg-gray-100" : "bg-white"
       } hover:bg-gray-100`}
     >
       {/* Profile Picture */}

@@ -67,7 +67,7 @@ const SearchSection = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, [categories]);
+  }, []);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {

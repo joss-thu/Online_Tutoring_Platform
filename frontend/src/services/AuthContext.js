@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
   const login = (token) => {
     saveToken(token);
     setUser(getUserFromToken());
-    console.log(user);
   };
 
   const logout = () => {

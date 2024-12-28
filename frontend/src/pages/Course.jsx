@@ -27,7 +27,7 @@ function Course() {
 
   useEffect(() => {
     fetchCourseDetails();
-  });
+  }, []);
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
@@ -135,7 +135,7 @@ function Course() {
             </div>
           </div>
           <div className="flex mt-10">
-            <div className="flex flex-col w-3/4">
+            <div className="flex flex-col w-3/4 pr-10">
               <div className="text-xl text-gray-800">Class Description</div>
               <div className="mt-1 text-sm text-gray-600">
                 <i>
