@@ -1,23 +1,17 @@
 import React from "react";
 
 function ChatHistoryItem({
-  message,
+  chat,
   selectedChatId,
   setSelectedChatId,
   setSelectedChatObject,
   readChat,
+  messages,
 }) {
-  const {
-    receiver,
-    lastMessage,
-    lastMessageDate,
-    lastMessageSenderId,
-    senderId,
-    unreadMessages,
-    chatId,
-  } = message;
+  const { receiver, senderId, unreadMessages, chatId } = chat;
 
-  const isLastMessageSentByUser = lastMessageSenderId === senderId;
+  const lastMessage = messages?.slice(-1)[0];
+  const isLastMessageSentByUser = lastMessage.senderId === senderId;
 
   const getInitials = (name) =>
     name
@@ -34,7 +28,7 @@ function ChatHistoryItem({
     <div
       onClick={() => {
         setSelectedChatId(chatId);
-        setSelectedChatObject(message);
+        setSelectedChatObject(chat);
         readChat(chatId);
       }}
       className={`flex items-center p-3 border-b border-gray-200 cursor-pointer transition-all ${
@@ -61,7 +55,7 @@ function ChatHistoryItem({
             {`${receiver.firstName} ${receiver.lastName}`}
           </h4>
           <span className="text-xs text-gray-500">
-            {new Date(lastMessageDate).toLocaleTimeString([], {
+            {new Date(lastMessage.date).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
@@ -72,7 +66,9 @@ function ChatHistoryItem({
             isLastMessageSentByUser ? "text-gray-400 italic" : "text-gray-600"
           }`}
         >
-          {isLastMessageSentByUser ? `You: ${lastMessage}` : lastMessage}
+          {isLastMessageSentByUser
+            ? `You: ${lastMessage.content}`
+            : lastMessage.content}
         </p>
       </div>
 

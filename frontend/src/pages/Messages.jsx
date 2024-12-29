@@ -2,30 +2,40 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../components/Navbar";
 import ChatHistoryItem from "../components/ChatHistoryItem";
 import io from "socket.io-client";
+import { getUserFromToken } from "../services/AuthService";
+import MessageItem from "../components/MessageItem";
 
 const socket = io("http://localhost:5000");
 
 function Messages() {
-  const [messages, setMessages] = useState([]);
+  const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState("");
   const [selectedChatObject, setSelectedChatObject] = useState(null);
   const [ongoingCall, setOngoingCall] = useState(null); // Holds call data (type, user)
   const [userStatus, setUserStatus] = useState({}); // Tracks online status of users
   const [searchQuery, setSearchQuery] = useState("");
+  const [messages, setMessages] = useState({});
+  const [typedMessage, setTypedMessage] = useState("");
+  const [currentUserId, setCurrentUserId] = useState();
+  const [rows, setRows] = useState(1);
+  const maxRows = 5;
 
   const readChat = (chatId) => {
-    setMessages((prevMessages) =>
-      prevMessages.map((message) =>
-        message.chatId === chatId
-          ? { ...message, unreadMessages: 0, read: true }
-          : message,
+    setChats((prevChats) =>
+      prevChats.map((chat) =>
+        chat.chatId === chatId
+          ? { ...chat, unreadMessages: 0, read: true }
+          : chat,
       ),
     );
   };
 
   useEffect(() => {
     // Load messages initially
+    loadChats();
     loadMessages();
+    const user = getUserFromToken();
+    setCurrentUserId(user.id);
 
     // Listen for user status updates
     socket.on("userStatusUpdate", ({ userId, isOnline }) => {
@@ -46,24 +56,70 @@ function Messages() {
   }, []);
 
   // Function to handle filtering
-  const filteredMessages = messages.filter((message) => {
-    const { firstName, lastName } = message.receiver;
+  const filteredChats = chats.filter((chat) => {
+    const { firstName, lastName } = chat.receiver;
     const fullName = `${firstName} ${lastName}`.toLowerCase();
     return fullName.includes(searchQuery.toLowerCase());
   });
 
   const loadMessages = () => {
-    setMessages([
+    setMessages({
+      1: [
+        {
+          senderId: 2,
+          content: "Hi!",
+          date: "Sat Dec 28 2024 14:40:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 1,
+          content: "Heyy",
+          date: "Sat Dec 28 2024 14:41:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 2,
+          content: "What's up",
+          date: "Sat Dec 28 2024 14:42:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 1,
+          content: "Just chilling, wbu?",
+          date: "Sat Dec 28 2024 14:43:27 GMT+0100 (Central European Standard Time)",
+        },
+      ],
+      2: [
+        {
+          senderId: 2,
+          content: "Hello!",
+          date: "Sat Dec 28 2024 14:33:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 1,
+          content: "Hi",
+          date: "Sat Dec 28 2024 14:34:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 2,
+          content: "What's up",
+          date: "Sat Dec 28 2024 14:36:27 GMT+0100 (Central European Standard Time)",
+        },
+        {
+          senderId: 1,
+          content: "Just chilling, wbu?",
+          date: "Sat Dec 28 2024 14:40:27 GMT+0100 (Central European Standard Time)",
+        },
+      ],
+    });
+  };
+
+  const loadChats = () => {
+    setChats([
       {
         receiver: {
           firstName: "John",
           lastName: "Doe",
         },
         senderId: "2",
-        chatId: "1",
-        lastMessage: "Hello",
-        lastMessageDate: "2024-11-27",
-        lastMessageSenderId: "1",
+        chatId: 1,
         unreadMessages: 1,
         read: true,
       },
@@ -72,11 +128,8 @@ function Messages() {
           firstName: "Manav",
           lastName: "Dave",
         },
-        chatId: "2",
+        chatId: 2,
         senderId: "1",
-        lastMessage: "World",
-        lastMessageDate: "2024-11-27",
-        lastMessageSenderId: "1",
         unreadMessages: 3,
         read: false,
       },
@@ -103,6 +156,34 @@ function Messages() {
     socket.emit("endCall", { to: ongoingCall.userId });
   };
 
+  const handleSendMessage = () => {
+    if (typedMessage.trim() === "") return;
+
+    setMessages((prevMessages) => ({
+      ...prevMessages,
+      [selectedChatId]: [
+        ...(prevMessages[selectedChatId] || []),
+        { senderId: currentUserId, content: typedMessage, date: new Date() },
+      ],
+    }));
+    setTypedMessage(""); // Clear the input field after sending
+    setRows(1);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevent the default behavior (creating a new line)
+      handleSendMessage(); // Send the message when Enter is pressed
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setTypedMessage(e.target.value);
+
+    // Calculate the new number of rows based on the content
+    const lineCount = e.target.value.split("\n").length;
+    setRows(Math.min(lineCount, maxRows)); // Limit the rows to maxRows
+  };
   return (
     <div className="flex flex-col w-full h-screen overflow-hidden font-merriweather_sans">
       {/* Navbar */}
@@ -126,10 +207,11 @@ function Messages() {
             </div>
           </div>
           <div className="overflow-y-auto">
-            {filteredMessages.map((message, index) => (
+            {filteredChats.map((chat, index) => (
               <ChatHistoryItem
                 key={index}
-                message={message}
+                chat={chat}
+                messages={messages[chat.chatId]}
                 selectedChatId={selectedChatId}
                 setSelectedChatId={setSelectedChatId}
                 setSelectedChatObject={setSelectedChatObject}
@@ -154,7 +236,7 @@ function Messages() {
                     onClick={() =>
                       startCall(
                         "audio",
-                        messages.find((m) => m.chatId === selectedChatId)
+                        chats.find((c) => c.chatId === selectedChatId)
                           ?.senderId,
                       )
                     }
@@ -166,7 +248,7 @@ function Messages() {
                     onClick={() =>
                       startCall(
                         "video",
-                        messages.find((m) => m.chatId === selectedChatId)
+                        chats.find((c) => c.chatId === selectedChatId)
                           ?.senderId,
                       )
                     }
@@ -175,16 +257,33 @@ function Messages() {
                   </button>
                 </div>
               </header>
-              <div className="flex-1 p-4 bg-gray-50 overflow-y-auto">
-                {/* Message threads */}
+              <div className="flex-1 p-4 bg-gray-50 overflow-y-auto flex flex-col space-y-2">
+                {messages[selectedChatId] ? (
+                  messages[selectedChatId].map((message, index) => (
+                    <MessageItem
+                      key={index}
+                      message={message}
+                      currentUserId={currentUserId}
+                    />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center">No messages yet</p>
+                )}
               </div>
+
               <footer className="p-4 bg-white flex items-center space-x-3">
-                <input
-                  type="text"
+                <textarea
+                  rows={rows}
                   placeholder="Your message"
-                  className="flex-1 px-4 py-2 bg-gray-200 rounded-full text-sm text-gray-800 outline-none"
+                  value={typedMessage}
+                  onKeyDown={handleKeyPress}
+                  onChange={handleInputChange}
+                  className="flex-1 px-4 py-2 bg-gray-200 rounded-xl text-sm text-gray-800 outline-none resize-none"
                 />
-                <button className="bg-blue-900 text-white px-4 py-2 rounded-full">
+                <button
+                  className="bg-blue-900 text-white px-4 py-2 rounded-full"
+                  onClick={handleSendMessage}
+                >
                   Send
                 </button>
               </footer>
