@@ -3,7 +3,9 @@ package de.thu.thutorium.api.controllers;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.services.interfaces.ChatService;
 import de.thu.thutorium.services.interfaces.MeetingService;
+import de.thu.thutorium.services.interfaces.MessageService;
 import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
@@ -120,7 +122,7 @@ public class UserController {
     }
   }
 
-    /**
+  /**
    * Retrieves a tutor by their ID.
    *
    * @param id the ID of the tutor to retrieve.
@@ -197,4 +199,4 @@ public class UserController {
     return userDetails.getUserId();
   }
 
-}
+ }

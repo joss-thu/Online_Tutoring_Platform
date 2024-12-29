@@ -1,5 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.MessageTOMapper;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.database.dbObjects.ChatDBO;
 import de.thu.thutorium.database.dbObjects.MessageDBO;
@@ -12,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Service implementation for managing messages within a chat system.
@@ -26,14 +28,17 @@ public class MessageServiceImpl implements MessageService {
   private final MessageRepository messageRepository;
   private final ChatRepository chatRepository;
   private final UserRepository userRepository;
+  private final MessageTOMapper messageTOMapper;
 
   public MessageServiceImpl(
       MessageRepository messageRepository,
       ChatRepository chatRepository,
-      UserRepository userRepository) {
+      UserRepository userRepository,
+      MessageTOMapper messageTOMapper) {
     this.messageRepository = messageRepository;
     this.chatRepository = chatRepository;
     this.userRepository = userRepository;
+    this.messageTOMapper = messageTOMapper;
   }
 
   /**
@@ -142,5 +147,11 @@ public class MessageServiceImpl implements MessageService {
         messageDBO.getSendAt(),
         messageDBO.getReadAt(),
         messageDBO.getIsRead());
+  }
+
+  @Override
+  public List<MessageTO> getMessagesByChatId(Long chatId) {
+    List<MessageDBO> messages = messageRepository.findByChat_ChatId(chatId);
+    return messageTOMapper.toDTOList(messages);
   }
 }
