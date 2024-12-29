@@ -1,6 +1,6 @@
 :root {
   --blue: #61dafb;
-  --white: #ffffff;
+  --white: #fff;
 }
 
 .app {
@@ -40,7 +40,6 @@
   padding: 10px 20px;
   font-size: 20px;
   margin: 10px;
-  font-family: Haskoy;
   font-weight: bold;
 }
 
