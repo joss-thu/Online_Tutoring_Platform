@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * that it is a Spring MVC controller for handling HTTP requests.
  *
  * @see CategoryService
- * @see Category
+ * @see Category/
  */
 @RestController
 public class CategoryController {
