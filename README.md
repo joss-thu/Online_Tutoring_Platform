@@ -1,97 +1,96 @@
-# Note 20.11.2024
 
-**In order to use the local Docker setup:**
+# THUtorium
+An online tutoring platform exclusively for THU students from THU students.
+## Docker
 
-1. Uncomment all lines in the file `/backend/src/main/resousrces/application.yml`
-2. Run the docker container using:
+### Prerequisites
 
-```bash
-docker compose up --force-recreate --build --detach
-```
+Before running the application, ensure you have the following installed:
 
-Now you habe a local postgresql server, which will persist in `/database/data` folder.
+- **Docker Engine**: Make sure Docker is installed and running on your machine.
+- **Docker Compose**: Docker Compose is also required. It typically comes with Docker Desktop, but you can install it separately if needed.
 
-**In order to use the CloudSQL database:**
+### Running the Application with Docker Compose
 
-1. Comment all lines in the file `/backend/src/main/resousrces/application.yml`
-2. Connect to the uni VPN
-3. Make sure you have the `/backend/.env` with CloudSQL credentials
-4. If you want to query CloudSQL database:
+To run both the backend and frontend applications using Docker Compose, follow these steps:
 
-```bash
-psql "sslmode=require hostaddr=34.107.78.43 port=5432  user=postgres dbname=test"
-# Enter the pass and use postgres syntax to query
-```
+1. **Navigate to the root directory of the project**:
+   ```bash
+   cd ~/path/to/Online_Tutoring_Platform
+   ```
 
-## Build
+2. **Run the Compose command**:
+   ```bash
+   docker-compose up --build --detach
+   ```
 
-Make sure you have the correct versions of the prerequisites if one is specified.
+### Running Backend, Frontend, or Database Individually
 
-**Prerequisites**
+- **Running only the Backend** (will start the database and webrtc server as dependencies):
+   ```bash
+   docker-compose up --build --detach backend
+   ```
 
-- JDK 21
-- Node.js v20.x(LTS)
-- npm
-- Docker
+- **Running only the Frontend**:
+   ```bash
+   docker-compose up --build --detach frontend
+   ```
 
-**Recommended IDE**
+- **Running only the Database**:
+   ```bash
+   docker-compose up --build --detach database
+   ```
 
-- backend: IntelliJ IDEA Ultimate (available with the uni account) or Community Edition
-- frontend: Visual Studio Code
+- **Running only the webrtc server**:
+   ```bash
+   docker-compose up --build --detach webrtc-server
+   ```
 
-## Steps
+### Stopping Containers
 
-1. Clone GitHub repository (be sure you set up SSH connection keys):
+- **Stopping all containers**:
+   ```bash
+   docker-compose down
+   ```
 
-```bash
-git clone git@github.com:ddarnold/Online_Tutoring_Platform.git
-```
+- **Stopping only the Backend**:
+   ```bash
+   docker-compose stop backend
+   ```
 
-2. Go into directory:
+- **Stopping only the Frontend**:
+   ```bash
+   docker-compose stop frontend
+   ```
 
-```bash
-cd Online_Tutoring_Platform
-```
+- **Stopping only the Database**:
+   ```bash
+   docker-compose stop database
+   ```
+  
+- **Stopping only the webrtc server**:
+   ```bash
+   docker-compose stop webrtc-server
+   ```
 
-3. Configure the `.env` File:
+### Running the code
 
-```bash
-cd backend # go into backend root directory
-# step2: Paste .env content into the file (Ask Arnold for it)
-```
+- **`.env` file**: An `.env` file, required for creating the database and backend container, is included in the repository as an example.
+- **Running Backend Locally**: If you run the backend from an IDE, ensure the database is started first (**!!IMPORTANT!!**), ideally from the docker container. 
+Identical environment variables should be set in the IDE to match those in Docker. In the intellij IDE, these can be set in the 'Edit Configurations' section.
+- **Local Database URL**: If the backend runs outside a Docker container, make sure the `databaseUrl` points to your local database (e.g., `localhost`).
+- **JWT_SECRET_KEY**:The secret key must be an HMAC hash string of 256 bits; otherwise, the token generation will throw an error.
 
-4. Connect to THU VPN (database access is allowed only from THU IP):
-   Might not be needed in the future
+### Database Data Persistence
 
-```bash
-sudo openconnect vpn.thu.de # or any other way you connect to VPN
-```
+- The database used in this application is configured to be persistent by utilizing Docker volumes.
+- In the `docker-compose.yml` file, a named volume (`postgres_data`) is created and mapped to the PostgreSQL container’s data directory (`/var/lib/postgresql/data`)
+- Additionally, the data is stored in a folder named `database` in the repository.
+- This setup ensures that all database data remains intact even when the container is stopped or removed, allowing for seamless data management across container lifecycles.
 
-5. Set up Application Default Credentials for Cloud SQL
-   [Configure ADC with your Google Account](https://cloud.google.com/docs/authentication/provide-credentials-adc#google-idp)
+### Ports Used
 
-6. Send an email to [arnodo01@thu.de](arnodo01@thu.de) from Google account you used in the previous step so I can verify you
-
-7. Wait for the verification confirmation from Arnold
-
-8. Run backend:
-
-```bash
-mvn spring-boot:run # run using maven
-
-# Or if you have IntelliJ you can open the backend project and run it using Shift + F10
-```
-
-9. Run frontend:
-
-```bash
-cd ../frontend # go into backend root directory
-npm install # Install dependencies
-npm start # Start the development server
-```
-
-10. Voila!
-
-Spring is on localhost:8080, try <http://localhost:8080/actuator/health>
-
-React is on localhost:3000
+- **Backend**: Available at [http://localhost:8080](http://localhost:8080)
+- **Frontend**: Available at [http://localhost](http://localhost) on port 80 (served by Nginx, not React's development server).
+- **Database**: Available at [http://localhost:5431](http://localhost:5431) (Ensure match with parameters in .env file)
+- **Webrtc server**: Available at [http://localhost:5000](http://localhost:5000)
