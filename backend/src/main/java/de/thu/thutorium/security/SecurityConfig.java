@@ -49,7 +49,8 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/v3/api-docs.yaml")
+                        "/v3/api-docs.yaml",
+                            "/chat/**")
                     .permitAll()
                     .requestMatchers("/student/**")
                     .hasRole("STUDENT")
@@ -126,17 +127,4 @@ public class SecurityConfig {
 
     return source;
   }
-
-  @Bean
-  public SecurityFilterChain websocketSecurity(HttpSecurity http) throws Exception {
-    http
-            .securityMatcher("/chat/**")  // Apply only to WebSocket paths
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/chat/**").permitAll())
-            .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for WebSockets
-            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));  // Updated way to disable frame options
-    return http.build();
-  }
-
-
 }
