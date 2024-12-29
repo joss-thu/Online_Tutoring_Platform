@@ -1,9 +1,12 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.MeetingToMapper;
 import de.thu.thutorium.api.TOMappers.UserTOMapper;
+import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.DBOMappers.AffiliationDBOMapper;
 import de.thu.thutorium.database.dbObjects.AffiliationDBO;
+import de.thu.thutorium.database.dbObjects.MeetingDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.dbObjects.enums.Role;
 import de.thu.thutorium.database.repositories.AffiliationRepository;
@@ -14,6 +17,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -31,6 +36,7 @@ public class UserServiceImpl implements UserService {
   private final UserTOMapper userMapper;
   private final AffiliationDBOMapper affiliationDBOMapper;
   private final AffiliationRepository affiliationRepository;
+  private final MeetingToMapper meetingMapper;
 
   /**
    * Constructs a new instance of {@link UserServiceImpl}.
@@ -43,11 +49,13 @@ public class UserServiceImpl implements UserService {
       UserRepository userRepository,
       UserTOMapper userMapper,
       AffiliationDBOMapper affiliationDBOMapper,
-      AffiliationRepository affiliationRepository) {
+      AffiliationRepository affiliationRepository,
+      MeetingToMapper meetingMapper) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
     this.affiliationDBOMapper = affiliationDBOMapper;
     this.affiliationRepository = affiliationRepository;
+    this.meetingMapper = meetingMapper;
   }
 
   /**
@@ -149,6 +157,21 @@ public class UserServiceImpl implements UserService {
     userRepository.delete(user);
   }
 
+  /**
+   * Updates the details of an existing user in the system.
+   *
+   * <p>This method retrieves the user by their unique ID, updates their information, including
+   * their affiliation, and saves the changes to the database.
+   *
+   * <p>The affiliation is checked for existence based on the university name and affiliation type.
+   * If a matching affiliation is found, it is reused; otherwise, the provided affiliation is saved
+   * as a new record.
+   *
+   * @param id the unique identifier of the user to be updated
+   * @param user the {@link UserTO} containing the updated details of the user
+   * @return a {@link UserTO} containing the updated user details
+   * @throws UsernameNotFoundException if no user is found with the given ID
+   */
   @Override
   public UserTO updateUser(Long id, UserTO user) {
     Optional<UserDBO> existingUserOptional = userRepository.findById(id);
@@ -181,5 +204,32 @@ public class UserServiceImpl implements UserService {
     } else {
       throw new UsernameNotFoundException("User not found with id " + id);
     }
+  }
+
+  /**
+   * Retrieves all meetings associated with a specific user.
+   *
+   * <p>This method fetches both types of meetings related to the user: - Meetings in which the user
+   * is a participant. - Meetings scheduled by the user as a tutor.
+   *
+   * <p>The two lists are combined, and the resulting list of meetings is mapped to DTOs for easier
+   * representation.
+   *
+   * @param userId the unique identifier of the user whose meetings are to be retrieved
+   * @return a list of {@link MeetingTO} objects representing the meetings related to the user
+   */
+  @Override
+  public List<MeetingTO> getMeetingsForUser(Long userId) {
+    // Get both participated and scheduled meetings
+    List<MeetingDBO> participatedMeetings = userRepository.findParticipatedMeetingsByUserId(userId);
+    List<MeetingDBO> scheduledMeetings = userRepository.findScheduledMeetingsByTutorId(userId);
+
+    // Combine both lists
+    List<MeetingDBO> allMeetings = new ArrayList<>();
+    allMeetings.addAll(participatedMeetings);
+    allMeetings.addAll(scheduledMeetings);
+
+    // Map to DTO
+    return meetingMapper.toDTOList(allMeetings);
   }
 }
