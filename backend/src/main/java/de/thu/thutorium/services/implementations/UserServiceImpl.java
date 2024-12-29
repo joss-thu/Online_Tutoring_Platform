@@ -205,31 +205,4 @@ public class UserServiceImpl implements UserService {
       throw new UsernameNotFoundException("User not found with id " + id);
     }
   }
-
-  /**
-   * Retrieves all meetings associated with a specific user.
-   *
-   * <p>This method fetches both types of meetings related to the user: - Meetings in which the user
-   * is a participant. - Meetings scheduled by the user as a tutor.
-   *
-   * <p>The two lists are combined, and the resulting list of meetings is mapped to DTOs for easier
-   * representation.
-   *
-   * @param userId the unique identifier of the user whose meetings are to be retrieved
-   * @return a list of {@link MeetingTO} objects representing the meetings related to the user
-   */
-  @Override
-  public List<MeetingTO> getMeetingsForUser(Long userId) {
-    // Get both participated and scheduled meetings
-    List<MeetingDBO> participatedMeetings = userRepository.findParticipatedMeetingsByUserId(userId);
-    List<MeetingDBO> scheduledMeetings = userRepository.findScheduledMeetingsByTutorId(userId);
-
-    // Combine both lists
-    List<MeetingDBO> allMeetings = new ArrayList<>();
-    allMeetings.addAll(participatedMeetings);
-    allMeetings.addAll(scheduledMeetings);
-
-    // Map to DTO
-    return meetingMapper.toDTOList(allMeetings);
-  }
 }

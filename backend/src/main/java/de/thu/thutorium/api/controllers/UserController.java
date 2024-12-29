@@ -3,6 +3,7 @@ package de.thu.thutorium.api.controllers;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.services.interfaces.MeetingService;
 import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +37,7 @@ import java.util.List;
 public class UserController {
 
   private final UserService userService;
+  private final MeetingService meetingService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -176,7 +178,7 @@ public class UserController {
   })
   @GetMapping("/get-meetings/{userId}")
   public ResponseEntity<List<MeetingTO>> getMeetingsForUser(@PathVariable Long userId) {
-    List<MeetingTO> meetings = userService.getMeetingsForUser(userId);
+    List<MeetingTO> meetings = meetingService.getMeetingsForUser(userId);
     return ResponseEntity.ok(meetings);
   }
 

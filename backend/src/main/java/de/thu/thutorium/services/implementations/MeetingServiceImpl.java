@@ -1,5 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.MeetingToMapper;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.database.DBOMappers.MeetingDBMapper;
 import de.thu.thutorium.database.dbObjects.AddressDBO;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,7 +36,9 @@ public class MeetingServiceImpl implements MeetingService {
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final AddressRepository addressRepository;
-  private final MeetingDBMapper meetingMapper;
+  private final MeetingDBMapper meetingDBMapper;
+  private final MeetingToMapper meetingTOMapper;
+
 
   /**
    * Creates a new meeting based on the provided {@link MeetingTO}.
@@ -96,7 +100,7 @@ public class MeetingServiceImpl implements MeetingService {
       }
     }
 
-    MeetingDBO meetingDBO = meetingMapper.toEntity(meetingTO);
+    MeetingDBO meetingDBO = meetingDBMapper.toEntity(meetingTO);
 
     // Set References
     meetingDBO.setTutor(tutor);
@@ -185,5 +189,32 @@ public class MeetingServiceImpl implements MeetingService {
 
     // Save the updated meeting
     meetingRepository.save(existingMeeting);
+  }
+
+  /**
+   * Retrieves all meetings associated with a specific user.
+   *
+   * <p>This method fetches both types of meetings related to the user: - Meetings in which the user
+   * is a participant. - Meetings scheduled by the user as a tutor.
+   *
+   * <p>The two lists are combined, and the resulting list of meetings is mapped to DTOs for easier
+   * representation.
+   *
+   * @param userId the unique identifier of the user whose meetings are to be retrieved
+   * @return a list of {@link MeetingTO} objects representing the meetings related to the user
+   */
+  @Override
+  public List<MeetingTO> getMeetingsForUser(Long userId) {
+    // Get both participated and scheduled meetings
+    List<MeetingDBO> participatedMeetings = meetingRepository.findParticipatedMeetingsByUserId(userId);
+    List<MeetingDBO> scheduledMeetings = meetingRepository.findScheduledMeetingsByTutorId(userId);
+
+    // Combine both lists
+    List<MeetingDBO> allMeetings = new ArrayList<>();
+    allMeetings.addAll(participatedMeetings);
+    allMeetings.addAll(scheduledMeetings);
+
+    // Map to DTO
+    return meetingTOMapper.toDTOList(allMeetings);
   }
 }

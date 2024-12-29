@@ -81,28 +81,4 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
           + "LOWER(CONCAT(u.lastName, ' ', u.firstName)) LIKE LOWER(CONCAT('%', :tutorName, '%')))")
   List<UserDBO> findByTutorFullName(@Param("tutorName") String tutorName);
 
-  /**
-   * Finds meetings in which a user is a participant.
-   *
-   * <p>This query joins the {@link MeetingDBO} entity with its participants and retrieves all
-   * meetings where the provided user ID matches a participant's user ID.
-   *
-   * @param userId the unique identifier of the user whose participated meetings are to be retrieved
-   * @return a list of {@link MeetingDBO} entities representing meetings the user has participated
-   *     in
-   */
-  @Query("SELECT m FROM MeetingDBO m JOIN m.participants p WHERE p.userId = :userId")
-  List<MeetingDBO> findParticipatedMeetingsByUserId(@Param("userId") Long userId);
-
-  /**
-   * Finds meetings scheduled by a specific tutor.
-   *
-   * <p>This query retrieves all meetings where the provided user ID matches the tutor's user ID. It
-   * leverages the one-to-many relationship between tutors and their scheduled meetings.
-   *
-   * @param userId the unique identifier of the tutor whose scheduled meetings are to be retrieved
-   * @return a list of {@link MeetingDBO} entities representing meetings scheduled by the tutor
-   */
-  @Query("SELECT m FROM MeetingDBO m WHERE m.tutor.userId = :userId")
-  List<MeetingDBO> findScheduledMeetingsByTutorId(@Param("userId") Long userId);
 }

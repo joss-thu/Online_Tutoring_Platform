@@ -72,17 +72,4 @@ public interface UserService {
    */
   UserTO updateUser(Long id, UserTO user);
 
-  /**
-   * Retrieves all meetings associated with a specific user.
-   *
-   * <p>This method returns a list of meetings related to the user, including: - Meetings in which
-   * the user is a participant. - Meetings scheduled by the user as a tutor.
-   *
-   * <p>The combined list of meetings is mapped to {@link MeetingTO} objects for easier use in
-   * service layers or client responses.
-   *
-   * @param userId the unique identifier of the user whose meetings are to be retrieved
-   * @return a list of {@link MeetingTO} objects representing the meetings related to the user
-   */
-  List<MeetingTO> getMeetingsForUser(Long userId);
 }
