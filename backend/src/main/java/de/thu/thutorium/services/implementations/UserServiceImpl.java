@@ -1,5 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.MeetingToMapper;
 import de.thu.thutorium.api.TOMappers.UserTOMapper;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.DBOMappers.AffiliationDBOMapper;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
   private final UserTOMapper userMapper;
   private final AffiliationDBOMapper affiliationDBOMapper;
   private final AffiliationRepository affiliationRepository;
+  private final MeetingToMapper meetingMapper;
 
   /**
    * Constructs a new instance of {@link UserServiceImpl}.
@@ -43,11 +45,13 @@ public class UserServiceImpl implements UserService {
       UserRepository userRepository,
       UserTOMapper userMapper,
       AffiliationDBOMapper affiliationDBOMapper,
-      AffiliationRepository affiliationRepository) {
+      AffiliationRepository affiliationRepository,
+      MeetingToMapper meetingMapper) {
     this.userRepository = userRepository;
     this.userMapper = userMapper;
     this.affiliationDBOMapper = affiliationDBOMapper;
     this.affiliationRepository = affiliationRepository;
+    this.meetingMapper = meetingMapper;
   }
 
   /**
@@ -149,6 +153,21 @@ public class UserServiceImpl implements UserService {
     userRepository.delete(user);
   }
 
+  /**
+   * Updates the details of an existing user in the system.
+   *
+   * <p>This method retrieves the user by their unique ID, updates their information, including
+   * their affiliation, and saves the changes to the database.
+   *
+   * <p>The affiliation is checked for existence based on the university name and affiliation type.
+   * If a matching affiliation is found, it is reused; otherwise, the provided affiliation is saved
+   * as a new record.
+   *
+   * @param id the unique identifier of the user to be updated
+   * @param user the {@link UserTO} containing the updated details of the user
+   * @return a {@link UserTO} containing the updated user details
+   * @throws UsernameNotFoundException if no user is found with the given ID
+   */
   @Override
   public UserTO updateUser(Long id, UserTO user) {
     Optional<UserDBO> existingUserOptional = userRepository.findById(id);
