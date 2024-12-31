@@ -17,7 +17,7 @@ import java.util.List;
  * <p>The mapper is configured to be a Spring component using {@code componentModel = "spring"}.
  */
 @Mapper(componentModel = "spring")
-public interface MeetingToMapper {
+public interface MeetingTOMapper {
 
   /**
    * Converts a {@link MeetingDBO} entity to a {@link MeetingTO} transfer object.
@@ -40,6 +40,7 @@ public interface MeetingToMapper {
   @Mapping(source = "address.addressId", target = "addressId")
   @Mapping(source = "meetingDate", target = "meetingDate", dateFormat = "yyyy-MM-dd")
   @Mapping(source = "meetingTime", target = "meetingTime")
+  @Mapping(source = "endTime", target = "endTime")
   @Mapping(source = "roomNum", target = "roomNum")
   MeetingTO toDTO(MeetingDBO meetingDBO);
 

@@ -25,12 +25,6 @@ import java.util.List;
  */
 @Repository
 public interface MeetingRepository extends JpaRepository<MeetingDBO, Long> {
-    List<MeetingDBO> findByMeetingDateAndRoomNumAndMeetingTimeLessThanEqualAndMeetingTimeGreaterThanEqual(
-            LocalDate meetingDate,
-            String roomNum,
-            LocalDateTime newMeetingEnd,
-            LocalDateTime newMeetingStart
-    );
 
     /**
      * Finds meetings in which a user is a participant.

@@ -1,6 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
-import de.thu.thutorium.api.TOMappers.MeetingToMapper;
+import de.thu.thutorium.api.TOMappers.MeetingTOMapper;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.database.DBOMappers.MeetingDBMapper;
 import de.thu.thutorium.database.dbObjects.AddressDBO;
@@ -37,7 +37,7 @@ public class MeetingServiceImpl implements MeetingService {
   private final CourseRepository courseRepository;
   private final AddressRepository addressRepository;
   private final MeetingDBMapper meetingDBMapper;
-  private final MeetingToMapper meetingTOMapper;
+  private final MeetingTOMapper meetingTOMapper;
 
 
   /**
@@ -76,29 +76,6 @@ public class MeetingServiceImpl implements MeetingService {
                     new EntityNotFoundException(
                         "Address not found with ID: " + meetingTO.getAddressId()));
 
-    // Calculate new meeting's time range
-    LocalDateTime newMeetingStart = meetingTO.getMeetingTime();
-    LocalDateTime newMeetingEnd = newMeetingStart.plusMinutes(meetingTO.getDuration());
-
-    // Fetch potential overlaps
-    List<MeetingDBO> overlappingMeetings =
-        meetingRepository
-            .findByMeetingDateAndRoomNumAndMeetingTimeLessThanEqualAndMeetingTimeGreaterThanEqual(
-                meetingTO.getMeetingDate(), meetingTO.getRoomNum(), newMeetingEnd, newMeetingStart);
-
-    // Check for actual overlaps
-    for (MeetingDBO existingMeeting : overlappingMeetings) {
-      LocalDateTime existingMeetingStart = existingMeeting.getMeetingTime();
-      LocalDateTime existingMeetingEnd =
-          existingMeetingStart.plusMinutes(existingMeeting.getDuration());
-
-      if (newMeetingStart.isBefore(existingMeetingEnd)
-          && newMeetingEnd.isAfter(existingMeetingStart)) {
-        throw new IllegalArgumentException(
-            "A meeting is already scheduled during the requested time in room "
-                + meetingTO.getRoomNum());
-      }
-    }
 
     MeetingDBO meetingDBO = meetingDBMapper.toEntity(meetingTO);
 
@@ -190,6 +167,8 @@ public class MeetingServiceImpl implements MeetingService {
     // Save the updated meeting
     meetingRepository.save(existingMeeting);
   }
+
+
 
   /**
    * Retrieves all meetings associated with a specific user.

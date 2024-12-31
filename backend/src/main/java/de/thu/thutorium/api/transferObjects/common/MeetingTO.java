@@ -31,6 +31,10 @@ public class MeetingTO {
     @NotNull(message = "Meeting time cannot be null")
     private LocalDateTime meetingTime;
 
+    /** The time of the meeting. */
+    @NotNull(message = "Meeting end time cannot be null")
+    private LocalDateTime endTime;
+
     /** The duration of the meeting in minutes. */
     @NotNull(message = "Duration cannot be null")
     private Integer duration;

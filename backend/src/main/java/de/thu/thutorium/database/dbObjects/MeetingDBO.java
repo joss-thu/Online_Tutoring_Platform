@@ -20,7 +20,13 @@ import java.util.List;
  */
 @Builder
 @Entity
-@Table(name = "meeting")
+@Table(
+        name = "meeting",
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_meeting_constraint",
+                columnNames = {"meeting_date", "meeting_time", "room_number", "address_id"}
+        )
+)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -56,6 +62,9 @@ public class MeetingDBO {
   /** The time on which the meeting is scheduled to be held. This field cannot be null. */
   @Column(name = "meeting_time", nullable = false)
   private LocalDateTime meetingTime;
+
+  @Column(name = "meeting_end_time", nullable = false)
+  private LocalDateTime endTime;
 
   /** The duration of the meeting in minutes. This field cannot be null. */
   @Column(name = "duration_minutes", nullable = false)
@@ -109,8 +118,18 @@ public class MeetingDBO {
   @Builder.Default
   private List<UserDBO> participants = new ArrayList<>();
 
+  @Column(name = "time_range", columnDefinition = "tsrange", nullable = false, updatable = false, insertable = false)
+  private String timeRange;
+
+  @PrePersist
+  @PreUpdate
+  private void calculateTimeRange() {
+    this.timeRange = String.format("[%s,%s)", meetingTime, endTime);
+  }
+
   /** Constructs a MeetingDBO with an empty set of meeting types and participants. */
   public MeetingDBO() {
     this.participants = new ArrayList<>();
   }
+
 }
