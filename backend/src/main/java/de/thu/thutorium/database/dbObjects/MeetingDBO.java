@@ -118,14 +118,9 @@ public class MeetingDBO {
   @Builder.Default
   private List<UserDBO> participants = new ArrayList<>();
 
-  @Column(name = "time_range", columnDefinition = "tsrange", nullable = false, updatable = false, insertable = false)
+  @Column(name = "time_range", columnDefinition = "tsrange", insertable = false, updatable = false)
   private String timeRange;
 
-  @PrePersist
-  @PreUpdate
-  private void calculateTimeRange() {
-    this.timeRange = String.format("[%s,%s)", meetingTime, endTime);
-  }
 
   /** Constructs a MeetingDBO with an empty set of meeting types and participants. */
   public MeetingDBO() {
