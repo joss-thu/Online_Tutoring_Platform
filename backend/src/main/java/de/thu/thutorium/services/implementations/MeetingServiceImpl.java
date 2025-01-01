@@ -17,9 +17,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service implementation for managing meetings.
@@ -38,7 +38,6 @@ public class MeetingServiceImpl implements MeetingService {
   private final AddressRepository addressRepository;
   private final MeetingDBMapper meetingDBMapper;
   private final MeetingTOMapper meetingTOMapper;
-
 
   /**
    * Creates a new meeting based on the provided {@link MeetingTO}.
@@ -76,6 +75,17 @@ public class MeetingServiceImpl implements MeetingService {
                     new EntityNotFoundException(
                         "Address not found with ID: " + meetingTO.getAddressId()));
 
+    List<UserDBO> participants =
+        meetingTO.getParticipantIds().stream()
+            .map(
+                participantId ->
+                    userRepository
+                        .findById(participantId)
+                        .orElseThrow(
+                            () ->
+                                new EntityNotFoundException(
+                                    "Participant not found with ID: " + participantId)))
+            .collect(Collectors.toList());
 
     MeetingDBO meetingDBO = meetingDBMapper.toEntity(meetingTO);
 
@@ -83,6 +93,8 @@ public class MeetingServiceImpl implements MeetingService {
     meetingDBO.setTutor(tutor);
     meetingDBO.setCourse(course);
     meetingDBO.setAddress(address);
+    meetingDBO.setParticipants(participants);
+    participants.forEach(participant -> participant.getMeetings().add(meetingDBO));
 
     meetingRepository.save(meetingDBO);
   }
@@ -168,8 +180,6 @@ public class MeetingServiceImpl implements MeetingService {
     meetingRepository.save(existingMeeting);
   }
 
-
-
   /**
    * Retrieves all meetings associated with a specific user.
    *
@@ -185,7 +195,8 @@ public class MeetingServiceImpl implements MeetingService {
   @Override
   public List<MeetingTO> getMeetingsForUser(Long userId) {
     // Get both participated and scheduled meetings
-    List<MeetingDBO> participatedMeetings = meetingRepository.findParticipatedMeetingsByUserId(userId);
+    List<MeetingDBO> participatedMeetings =
+        meetingRepository.findParticipatedMeetingsByUserId(userId);
     List<MeetingDBO> scheduledMeetings = meetingRepository.findScheduledMeetingsByTutorId(userId);
 
     // Combine both lists

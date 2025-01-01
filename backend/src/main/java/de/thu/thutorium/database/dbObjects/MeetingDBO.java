@@ -30,6 +30,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MeetingDBO {
   /** The unique identifier for the meeting. This ID is generated automatically. */
   @Id
@@ -120,11 +121,5 @@ public class MeetingDBO {
 
   @Column(name = "time_range", columnDefinition = "tsrange", insertable = false, updatable = false)
   private String timeRange;
-
-
-  /** Constructs a MeetingDBO with an empty set of meeting types and participants. */
-  public MeetingDBO() {
-    this.participants = new ArrayList<>();
-  }
 
 }

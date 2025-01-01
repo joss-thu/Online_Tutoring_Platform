@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,4 +54,7 @@ public class MeetingTO {
 
     @NotEmpty(message = "Room number cant be empty")
     private String roomNum;
+
+    @NotEmpty(message = "Participants cannot be empty")
+    private List<Long> participantIds;
 }
