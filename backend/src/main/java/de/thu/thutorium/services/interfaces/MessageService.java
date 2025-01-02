@@ -33,9 +33,9 @@ public interface MessageService {
    * <p>This method marks the message with the specified ID as read in the system.
    *
    * @param messageId the unique ID of the message to be marked as read.
-   * @return the updated {@link MessageTO} object with the message marked as read.
    */
-  MessageTO markAsRead(Long messageId);
+  void markAsRead(Long messageId);
 
   List<MessageTO> getMessagesByChatId(Long chatId);
+
 }
