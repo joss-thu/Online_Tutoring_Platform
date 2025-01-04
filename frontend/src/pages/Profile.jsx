@@ -17,7 +17,7 @@ function Profile() {
     const fetchProfile = async () => {
       if (!user) return;
       try {
-        const { data } = await apiClient.get(`/account?userId=${user.id}`);
+        const { data } = await apiClient.get(`/user/get-user/${user.id}`);
         setRoles(user.roles);
         setProfile(data);
       } catch (err) {

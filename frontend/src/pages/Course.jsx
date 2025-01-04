@@ -27,7 +27,7 @@ function Course() {
 
   useEffect(() => {
     fetchCourseDetails();
-  }, []);
+  });
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">

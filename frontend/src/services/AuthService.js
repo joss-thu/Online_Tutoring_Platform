@@ -28,11 +28,10 @@ export const getUserFromToken = () => {
 export const isAuthenticated = () => !!getUserFromToken();
 
 export const hasRole = (role) => {
-  const user = getUserFromToken();
-  return user?.roles?.includes(role);
+  return getRoles().includes(role);
 };
 
-export const getRoles = () => {
+const getRoles = () => {
   const user = getUserFromToken();
   return user?.roles;
 };

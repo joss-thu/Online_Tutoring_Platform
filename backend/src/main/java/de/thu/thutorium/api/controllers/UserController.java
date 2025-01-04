@@ -1,10 +1,17 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
+import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.services.interfaces.ChatService;
+import de.thu.thutorium.services.interfaces.MeetingService;
+import de.thu.thutorium.services.interfaces.MessageService;
 import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,7 +26,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /** Controller for managing user operations. */
 @RestController
@@ -31,6 +41,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   private final UserService userService;
+  private final MeetingService meetingService;
+  private final ChatService chatService;
+  private final MessageService messageService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -40,9 +53,9 @@ public class UserController {
    * @throws UsernameNotFoundException if the use could not be found in the database.
    */
   @Operation(
-      summary = "Retrieve the account details of an existing user",
-      description = "Retrieve an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+          summary = "Retrieve the account details of an existing user",
+          description = "Retrieve an existing user if they exist in the database",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @GetMapping("/get-user/{userId}")
   public ResponseEntity<?> getUser(@PathVariable Long userId) {
@@ -53,7 +66,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Unexpected error: " + ex.getMessage());
+              .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -67,9 +80,9 @@ public class UserController {
    * @throws UsernameNotFoundException if the use could not be found in the database.
    */
   @Operation(
-      summary = "Update an existing user",
-      description = "Update an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+          summary = "Update an existing user",
+          description = "Update an existing user if they exist in the database",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @PutMapping("/update-user/{id}")
   public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserTO userTO) {
@@ -80,7 +93,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Unexpected error: " + ex.getMessage());
+              .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -93,9 +106,9 @@ public class UserController {
    *     database.
    */
   @Operation(
-      summary = "Enables an existing user to delete his account",
-      description = "Retrieves an existing and authenticated user and deletes their account.",
-      tags = {" User Endpoints"})
+          summary = "Enables an existing user to delete his account",
+          description = "Retrieves an existing and authenticated user and deletes their account.",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @DeleteMapping("/delete-my-account")
   public ResponseEntity<String> deleteMyAccount() {
@@ -104,16 +117,14 @@ public class UserController {
       Long authenticatedUserId = getAuthenticatedUserId();
       userService.deleteUser(authenticatedUserId);
       return ResponseEntity.ok(
-          "User account with ID " + authenticatedUserId + " has been successfully deleted.");
+              "User account with ID " + authenticatedUserId + " has been successfully deleted.");
     } catch (AuthenticationException ex) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An error occurred while deleting the account.");
+              .body("An error occurred while deleting the account.");
     }
   }
-
-  /** User Operations */
 
   /**
    * Retrieves a tutor by their ID.
@@ -124,10 +135,11 @@ public class UserController {
   @Operation(
           summary = "Retrieve tutor by ID",
           description = "Fetches tutor details by their unique ID.",
-          tags = {"User Operations"}
-  )
+          tags = {"User Operations"})
   @ApiResponses({
-          @ApiResponse(responseCode = "200", description = "Tutor retrieved successfully",
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Tutor retrieved successfully",
                   content = @Content(schema = @Schema(implementation = UserTO.class))),
           @ApiResponse(responseCode = "404", description = "Tutor not found")
   })
@@ -138,6 +150,60 @@ public class UserController {
   }
 
   /**
+   * Retrieves all meetings associated with a specific user.
+   *
+   * <p>This endpoint fetches a list of meetings for a given user ID. It includes both:
+   *
+   * <ul>
+   *   <li>Meetings where the user is a participant
+   *   <li>Meetings scheduled by the user in their role as a tutor
+   * </ul>
+   *
+   * @param userId the unique identifier of the user whose meetings are to be retrieved
+   * @return a {@link ResponseEntity} containing a list of {@link MeetingTO} objects representing
+   *     the meetings associated with the user, or an empty list if none are found
+   * @throws org.springframework.web.server.ResponseStatusException if the user is not found or an
+   *     error occurs while retrieving the meetings
+   * @see MeetingTO
+   */
+//  @Operation(
+//          summary = "Retrieve all meetings for a specific user",
+//          description =
+//                  "Fetches a list of meetings associated with a user. Includes both meetings the user participates in and meetings they have scheduled as a tutor.")
+//  @ApiResponses({
+//          @ApiResponse(
+//                  responseCode = "200",
+//                  description = "Meetings retrieved successfully",
+//                  content =
+//                  @Content(array = @ArraySchema(schema = @Schema(implementation = MeetingTO.class)))),
+//          @ApiResponse(
+//                  responseCode = "404",
+//                  description = "User not found or no meetings available for the user",
+//                  content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+//          @ApiResponse(responseCode = "500", description = "Internal server error")
+//  })
+//  @GetMapping("/get-meetings/{userId}")
+//  public ResponseEntity<List<MeetingTO>> getMeetingsForUser(@PathVariable Long userId) {
+//    List<MeetingTO> meetings = meetingService.getMeetingsForUser(userId);
+//    return ResponseEntity.ok(meetings);
+//  }
+
+  /*chat*/
+
+  @GetMapping("/get-chat-summaries")
+  public ResponseEntity<List<ChatSummaryTO>> getChatSummaries(@RequestParam Long userId) {
+    List<ChatSummaryTO> summaries = chatService.getChatSummaries(userId);
+    return ResponseEntity.ok(summaries);
+  }
+
+  @GetMapping("/get-messages-chat")
+  public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
+    List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
+    return ResponseEntity.ok(messages);
+  }
+
+
+  /**
    * Retrieves the authenticated user's ID.
    *
    * @return the ID of the authenticated user.
@@ -146,9 +212,10 @@ public class UserController {
   private Long getAuthenticatedUserId() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !authentication.isAuthenticated()) {
-      throw new AuthenticationException("User is not authenticated") { };
+      throw new AuthenticationException("User is not authenticated") {};
     }
     UserDBO userDetails = (UserDBO) authentication.getPrincipal();
     return userDetails.getUserId();
   }
+
 }

@@ -7,11 +7,12 @@ function ChatHistoryItem({
   setSelectedChatObject,
   readChat,
   messages,
+  currentUserId,
 }) {
   const { receiver, senderId, unreadMessages, chatId } = chat;
 
   const lastMessage = messages?.slice(-1)[0];
-  const isLastMessageSentByUser = lastMessage.senderId === senderId;
+  const isLastMessageSentByUser = lastMessage?.senderId === currentUserId;
 
   const getInitials = (name) =>
     name
@@ -31,12 +32,12 @@ function ChatHistoryItem({
         setSelectedChatObject(chat);
         readChat(chatId);
       }}
-      className={`flex items-center p-3 border-b border-gray-200 cursor-pointer transition-all ${
+      className={`flex items-center p-3 border-b border-gray-200 cursor-pointer transition-all overflow-hidden ${
         selectedChatId === chatId ? "bg-gray-100" : "bg-white"
       } hover:bg-gray-100`}
     >
       {/* Profile Picture */}
-      <div className="relative w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">
+      <div className="relative w-12 h-12 min-w-12 min-h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">
         {receiver.profilePicture ? (
           <img
             src={receiver.profilePicture}
@@ -54,21 +55,23 @@ function ChatHistoryItem({
           <h4 className="text-sm font-medium text-gray-800 truncate">
             {`${receiver.firstName} ${receiver.lastName}`}
           </h4>
-          <span className="text-xs text-gray-500">
-            {new Date(lastMessage.date).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </span>
+          {lastMessage?.sendAt && (
+            <span className="text-xs text-gray-500">
+              {new Date(lastMessage?.sendAt + "Z").toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
         </div>
         <p
-          className={`text-xs truncate ${
+          className={`text-xs truncate max-w-md ${
             isLastMessageSentByUser ? "text-gray-400 italic" : "text-gray-600"
           }`}
         >
           {isLastMessageSentByUser
-            ? `You: ${lastMessage.content}`
-            : lastMessage.content}
+            ? `You: ${lastMessage?.messageContent}`
+            : lastMessage?.messageContent}
         </p>
       </div>
 

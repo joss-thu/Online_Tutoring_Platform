@@ -3,6 +3,8 @@ package de.thu.thutorium.services.interfaces;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * The {@code MessageService} interface provides methods for managing messages.
  *
@@ -30,8 +32,11 @@ public interface MessageService {
    *
    * <p>This method marks the message with the specified ID as read in the system.
    *
-   * @param messageId the unique ID of the message to be marked as read.
+   * @param chatId the unique ID of the chat to be marked as read.
    * @return the updated {@link MessageTO} object with the message marked as read.
    */
-  MessageTO markAsRead(Long messageId);
+  void markAsRead(Long chatId);
+
+  List<MessageTO> getMessagesByChatId(Long chatId);
+
 }

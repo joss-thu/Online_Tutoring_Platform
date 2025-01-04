@@ -3,10 +3,10 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
 
 const ProtectedRoute = ({ children, roles }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated, checkRole } = useAuth();
 
   if (!isAuthenticated) return <Navigate to="/login" />;
-  if (roles && !roles.some((role) => user.roles.includes(role))) {
+  if (roles && !roles.some((role) => checkRole(role))) {
     return <Navigate to="/" />;
   }
 
