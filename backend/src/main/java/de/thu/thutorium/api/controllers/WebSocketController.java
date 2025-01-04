@@ -37,7 +37,7 @@ public class WebSocketController {
    */
   public WebSocketController(MessageService messageService, ChatService chatService) {
     this.messageService = messageService;
-    this.chatService = chatService;
+      this.chatService = chatService;
   }
 
   /**
@@ -48,6 +48,7 @@ public class WebSocketController {
    * @param messageTO the message data transfer object containing the message details
    * @return the saved message as a MessageDTO, which will be sent to all subscribers
    */
+
   @MessageMapping("/sendMessage")
   @SendTo("/topic/messages")
   public MessageTO sendMessage(MessageTO messageTO) {
@@ -65,11 +66,10 @@ public class WebSocketController {
   @Operation(
           summary = "Send a new message",
           description = "Persists a new message in the database and sends it to the recipient.",
-          tags = {"Message Operations"})
+          tags = {"Message Operations"}
+  )
   @ApiResponses({
-          @ApiResponse(
-                  responseCode = "200",
-                  description = "Message sent successfully",
+          @ApiResponse(responseCode = "200", description = "Message sent successfully",
                   content = @Content(schema = @Schema(implementation = MessageTO.class))),
           @ApiResponse(responseCode = "400", description = "Invalid message data")
   })
@@ -88,7 +88,8 @@ public class WebSocketController {
   @Operation(
           summary = "Create a new chat",
           description = "Creates a new chat session based on the provided chat details.",
-          tags = {"Chat Operations"})
+          tags = {"Chat Operations"}
+  )
   @ApiResponses({
           @ApiResponse(responseCode = "201", description = "Chat created successfully"),
           @ApiResponse(responseCode = "400", description = "Invalid chat data")
@@ -108,7 +109,8 @@ public class WebSocketController {
   @Operation(
           summary = "Delete a chat by ID",
           description = "Deletes an existing chat by its unique ID.",
-          tags = {"Chat Operations"})
+          tags = {"Chat Operations"}
+  )
   @ApiResponses({
           @ApiResponse(responseCode = "204", description = "Chat deleted successfully"),
           @ApiResponse(responseCode = "404", description = "Chat not found")
