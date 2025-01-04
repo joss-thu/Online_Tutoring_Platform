@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +29,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Tag(name = "User end-points", description = "Endpoints for user operations")
+//@Tag(name = "User Endpoints", description = "Endpoints for user operations")
 @Slf4j
 @CommonApiResponses
 public class UserController {
@@ -49,7 +47,7 @@ public class UserController {
   @Operation(
       summary = "Retrieve the account details of an existing user",
       description = "Retrieve an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+      tags = {"User Endpoints"})
   @CommonApiResponses
   @GetMapping("/get-user/{userId}")
   public ResponseEntity<?> getUser(@PathVariable Long userId) {
@@ -76,7 +74,7 @@ public class UserController {
   @Operation(
       summary = "Update an existing user",
       description = "Update an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+      tags = {"User Endpoints"})
   @CommonApiResponses
   @PutMapping("/update-user/{id}")
   public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserTO userTO) {
@@ -102,10 +100,10 @@ public class UserController {
   @Operation(
       summary = "Enables an existing user to delete his account",
       description = "Retrieves an existing and authenticated user and deletes their account.",
-      tags = {" User Endpoints"})
+      tags = {"User Endpoints"})
   @CommonApiResponses
   @DeleteMapping("/delete-my-account")
-  public ResponseEntity<String> deleteMyAccount() {
+  public ResponseEntity<?> deleteMyAccount() {
     try {
       // Retrieve the currently authenticated user's ID
       Long authenticatedUserId = getAuthenticatedUserId();
@@ -120,6 +118,8 @@ public class UserController {
     }
   }
 
+  /** User Operations */
+
   /**
    * Retrieves a tutor by their ID.
    *
@@ -127,9 +127,10 @@ public class UserController {
    * @return the {@link UserTO} object containing tutor details.
    */
   @Operation(
-      summary = "Retrieve tutor by ID",
-      description = "Fetches tutor details by their unique ID.",
-      tags = {"User Operations"})
+          summary = "Retrieve tutor by ID",
+          description = "Fetches tutor details by their unique ID.",
+          tags = {"User Endpoints"}
+  )
   @ApiResponses({
     @ApiResponse(
         responseCode = "200",
@@ -158,7 +159,7 @@ public class UserController {
    *     the meetings associated with the user, or an empty list if none are found
    * @throws org.springframework.web.server.ResponseStatusException if the user is not found or an
    *     error occurs while retrieving the meetings
-   * @see MeetingTO
+   * @see de.thu.thutorium.api.transferObjects.common.MeetingTO
    */
   @Operation(
       summary = "Retrieve all meetings for a specific user",
@@ -173,7 +174,7 @@ public class UserController {
     @ApiResponse(
         responseCode = "404",
         description = "User not found or no meetings available for the user",
-        content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        content = @Content(schema = @Schema(implementation = String.class))),
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-meetings/{userId}")
@@ -193,9 +194,7 @@ public class UserController {
     if (authentication == null || !authentication.isAuthenticated()) {
       throw new AuthenticationException("User is not authenticated") { };
     }
-
     UserDBO userDetails = (UserDBO) authentication.getPrincipal();
     return userDetails.getUserId();
   }
-
 }

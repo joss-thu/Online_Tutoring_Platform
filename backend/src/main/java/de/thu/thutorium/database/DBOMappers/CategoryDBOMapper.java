@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 /**
- * A MapStruct mapper interface for converting {@link CourseCategoryTO} to
+ * A mapper class for converting {@link CourseCategoryTO} to
  * {@link CourseCategoryDBO}.
  */
 @Component
-public class CourseCategoryDBOMapper {
+public class CategoryDBOMapper {
     /**
      * Converts an {@link CourseCategoryTO} object to an {@link CourseCategoryDBO} object.
      */

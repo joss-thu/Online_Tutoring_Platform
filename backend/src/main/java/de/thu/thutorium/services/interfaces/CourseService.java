@@ -1,6 +1,7 @@
 package de.thu.thutorium.services.interfaces;
 
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.api.transferObjects.common.RatingCourseTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,8 +62,9 @@ public interface CourseService {
    * object.
    *
    * @param courseTO the {@link CourseTO} object containing the data for the course to be created.
+   * @return the {@link de.thu.thutorium.database.dbObjects.CourseDBO} object created.
    */
-  void createCourse(CourseTO courseTO);
+  CourseTO createCourse(CourseTO courseTO);
 
   /**
    * Deletes a course by its ID.
@@ -82,4 +84,11 @@ public interface CourseService {
    * @param courseTO the {@link CourseTO} object containing the new course data.
    */
   void updateCourse(Long courseId, CourseTO courseTO);
+
+  /**
+   * User rates an existing course.
+   *
+   * @param ratingCourseTO the {@link RatingCourseTO} which contains details of the review.
+   */
+  void rateCourse(RatingCourseTO ratingCourseTO);
 }
