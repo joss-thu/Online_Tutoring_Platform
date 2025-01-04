@@ -42,6 +42,22 @@ public class UserDBO implements UserDetails {
   @Column(name = "last_name", nullable = false)
   private String lastName;
 
+  /**
+   * The full name of the user, which is a combination of the first name and last
+   * name.
+   * This field is not persisted in the database.
+   */
+  @Transient
+  private String fullName;
+
+  /**
+   * Initializes transient fields after the entity is loaded from the database.
+   */
+  @PostLoad
+  private void onLoad() {
+    this.fullName = firstName + " " + lastName;
+  }
+
   /** The user's email, used for login. This field must be unique. */
   @Column(name = "email_address", nullable = false, unique = true)
   private String email;
@@ -128,7 +144,7 @@ public class UserDBO implements UserDetails {
    * cascading operations defined in this relationship. The counterpart is denoted by a Set<UserDBO>
    * called 'participants' in the {@link CourseDBO}.
    */
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(
       name = "course_students",
       joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "user_id"),

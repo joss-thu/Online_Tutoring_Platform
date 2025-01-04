@@ -10,7 +10,6 @@ import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.UniversityTO;
 import de.thu.thutorium.exceptions.ResourceAlreadyExistsException;
-import de.thu.thutorium.exceptions.UserNameNotFoundException;
 import de.thu.thutorium.services.interfaces.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -117,7 +117,7 @@ public class ThutoriumApplicationTests {
     public void testDeleteUser_NotFound() {
         // Given
         Long userId = 1L;
-        doThrow(new UserNameNotFoundException("User not found")).when(userService).deleteUser(userId);
+        doThrow(new UsernameNotFoundException("User not found")).when(userService).deleteUser(userId);
 
         // When
         ResponseEntity<?> response = adminController.deleteUser(userId);
