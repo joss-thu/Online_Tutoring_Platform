@@ -1,59 +1,58 @@
+
 services:
+
   database:
-    image: postgres:17.1
+    image: postgres
     container_name: otp-database
-    volumes:
-      - ./database/data:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    restart: no
-    # env_file:
-    #   - ./.env
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=test_database
-      - POSTGRES_HOST_AUTH_METHOD=md5
-    healthcheck:
-      test: "pg_isready -U postgres -d postgres"
-      interval: 10s
-      timeout: 3s
-      retries: 3
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+    # - postgres_data:/var/lib/postgresql/data
+    - ./database/data:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    restart: no
+    env_file:
+      - ./.env
 
   frontend:
     container_name: otp-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        buildType: build-dc
     ports:
-      - "3000:3000"
+      - "80:80"
     restart: no
-    healthcheck:
-      test: "wget --spider --quiet http://frontend:3000 || exit 1"
-      interval: 10s
-      timeout: 3s
-      retries: 3
 
   backend:
     container_name: otp-backend
     depends_on:
       database:
-        condition: service_healthy
+        condition: service_started
+      webrtc-server: # Add dependency on webrtc-server
+        condition: service_started
     build:
       context: ./backend
       dockerfile: Dockerfile
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/test_database
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - "8080:8080"
+      - "8081:8080"
     restart: no
-    healthcheck:
-      test: "wget --spider --quiet 'http://backend:8080/actuator/healthy/' || exit 1"
-      interval: 10s
-      timeout: 3s
-      retries: 3
+    env_file:
+      - ./.env
+
+  webrtc-server:
+    container_name: otp-webrtc-server
+    build:
+      context: ./webrtc
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    restart: no
+    volumes:
+      - ./webrtc:/app
+    environment:
+      - NODE_ENV=development
