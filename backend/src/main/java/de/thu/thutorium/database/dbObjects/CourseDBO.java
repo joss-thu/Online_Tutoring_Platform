@@ -6,9 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a course entity. This entity is mapped to the {@code course} table in the database.
@@ -20,7 +18,7 @@ import java.util.Set;
  *
  * <p>
  */
-@Builder // If Builder is intended to be used
+@Builder(toBuilder = true) // If Builder is intended to be used
 @Entity
 @Table(name = "course")
 @Getter
@@ -45,7 +43,7 @@ public class CourseDBO {
    */
   @ManyToMany(mappedBy = "studentCourses", fetch = FetchType.LAZY)
   @Builder.Default
-  private Set<UserDBO> students = new HashSet<>();
+  private List<UserDBO> students = new ArrayList<>();
 
   /** The name of the course. This field is mandatory and cannot be null. */
   @Column(name = "course_name", nullable = false)
@@ -135,13 +133,12 @@ public class CourseDBO {
   private List<ProgressDBO> progress;
 
   /** The list of course categories for a course. */
-  @ManyToMany(mappedBy = "courses", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-  @Builder.Default
+  @ManyToMany(mappedBy = "courses", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   private List<CourseCategoryDBO> courseCategories = new ArrayList<>();
 
   /** Constructs a CourseDBO object with empty lists. */
   public CourseDBO() {
-    this.students = new HashSet<>();
+    this.students = new ArrayList<>();
     this.receivedCourseRatings = new ArrayList<>();
     this.meetings = new ArrayList<>();
     this.progress = new ArrayList<>();

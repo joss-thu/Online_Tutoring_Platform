@@ -3,17 +3,22 @@ package de.thu.thutorium.api.controllers;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.TutorTO;
-import de.thu.thutorium.services.implementations.SearchServiceImpl;
+import de.thu.thutorium.exceptions.ResourceNotFoundException;
+import de.thu.thutorium.services.interfaces.CategoryService;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.SearchService;
 import de.thu.thutorium.services.interfaces.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -30,31 +35,23 @@ import java.util.List;
  *   <li>Retrieve a list of course categories
  *   <li>Get a list of courses by category
  *   <li>Retrieve the total count of students, tutors, and courses on the platform
+ *   <li> etc.</li>
  * </ul>
  *
  * <p><b>Access:</b> This controller is publicly accessible, meaning it can be accessed without
  * authentication. It is designed to provide search functionality and general platform information
  * to both logged-in and not logged-in users.
- *
- * <p>All endpoints in this controller support cross-origin requests from "http://localhost:3000"
- * and allow preflight request caching for up to 3600 seconds.
  */
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/search")
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 public class SearchController {
 
   private final SearchService searchService;
+  private final CategoryService categoryService;
   private final CourseService courseService;
   private final UserService userService;
-
-  @Autowired
-  public SearchController(
-      SearchServiceImpl searchServiceImpl, CourseService courseService, UserService userService) {
-    this.searchService = searchServiceImpl;
-    this.courseService = courseService;
-    this.userService = userService;
-  }
 
   /**
    * Searches for tutors or courses based on the provided query parameters.
@@ -69,51 +66,66 @@ public class SearchController {
    * @return A list of search results containing either tutors (UserBaseDTO), courses (CourseDTO),
    *     or both, depending on the provided parameters. Results may include duplicates if multiple
    *     entities match the search criteria.
+   * @throws jakarta.persistence.EntityNotFoundException if the searched parameters are not found.
+   * Todo: Review:
+   * - The method will find match for any course and tutor names, even if the courses are not
+   * being offered by the respective tutors; is this by design?
+   * - Passing of special characters 'C++' seem to cause internal errors?
    */
   @Operation(
           summary = "Search tutors or courses",
-          description = "Search for tutors by name or courses by name.",
+          description = "Search for tutors by name or courses by name. ",
           tags = {"Search Endpoints"})
   @ApiResponses({
           @ApiResponse(
                   responseCode = "200",
                   description = "Search results returned successfully",
-                  content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object.class)))),
-          @ApiResponse(responseCode = "400", description = "Invalid query parameters provided"),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
+                  content = @Content(array = @ArraySchema(schema = @Schema(implementation = Object.class)))
+          )
   })
   @GetMapping
-  public List<Object> search(
+  public ResponseEntity<?> search(@Parameter(name = "tutorName",
+                               description = "The name of the tutor to be found. The method returns results for"
+                                       + "any partial match of the name passed. This parameter is optional and the method returns "
+                                       + "only the courses searched for if this parameter is empty.",
+                               required = false)
       @RequestParam(required = false) String tutorName,
+                                  @Parameter(name = "courseName",
+                                     description = "The name of the course to be found. The method returns results for"
+                                             + "any partial match of the course name passed.  This parameter is optional"
+                                             + " and the method returns only the tutors searched for if this parameter is empty.",
+                                     required = false)
       @RequestParam(required = false) String courseName) {
-    // Initialize an empty list to store results
-    List<Object> results = new ArrayList<>();
+    try {
+      // Initialize an empty list to store results
+      List<Object> results = new ArrayList<>();
 
-    // If tutorName is provided, search for tutors and add to the results
-    if (tutorName != null && !tutorName.isEmpty()) {
-      List<TutorTO> tutors = searchService.searchTutors(tutorName);
-      results.addAll(tutors); // Add tutors to the results list
+      // If tutorName is provided, search for tutors and add to the results
+      if (tutorName != null && !tutorName.isEmpty()) {
+        List<TutorTO> tutors = searchService.searchTutors(tutorName);
+        results.addAll(tutors); // Add tutors to the results list
+      }
+
+      // If courseName is provided, search for courses and add to the results
+      if (courseName != null && !courseName.isEmpty()) {
+        List<CourseTO> courses = courseService.searchCourses(courseName);
+        results.addAll(courses); // Add courses to the results list
+      }
+      // Return the combined results without removing duplicates
+      return ResponseEntity.status(HttpStatus.OK).body(results);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body("Unexpected error: " + ex.getMessage());
     }
-
-    // If courseName is provided, search for courses and add to the results
-    if (courseName != null && !courseName.isEmpty()) {
-      List<CourseTO> courses = searchService.searchCourses(courseName);
-      results.addAll(courses); // Add courses to the results list
-    }
-
-    // Return the combined results without removing duplicates
-    return results;
   }
 
   /**
-   * Converts a {@link CourseCategoryTO} (representing a course category in the database) to a
-   * {@link CourseCategoryTO}.
+   * Gets all course categories.
    *
-   * <p>This method maps the {@code categoryName} field of the {@code CourseCategoryDBO} to the
-   * {@code categoryName} field in the {@code CourseCategoryDTO}.
+   * <p>This endpoint fetches all the available course categories from the database.
    *
-   * @return a {@code CourseCategoryDTO} object containing the course category data
-   */
+   * @return  {@code List} of all the available {@link CourseCategoryTO} objects.
+   **/
   @Operation(
           summary = "Retrieve all course categories",
           description = "Fetches a list of all available course categories in the system.",
@@ -123,20 +135,26 @@ public class SearchController {
                   responseCode = "200",
                   description = "Categories retrieved successfully",
                   content = @Content(array = @ArraySchema(schema = @Schema(implementation = CourseCategoryTO.class)))),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/categories")
-  public List<CourseCategoryTO> getCategories() {
-    return searchService.getAllCategories();
+  public ResponseEntity<?> getCategories() {
+    try {
+      List<CourseCategoryTO> categories = categoryService.getAllCategories();
+      return ResponseEntity.status(HttpStatus.OK).body(categories);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   /**
-   * Retrieves a list of courses based on the specified category name. This endpoint is cross-origin
-   * enabled for requests from "http://localhost:3000" and allows preflight requests to be cached
-   * for up to 3600 seconds.
+   * Retrieves a list of courses based on the specified category name.
    *
    * @param categoryName The name of the category for which courses are to be retrieved.
    * @return A list of {@link CourseTO} objects that belong to the specified category.
+   * Todo: Is the method case-insensitive for parameters? Does it provide/ need to provide partial matches?
+   * Todo: Review the repository method?
+   * Todo: The url is misleading? Shouldn't it be course/Category name?
    */
   @Operation(
           summary = "Retrieve courses by category",
@@ -147,22 +165,21 @@ public class SearchController {
                   responseCode = "200",
                   description = "Courses retrieved successfully",
                   content = @Content(array = @ArraySchema(schema = @Schema(implementation = CourseTO.class)))),
-          @ApiResponse(responseCode = "404", description = "Category not found"),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/category/{categoryName}")
-  public List<CourseTO> getCoursesByCategory(@PathVariable String categoryName) {
-    return courseService.getCoursesByCategory(categoryName);
+  public ResponseEntity<?> getCoursesByCategory(@PathVariable String categoryName) {
+    try {
+      return ResponseEntity.status(HttpStatus.OK).body(courseService.getCoursesByCategory(categoryName));
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
-  // Count Functions (works)
   /**
    * Endpoint to get the total count of students.
    *
    * @return the total number of users with the role of 'student'
-   * @apiNote This endpoint can be accessed via a GET request to '/students/count'.
-   * @example GET /students/count
-   * @response 42
    */
   @Operation(
           summary = "Get total student count",
@@ -173,7 +190,6 @@ public class SearchController {
                   responseCode = "200",
                   description = "Student count retrieved successfully",
                   content = @Content(schema = @Schema(implementation = Long.class))),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("students/count")
   public Long getStudentCount() {
@@ -184,9 +200,6 @@ public class SearchController {
    * Endpoint to get the total count of tutors.
    *
    * @return the total number of users with the role of 'tutor'
-   * @apiNote This endpoint can be accessed via a GET request to '/tutors/count'.
-   * @example GET /tutors/count
-   * @response 15
    */
   @Operation(
           summary = "Get total tutor count",
@@ -197,7 +210,6 @@ public class SearchController {
                   responseCode = "200",
                   description = "Tutor count retrieved successfully",
                   content = @Content(schema = @Schema(implementation = Long.class))),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("tutors/count")
   public Long getTutorsCount() {
@@ -205,8 +217,7 @@ public class SearchController {
   }
 
   /**
-   * Handles a GET request to retrieve the total count of courses. Allows cross-origin requests from
-   * "http://localhost:3000" with a maximum age of 3600 seconds.
+   * Handles a GET request to retrieve the total count of courses.
    *
    * @return the total number of courses as a {@code Long}.
    */
@@ -219,10 +230,59 @@ public class SearchController {
                   responseCode = "200",
                   description = "Course count retrieved successfully",
                   content = @Content(schema = @Schema(implementation = Long.class))),
-          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/courses/count")
   public Long getCoursesCount() {
     return courseService.getTotalCountOfCourses();
+  }
+
+  /**
+   * Retrieves a course based on its ID.
+   *
+   * @param id The ID of the course to retrieve.
+   * @return The {@link CourseTO} object representing the course.
+   * @throws ResourceNotFoundException, if the searched course does not exist in the database.
+   */
+  @Operation(
+          summary = "A user can search for and retrieve a course if it exists in the database",
+          description =
+                  "Allows a user to search for the course by its user ID. If the course does not exist in the database"
+                          + "an appropriate error is thrown.",
+          tags = {"Course Endpoints"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "The course is retrieved successfully",
+                  content =
+                  @Content(
+                          mediaType = "application/json",
+                          schema = @Schema(implementation = CourseTO.class)
+                  )
+          ),
+          @ApiResponse(
+                  responseCode = "404",
+                  description = "Course does not exist in database",
+                  content =
+                  @Content(
+                          mediaType = "application/json",
+                          schema = @Schema(implementation = String.class)
+                  )
+          )
+  })
+  @GetMapping("/get-course/{id}")
+  public ResponseEntity<?> getCourseById(@Parameter(
+          name = "course ID",
+          description = "The ID of the course to be queried",
+          required = true
+  ) @PathVariable Long id) {
+    try {
+      CourseTO course = courseService.findCourseById(id);
+      return ResponseEntity.status(HttpStatus.OK).body(course);
+    } catch (ResourceNotFoundException ex) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 }

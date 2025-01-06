@@ -8,17 +8,6 @@ import java.util.List;
 
 /**
  * The {@code CourseService} interface provides methods for retrieving and searching courses.
- *
- * <p>It exposes the following functionalities:
- *
- * <ul>
- *   <li>Find a course by its ID.
- *   <li>Find courses by tutor's first and last name.
- *   <li>Find courses by a full tutor's name.
- *   <li>Find courses by course name.
- *   <li>Retrieve courses by category name.
- *   <li>Get the total count of courses.
- * </ul>
  */
 @Service
 public interface CourseService {
@@ -82,8 +71,9 @@ public interface CourseService {
    *
    * @param courseId the unique ID of the course to be updated.
    * @param courseTO the {@link CourseTO} object containing the new course data.
+   * @return
    */
-  void updateCourse(Long courseId, CourseTO courseTO);
+  CourseTO updateCourse(Long courseId, CourseTO courseTO);
 
   /**
    * User rates an existing course.
@@ -91,4 +81,17 @@ public interface CourseService {
    * @param ratingCourseTO the {@link RatingCourseTO} which contains details of the review.
    */
   void rateCourse(RatingCourseTO ratingCourseTO);
+
+  /**
+   * Searches for courses by the given course name.
+   *
+   * <p>This method will return a list of {@link CourseTO} objects that match the given course name.
+   * The search can support case-insensitivity and partial name matches depending on the
+   * implementation.
+   *
+   * @param courseName the name (or partial name) of the course to search for.
+   * @return a list of {@link CourseTO} objects representing courses that match the search criteria.
+   *     If no courses are found, an empty list is returned.
+   */
+  List<CourseTO> searchCourses(String courseName);
 }

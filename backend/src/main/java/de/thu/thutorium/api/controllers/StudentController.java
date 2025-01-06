@@ -1,6 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.common.RatingCourseTO;
+import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.services.implementations.UserServiceImpl;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.swagger.CommonApiResponses;
@@ -30,7 +31,7 @@ public class StudentController {
     private final CourseService courseService;
 
     /**
-     * Retrieves a course based on its ID.
+     * A student enrolls in a course.
      *
      * @param studentId The ID of the student who wants to enroll in a course.
      * @param courseId The ID of the course in which the student wants to enroll.
@@ -77,6 +78,53 @@ public class StudentController {
     }
 
     /**
+     * A student Unenrolls in a course.
+     * Todo: Implement the method
+     * @param studentId The ID of the student who wants to unenroll in a course.
+     * @param courseId The ID of the course in which the student wants to unenroll.
+     * @return suitable HTTP response upon successful unenrolment.
+     * @throws EntityNotFoundException, if the searched student/course does not exist in the database.
+     */
+    @Operation(
+            summary = "Student unenrolls in a course. ",
+            description =
+                    "A student can unenroll in a course, provided he is already enrolled in the course.",
+            tags = {"Student Endpoints"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User successfully unenrolled."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Student or course not found.",
+                    content =
+                    @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            )
+    })
+    @PostMapping("/unenroll-course")
+    public ResponseEntity<?> unenrollInCourse(@Parameter(
+                                                    name = "student ID",
+                                                    description = "The ID of the student unenrolling in the course",
+                                                    required = true
+                                            ) @RequestParam Long studentId,
+                                            @Parameter(
+                                                    name = "course ID",
+                                                    description = "The ID of the course from which the student unenrolls.",
+                                                    required = true
+                                            ) @RequestParam Long courseId) {
+        try {
+            studentService.unenrollCourse(studentId, courseId);
+            return ResponseEntity.status(HttpStatus.OK).body("Unenrolled successfully in the course");
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error: " + ex.getMessage());
+        }
+    }
+
+    /**
      * Provide a course rating based on its ID.
      *
      * @param ratingCourseTO the {@link RatingCourseTO} which contains the details of the rating and review from the user.
@@ -105,6 +153,45 @@ public class StudentController {
     public ResponseEntity<?> rateCourse(@Valid @RequestBody RatingCourseTO ratingCourseTO) {
         try {
             courseService.rateCourse(ratingCourseTO);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Provide a tutor rating based on its ID.
+     *
+     * @param ratingTutorTO the {@link RatingTutorTO} which contains the details of the tutor and review from the student.
+     * Only a student can rate a tutor.
+     * @return suitable HTTP response upon successful rating.
+     * @throws EntityNotFoundException, if the searched student/tutor does not exist in the database.
+     */
+    @Operation(
+            summary = "Student rates a tutor. ",
+            description =
+                    "A student can rate a tutor, provided they exists already in the database and the student "
+                            + "has enrolled in at least one of the courses offered by the tutor.",
+            tags = {"Student Endpoints"})
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tutor successfully rated."),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Student or tutor not found.",
+                    content =
+                    @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            )
+    })
+    @PostMapping("/rate-tutor")
+    public ResponseEntity<?> rateTutor(@Valid @RequestBody RatingTutorTO ratingTutorTO) {
+        try {
+            studentService.rateTutor(ratingTutorTO);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());

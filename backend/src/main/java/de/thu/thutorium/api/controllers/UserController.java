@@ -1,7 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
+import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
@@ -16,7 +16,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -202,6 +200,7 @@ public class UserController {
       List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
       return ResponseEntity.ok(messages);
     }
+
   /**
    * Retrieves the authenticated user's ID.
    *
