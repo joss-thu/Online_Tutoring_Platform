@@ -1,6 +1,8 @@
 package de.thu.thutorium.services.interfaces;
 
+import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
+import jakarta.validation.Valid;
 
 /**
  * The {@code UserService} interface provides methods for managing and retrieving user data.
@@ -69,4 +71,26 @@ public interface UserService {
    */
   UserTO updateUser(Long id, UserTO user);
 
+  /**
+   * Enrolls a student in a course
+   *
+   * @param studentId  the id of the student
+   * @param courseId  the id of the course
+   */
+  void enrollCourse(Long studentId, Long courseId);
+
+  /**
+   * User rates an existing tutor.
+   *
+   * @param ratingTutorTO the {@link RatingTutorTO} which contains details of the review.
+   */
+  void rateTutor(@Valid RatingTutorTO ratingTutorTO);
+
+  /**
+   * A student unenrolls from a course.
+   *
+   * @param studentId the id of the student who unenrolls.
+   * @param courseId the id of the course from which the student unenrolls.
+   */
+  void unenrollCourse(Long studentId, Long courseId);
 }

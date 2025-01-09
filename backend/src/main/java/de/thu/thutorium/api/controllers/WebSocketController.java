@@ -1,5 +1,6 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
 import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.services.interfaces.ChatService;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * WebSocketController handles WebSocket messaging and facilitates real-time message sending through
@@ -116,5 +119,63 @@ public class WebSocketController {
   public ResponseEntity<String> deleteChat(@PathVariable Long chatId) {
     chatService.deleteChat(chatId);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Chat deleted successfully!");
+  }
+
+  @Operation(
+          summary = "Get chat summaries for a user",
+          description = "Fetches a list of chat summaries for a user by their user ID.",
+          tags = {"Chat Operations"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Successfully retrieved chat summaries",
+                  content =
+                  @Content(
+                          mediaType = "application/json",
+                          schema = @Schema(implementation = ChatSummaryTO.class))),
+          @ApiResponse(responseCode = "400", description = "Invalid user ID supplied"),
+          @ApiResponse(responseCode = "404", description = "User not found"),
+          @ApiResponse(responseCode = "403", description = "Forbidden: Invalid token or bad request")
+  })
+  @GetMapping("/get-chat-summaries")
+  public ResponseEntity<List<ChatSummaryTO>> getChatSummaries(@RequestParam Long userId) {
+    List<ChatSummaryTO> summaries = chatService.getChatSummaries(userId);
+    return ResponseEntity.ok(summaries);
+  }
+
+  @Operation(
+          summary = "Get messages for a specific chat",
+          description = "Fetches a list of messages in a chat by the chat's unique ID.",
+          tags = {"Chat Operations"})
+  @ApiResponses({
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Successfully retrieved chat messages",
+                  content =
+                  @Content(
+                          mediaType = "application/json",
+                          schema = @Schema(implementation = MessageTO.class))),
+          @ApiResponse(responseCode = "400", description = "Invalid chat ID supplied"),
+          @ApiResponse(responseCode = "404", description = "Chat not found"),
+          @ApiResponse(responseCode = "403", description = "Forbidden: Invalid token or bad request")
+  })
+  @GetMapping("/get-messages-chat")
+  public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
+    List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
+    return ResponseEntity.ok(messages);
+  }
+
+  @Operation(
+          summary = "Mark all messages as read",
+          description = "Updates all of the message status to read and sets the read timestamp.",
+          tags = {"Message Operations"})
+  @ApiResponses({
+          @ApiResponse(responseCode = "200", description = "All message marked as read successfully"),
+          @ApiResponse(responseCode = "404", description = "Chat not found")
+  })
+  @PutMapping("/message/{chatId}/read")
+  public ResponseEntity<String> markMessageAsRead(@PathVariable Long chatId) {
+    messageService.markAsRead(chatId);
+    return ResponseEntity.ok("All messages marked as read successfully.");
   }
 }

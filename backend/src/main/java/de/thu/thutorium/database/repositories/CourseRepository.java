@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository interface for managing {@link CourseDBO} entities. This interface extends {@link
@@ -53,11 +54,10 @@ public interface CourseRepository extends JpaRepository<CourseDBO, Long> {
   /**
    * Finds a course by its ID.
    *
-   * @param id The ID of the course to search for.
+   * @param courseId The ID of the course to search for.
    * @return The {@link CourseDBO} with the specified ID.
    */
-  @Query("SELECT c FROM CourseDBO c WHERE c.courseId = :id")
-  CourseDBO findCourseById(@Param("id") Long id);
+  Optional<CourseDBO> findCourseDBOByCourseId(Long courseId);
 
   /**
    * Finds courses by matching the category name.
@@ -69,4 +69,27 @@ public interface CourseRepository extends JpaRepository<CourseDBO, Long> {
           "SELECT c FROM CourseDBO c JOIN c.courseCategories cc WHERE LOWER(cc.categoryName) = LOWER(:categoryName)")
   List<CourseDBO> findCoursesByCategoryName(@Param("categoryName") String categoryName);
 
+  /**
+   * Checks if a course exists in the database from its name.
+   * @param courseName to be searched
+   * @return {@code boolean} value indicating if the searched course exists
+   */
+  boolean existsByCourseName(String courseName);
+
+  /**
+   * Finds a CourseDBO entity based on the course ID and the tutor's user ID.
+   *
+   * <p>
+   * This method retrieves a course that is associated with a specific tutor. It
+   * is useful for
+   * ensuring that a particular tutor is responsible for a given course.
+   *
+   * @param courseId    The unique ID of the course.
+   * @param tutorUserId The unique ID of the tutor.
+   * @return An {@link Optional} containing the {@link CourseDBO} object if a
+   *         course with the specified
+   *         course ID and tutor user ID exists, or an empty {@link Optional} if
+   *         no such course is found.
+   */
+  Optional<CourseDBO> findByCourseIdAndTutor_UserId(Long courseId, Long tutorUserId);
 }

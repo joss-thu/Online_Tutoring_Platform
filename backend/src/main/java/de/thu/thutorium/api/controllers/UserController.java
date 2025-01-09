@@ -1,15 +1,21 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
+import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.services.interfaces.ChatService;
+import de.thu.thutorium.services.interfaces.MeetingService;
+import de.thu.thutorium.services.interfaces.MessageService;
 import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +27,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /** Controller for managing user operations. */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@Tag(name = "User end-points", description = "Endpoints for user operations")
+//@Tag(name = "User end-points", description = "Endpoints for user operations")
 @Slf4j
 @CommonApiResponses
 public class UserController {
 
   private final UserService userService;
+  private final MeetingService meetingService;
+  private final ChatService chatService;
+  private final MessageService messageService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -136,6 +147,59 @@ public class UserController {
   public UserTO getTutor(@RequestParam Long id) {
     return userService.getTutorByID(id);
   }
+
+/**
+   * Retrieves all meetings associated with a specific user.
+   *
+   * <p>This endpoint fetches a list of meetings for a given user ID. It includes both:
+   *
+   * <ul>
+   *   <li>Meetings where the user is a participant
+   *   <li>Meetings scheduled by the user in their role as a tutor
+   * </ul>
+   *
+   * @param userId the unique identifier of the user whose meetings are to be retrieved
+   * @return a {@link ResponseEntity} containing a list of {@link MeetingTO} objects representing
+   *     the meetings associated with the user, or an empty list if none are found
+   * @throws org.springframework.web.server.ResponseStatusException if the user is not found or an
+   *     error occurs while retrieving the meetings
+   * @see de.thu.thutorium.api.transferObjects.common.MeetingTO
+   */
+  @Operation(
+      summary = "Retrieve all meetings for a specific user",
+      description =
+          "Fetches a list of meetings associated with a user. Includes both meetings the user participates in and meetings they have scheduled as a tutor.")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Meetings retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = MeetingTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "User not found or no meetings available for the user",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  @GetMapping("/get-meetings/{userId}")
+  public ResponseEntity<List<MeetingTO>> getMeetingsForUser(@PathVariable Long userId) {
+    List<MeetingTO> meetings = meetingService.getMeetingsForUser(userId);
+    return ResponseEntity.ok(meetings);
+  }
+
+  /*chat*/
+
+    @GetMapping("/get-chat-summaries")
+    public ResponseEntity<List<ChatSummaryTO>> getChatSummaries(@RequestParam Long userId) {
+      List<ChatSummaryTO> summaries = chatService.getChatSummaries(userId);
+      return ResponseEntity.ok(summaries);
+    }
+
+    @GetMapping("/get-messages-chat")
+    public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
+      List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
+      return ResponseEntity.ok(messages);
+    }
 
   /**
    * Retrieves the authenticated user's ID.

@@ -42,6 +42,14 @@ public class UserDBO implements UserDetails {
   @Column(name = "last_name", nullable = false)
   private String lastName;
 
+  /**
+   * The full name of the user, which is a combination of the first name and last
+   * name.
+   * This field is not persisted in the database.
+   */
+  @Transient
+  private String fullName;
+
   /** The user's email, used for login. This field must be unique. */
   @Column(name = "email_address", nullable = false, unique = true)
   private String email;
@@ -128,13 +136,13 @@ public class UserDBO implements UserDetails {
    * cascading operations defined in this relationship. The counterpart is denoted by a Set<UserDBO>
    * called 'participants' in the {@link CourseDBO}.
    */
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JoinTable(
       name = "course_students",
       joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "course_id"))
   @Builder.Default
-  private Set<CourseDBO> studentCourses = new HashSet<>();
+  private List<CourseDBO> studentCourses = new ArrayList<>();
 
   /**
    * Ratings given by a student to tutors.
@@ -156,6 +164,34 @@ public class UserDBO implements UserDetails {
   @OneToMany(mappedBy = "tutor", orphanRemoval = true)
   @Builder.Default
   private List<RatingTutorDBO> receivedTutorRatings = new ArrayList<>();
+
+
+  /**
+   * The average rating of the tutor.
+   * This field is not persisted in the database.
+   */
+  @Transient
+  private Double averageRating;
+
+  /**
+   * Initializes transient fields after the entity is loaded from the database.
+   */
+  @PostLoad
+  private void onLoad() {
+    //Retrieve full name of the user
+    this.fullName = firstName + " " + lastName;
+    //Retrieve average rating of the user with tutor role.
+    if (receivedTutorRatings != null && !receivedTutorRatings.isEmpty()) {
+      double sum = receivedTutorRatings.stream()
+              .mapToDouble(RatingTutorDBO::getPoints)
+              .sum();
+      this.averageRating = sum / receivedTutorRatings.size();
+    } else {
+      this.averageRating = 0.0;
+    }
+  }
+
+
 
   /**
    * Ratings given by this student to courses.
@@ -226,7 +262,7 @@ public class UserDBO implements UserDetails {
   public UserDBO() {
     this.roles = new HashSet<>();
     this.verifiers = new HashSet<>();
-    this.studentCourses = new HashSet<>();
+    this.studentCourses = new ArrayList<>();
     this.tutorCourses = new ArrayList<>();
     this.givenTutorRatings = new ArrayList<>();
     this.receivedTutorRatings = new ArrayList<>();

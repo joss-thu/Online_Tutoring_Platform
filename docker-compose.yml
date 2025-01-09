@@ -1,3 +1,4 @@
+
 services:
 
   database:
@@ -20,7 +21,7 @@ services:
     container_name: otp-frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile  
+      dockerfile: Dockerfile
       args:
         buildType: build-dc
     ports:

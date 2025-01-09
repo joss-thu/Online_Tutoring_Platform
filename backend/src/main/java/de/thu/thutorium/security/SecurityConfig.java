@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -49,26 +47,23 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/swagger-ui/**",
                         "/webjars/**",
-                        "/v3/api-docs.yaml")
+                        "/v3/api-docs.yaml",
+                        "/chat/**")
                     .permitAll()
-                    .requestMatchers("/student/**")
-                    .hasRole("STUDENT")
-                    .requestMatchers("/tutor/**")
-                    .hasRole("TUTOR")
-                    .requestMatchers("/verifier/**")
-                    .hasRole("VERIFIER")
-                    .requestMatchers("/admin/**")
-                    .hasRole("ADMIN")
-                    .anyRequest()
-                    .authenticated())
+                    .requestMatchers("/course/**").permitAll()
+                    .requestMatchers("/search/**").permitAll()
+                    .requestMatchers("/profile").permitAll()
+                    .requestMatchers("/student/**").hasRole("STUDENT")
+                    .requestMatchers("/tutor/**").hasRole("TUTOR")
+                    .requestMatchers("/verifier/**").hasRole("VERIFIER")
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authenticationProvider)
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
-
-
 
   /**
    * Configures Cross-Origin Resource Sharing (CORS) settings for the application, allowing specific
@@ -116,7 +111,7 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/v3/api-docs/**", swaggerConfiguration);
     source.registerCorsConfiguration("/v3/api-docs.yaml", swaggerConfiguration);
 
-    //chat
+    // chat
     CorsConfiguration chatCorsConfig = new CorsConfiguration();
     chatCorsConfig.setAllowedOrigins(List.of("*"));
     chatCorsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
@@ -126,17 +121,4 @@ public class SecurityConfig {
 
     return source;
   }
-
-  @Bean
-  public SecurityFilterChain websocketSecurity(HttpSecurity http) throws Exception {
-    http
-            .securityMatcher("/chat/**")  // Apply only to WebSocket paths
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/chat/**").permitAll())
-            .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF for WebSockets
-            .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));  // Updated way to disable frame options
-    return http.build();
-  }
-
-
 }

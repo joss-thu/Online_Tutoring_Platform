@@ -2,14 +2,17 @@ package de.thu.thutorium.services.implementations;
 
 import de.thu.thutorium.api.TOMappers.CourseCategoryTOMapper;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
-import de.thu.thutorium.database.DBOMappers.CourseCategoryDBOMapper;
+import de.thu.thutorium.database.DBOMappers.CategoryDBOMapper;
 import de.thu.thutorium.database.dbObjects.CourseCategoryDBO;
 import de.thu.thutorium.database.repositories.CategoryRepository;
-import de.thu.thutorium.exceptions.ResourceAlreadyExistsException;
 import de.thu.thutorium.services.interfaces.CategoryService;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,15 +29,15 @@ import java.util.Optional;
 @Service
 public class CategoryServiceImpl implements CategoryService {
   private final CategoryRepository courseCategoryRepository;
-  private final CourseCategoryDBOMapper courseCategoryDBOMapper;
+  private final CategoryDBOMapper categoryDBOMapper;
   private final CourseCategoryTOMapper courseCategoryTOMapper;
 
   public CategoryServiceImpl(
       CategoryRepository courseCategoryRepository,
-      CourseCategoryDBOMapper courseCategoryDBOMapper,
+      CategoryDBOMapper categoryDBOMapper,
       CourseCategoryTOMapper courseCategoryTOMapper) {
     this.courseCategoryRepository = courseCategoryRepository;
-    this.courseCategoryDBOMapper = courseCategoryDBOMapper;
+    this.categoryDBOMapper = categoryDBOMapper;
     this.courseCategoryTOMapper = courseCategoryTOMapper;
   }
 
@@ -44,23 +47,20 @@ public class CategoryServiceImpl implements CategoryService {
    * @param courseCategory the data transfer object containing the details of the course category to
    *     be created
    * @return the created course category as a {@link CourseCategoryTO}
+   * @throws EntityExistsException if the category already exists by name
    */
   @Override
   public CourseCategoryTO createCourseCategory(@Valid CourseCategoryTO courseCategory) {
     // Check if the courseCategoryDBO already exists (by name)
-    // If yes, Throw ResourceAlreadyExistsException
-    // Save to DB
-
     Optional<CourseCategoryDBO> categoryDBOOptional =
-        Optional.ofNullable(
             courseCategoryRepository.findCourseCategoryDBOByCategoryName(
-                courseCategory.getCategoryName()));
+                courseCategory.getCategoryName());
     categoryDBOOptional.ifPresent(
         (category) -> {
-          throw new ResourceAlreadyExistsException(
+          throw new EntityExistsException(
               "Category \"" + category.getCategoryName() + "\" already exists!");
         });
-    CourseCategoryDBO categoryDBO = courseCategoryDBOMapper.toDBO(courseCategory);
+    CourseCategoryDBO categoryDBO = categoryDBOMapper.toDBO(courseCategory);
     CourseCategoryDBO savedCategoryDBO = courseCategoryRepository.save(categoryDBO);
     return courseCategoryTOMapper.toDTO(savedCategoryDBO);
   }
@@ -71,15 +71,19 @@ public class CategoryServiceImpl implements CategoryService {
    * @param categoryId the ID of the course category to be updated
    * @param courseCategory the data transfer object containing the updated details of the course
    *     category
-   * @return an {@link Optional} containing the updated course category as a {@link
-   *     CourseCategoryTO}, or empty if not found
+   * @return an {@link CourseCategoryTO} containing the updated course category.
+   * @throws EntityNotFoundException, if the searched category does not exist in the database.
    */
   @Override
-  public Optional<CourseCategoryTO> updateCourseCategory(
-      int categoryId, CourseCategoryTO courseCategory) {
-    // Check if the courseCategory exists => throw Not found exception
-    // Update and return the courseCategoryTO
-    return Optional.empty();
+  public CourseCategoryTO updateCourseCategory(Long categoryId, @Valid CourseCategoryTO courseCategory) {
+    Optional<CourseCategoryDBO> courseCategoryOptional = courseCategoryRepository.findById(categoryId);
+    CourseCategoryDBO existingCategory = courseCategoryOptional.orElseThrow(
+            () -> new EntityNotFoundException("Error: Course Category with id "
+            + categoryId + " not found!"));
+    existingCategory.setCategoryName(courseCategory.getCategoryName());
+    existingCategory.setCreatedOn(LocalDateTime.now());
+    CourseCategoryDBO savedCategoryDBO = courseCategoryRepository.save(existingCategory);
+    return courseCategoryTOMapper.toDTO(savedCategoryDBO);
   }
 
   /**
@@ -92,5 +96,23 @@ public class CategoryServiceImpl implements CategoryService {
     // Check if the courseCategory exists => throw Not found exception
     // Delete the courseCategoryDBO => Check for side effects on courses, other possible side
     // effects
+  }
+
+  /**
+   * Retrieves all available course categories.
+   *
+   * <p>This method fetches the list of all course categories from the {@link CategoryRepository}.
+   * The result is a list of {@link CourseCategoryTO} objects representing the available categories.
+   *
+   * @return a list of {@link CourseCategoryTO} objects representing all available categories. If no
+   *     categories are found, an empty list is returned.
+   * @throws EntityNotFoundException if no categories are found
+   */
+  @Override
+  public List<CourseCategoryTO> getAllCategories() {
+    // Use repository's built-in `findAll` and map results to TOs
+      return courseCategoryRepository.findAll().stream()
+              .map(courseCategoryTOMapper::toDTO)
+              .toList();
   }
 }
