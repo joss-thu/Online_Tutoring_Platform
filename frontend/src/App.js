@@ -23,7 +23,12 @@ export default function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/createcourse" element={<CourseForm />} />
+                    <Route path="/createcourse"
+                           element={
+                               <ProtectedRoutes roles={["ROLE_TUTOR"]}>
+                                   <CourseForm />
+                               </ProtectedRoutes>
+                           }/>
                     <Route
                         path="/my-courses"
                         element={
