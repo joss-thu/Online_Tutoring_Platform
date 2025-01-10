@@ -10,7 +10,7 @@ import apiClient from "../services/AxiosConfig";
 const CourseForm = () => {
   const [formSchema, setFormSchema] = useState([])
   const [courseDetails, setCourseDetails] = useState({}); //dynamically updated
-  const { user, login } = useAuth();
+  const { user} = useAuth();
   const [conflictError, setConflictError] = useState(false);
 
   //fetch the form schema from the backend API
@@ -42,31 +42,11 @@ const CourseForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setConflictError(false);
 
-    try {
-      const formData = {}; // Add any additional data if necessary
-      const { data } = await apiClient.post("/auth/register", formData);
-
-      //log in and authenticate
-      login(data.token); //save the token to the context or storage
-      console.log("User authenticated. Proceeding with course creation...");
-    } catch (error) {
-      if (error.response?.status === 409) {
-        setConflictError(true);
-        alert("Conflict detected during authentication.");
-        return; // Stop further execution
-      } else {
-        console.error("Authentication failed:", error);
-        alert("Failed to authenticate. Please try again.");
-        return; // Stop further execution
-      }
-    }
-
-
-    // the request body using the vourseDetails state
     const requestBody = {
       courseName: courseDetails.courseName,
-      tutorId: user.id,
+      tutorId: user?.id,
       descriptionShort: courseDetails.shortDescription,
       descriptionLong: courseDetails.longDescription,
       startDate: courseDetails.startDate,
@@ -74,40 +54,34 @@ const CourseForm = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:8080/tutor/course/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody), // Convert the object to a JSON string
+
+      const { data } = await apiClient.post(
+          "/tutor/course/create",
+          requestBody
+      );
+      // If successful, you can handle success here
+      alert("Course successfully created!");
+      console.log("Response:", data);
+
+      // Reset form fields
+      setCourseDetails({
+        courseName: "",
+        shortDescription: "",
+        longDescription: "",
+        category: "",
+        startDate: "",
+        endDate: "",
+        image: null,
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        alert("Course successfully created!");
-        console.log("Response:", result);
-
-        // Reset form fields
-        setCourseDetails({
-          courseName: "",
-          shortDescription: "",
-          longDescription: "",
-          category: "",
-          startDate: "",
-          endDate: "",
-          image: null,
-        });
-      } else if (response.status === 409) {
+    } catch (error) {
+      // Handle conflict or other errors
+      if (error.response?.status === 409) {
         setConflictError(true);
         alert("A course with similar details already exists.");
       } else {
-        const errorMessage = await response.text();
-        console.error("Error:", errorMessage);
-        alert(`Error: ${errorMessage}`);
+        console.error("Error submitting data:", error);
+        alert("An error occurred. Please try again.");
       }
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      alert("An error occurred. Please try again.");
     }
   };
 
