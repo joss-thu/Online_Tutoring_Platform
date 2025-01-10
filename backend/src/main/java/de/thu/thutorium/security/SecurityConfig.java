@@ -56,6 +56,12 @@ public class SecurityConfig {
                             "/**",
                             "/call")
                     .permitAll()
+                    .requestMatchers("/course/**")
+                    .permitAll()
+                    .requestMatchers("/search/**")
+                    .permitAll()
+                    .requestMatchers("/profile")
+                    .permitAll()
                     .requestMatchers("/student/**")
                     .hasRole("STUDENT")
                     .requestMatchers("/tutor/**")

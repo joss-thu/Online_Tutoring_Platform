@@ -1,6 +1,5 @@
 package de.thu.thutorium.database.dbObjects;
 
-import de.thu.thutorium.database.dbObjects.enums.MeetingStatus;
 import de.thu.thutorium.database.dbObjects.enums.MeetingType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,12 +20,11 @@ import java.util.List;
 @Builder
 @Entity
 @Table(
-        name = "meeting",
-        uniqueConstraints = @UniqueConstraint(
-                name = "unique_meeting_constraint",
-                columnNames = {"meeting_date", "meeting_time", "room_number", "address_id"}
-        )
-)
+    name = "meeting",
+    uniqueConstraints =
+        @UniqueConstraint(
+            name = "unique_meeting_constraint",
+            columnNames = {"meeting_date", "meeting_time", "room_number", "address_id"}))
 @Getter
 @Setter
 @AllArgsConstructor
@@ -44,7 +42,7 @@ public class MeetingDBO {
    * meetingsScheduled in {@link UserDBO}
    */
   @ManyToOne
-  @JoinColumn(name = "created_by")
+  @JoinColumn(name = "created_by", nullable = false)
   private UserDBO tutor;
 
   /**
@@ -53,7 +51,7 @@ public class MeetingDBO {
    * 'meetings' in {@link CourseDBO}
    */
   @ManyToOne
-  @JoinColumn(name = "course_id")
+  @JoinColumn(name = "course_id", nullable = false)
   private CourseDBO course;
 
   /** The date on which the meeting is scheduled to be held. This field cannot be null. */
@@ -61,8 +59,8 @@ public class MeetingDBO {
   private LocalDate meetingDate;
 
   /** The time on which the meeting is scheduled to be held. This field cannot be null. */
-  @Column(name = "meeting_time", nullable = false)
-  private LocalDateTime meetingTime;
+  @Column(name = "meeting_start_time", nullable = false)
+  private LocalDateTime startTime;
 
   @Column(name = "meeting_end_time", nullable = false)
   private LocalDateTime endTime;
@@ -79,14 +77,6 @@ public class MeetingDBO {
   @Enumerated(EnumType.STRING)
   @Column(name = "meeting_type", nullable = false)
   private MeetingType meetingType;
-
-  /**
-   * The current status of the meeting (e.g., confirmed, canceled, etc.). Must be a non-null string
-   * with a maximum length of 255 characters.
-   */
-  @Enumerated(EnumType.STRING)
-  @Column(name = "meeting_status", nullable = false)
-  private MeetingStatus meetingStatus;
 
   /**
    * The room number where the meeting is taking place, if applicable. This field may be null and
@@ -121,5 +111,4 @@ public class MeetingDBO {
 
   @Column(name = "time_range", columnDefinition = "tsrange", insertable = false, updatable = false)
   private String timeRange;
-
 }
