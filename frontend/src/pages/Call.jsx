@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:5000");
+const socket = io("http://localhost:5000");
 
 function App() {
   const [me, setMe] = useState("");
@@ -61,6 +61,7 @@ function App() {
 
     socket.on("me", (id) => {
       setMe(id);
+      console.log(id);
     });
 
     socket.on("callUser", (data) => {
@@ -101,10 +102,10 @@ function App() {
     });
 
     configurePeer(peer);
-
+    //TODO fetch socket id from backend here
     peer.on("signal", (data) => {
       socket.emit("callUser", {
-        userToCall: id,
+        socketId: id,
         signalData: data,
         from: me,
         name: name,

@@ -8,10 +8,16 @@ import apiClient from "../services/AxiosConfig";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import FormatDate from "../helpers/FormatDate";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../services/AuthContext";
 
 //const socket = io("http://localhost:5000");
 
 function Messages() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const idToMessage = query.get("userId");
   const [chats, setChats] = useState();
   const [selectedChatId, setSelectedChatId] = useState("");
   const [selectedChatObject, setSelectedChatObject] = useState(null);
@@ -26,6 +32,7 @@ function Messages() {
   const [stompClient, setStompClient] = useState(null);
   const maxRows = 5;
   const messagesEndRef = useRef(null);
+  const navigate = useNavigate();
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -35,6 +42,49 @@ function Messages() {
       }
     }
   };
+
+  useEffect(() => {
+    async function createChat() {
+      if (idToMessage && chats && idToMessage !== user.id) {
+        let chatExists = false;
+        for (let i = 0; i < chats.length; i++) {
+          if (String(chats[i].receiver.id) === String(idToMessage)) {
+            chatExists = true;
+            break;
+          }
+        }
+
+        if (!chatExists) {
+          const postData = {
+            participantIds: [Number(user.id), Number(idToMessage)],
+            chatTitle: "",
+            isGroup: false,
+            creatorId: Number(user.id),
+          };
+          await apiClient.post(`/chat-create`, postData);
+          // Create a URL object from the current window's location
+          const currentUrl = new URL(window.location.href);
+
+          // Remove the userId parameter
+          currentUrl.searchParams.delete("userId");
+
+          // Update the browser's URL without reloading the page
+          window.history.replaceState({}, "", currentUrl);
+          await loadChats();
+        } else {
+          // Create a URL object from the current window's location
+          const currentUrl = new URL(window.location.href);
+
+          // Remove the userId parameter
+          currentUrl.searchParams.delete("userId");
+
+          // Update the browser's URL without reloading the page
+          window.history.replaceState({}, "", currentUrl);
+        }
+      }
+    }
+    createChat();
+  }, [idToMessage, chats]);
 
   // Call scrollToBottom whenever messages[selectedChatId] changes
   useEffect(() => {
@@ -159,12 +209,6 @@ function Messages() {
     }
   }, [searchQuery]);
 
-  useEffect(() => {
-    if (messages) {
-      console.log(messages);
-    }
-  }, [messages]);
-
   const loadMessages = async () => {
     for (const chat of chats) {
       const chatId = chat.chatId;
@@ -172,7 +216,6 @@ function Messages() {
         const { data } = await apiClient.get(
           "/user/get-messages-chat?chatId=" + chatId,
         );
-        console.log(data);
         setMessages((prevMessages) => ({ ...prevMessages, [chatId]: data }));
       } catch (error) {
         console.error("Error loading messages:", error);

@@ -1,10 +1,11 @@
 import NavBar from "../components/Navbar";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import calculateAverageRating from "../helpers/CalculateAverageRating";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import { Rating, StickerStar } from "@smastrom/react-rating";
+import { useAuth } from "../services/AuthContext";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -13,21 +14,28 @@ const ratingStyle = {
 };
 
 function Tutor() {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
   const [tutor, setTutor] = useState(false);
-  const isLoggedIn = false;
-  const fetchTutorDetails = async () => {
-    const res = await fetch("http://localhost:8080/tutor?id=" + id);
-    const data = await res.json();
-    console.log(data);
-    setTutor(data);
-  };
+  const fetchTutorDetails = useCallback(async () => {
+    try {
+      const res = await fetch("http://localhost:8080/user/tutor?id=" + id);
+      const data = await res.json();
+      console.log(data);
+      setTutor(data);
+    } catch (error) {
+      console.error("Error fetching tutor details:", error);
+    }
+  }, [id]); // Dependency on 'id'
+
   useEffect(() => {
-    fetchTutorDetails();
-  });
+    if (id) {
+      fetchTutorDetails();
+    }
+  }, [id, fetchTutorDetails]);
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar currentPage="/" />
@@ -55,29 +63,15 @@ function Tutor() {
               >
                 Link copied!
               </Tooltip>
-              <div className="text-xl w-auto self-start">
-                {tutor.isVerified ? (
-                  <span className="text-white py-1 px-2 rounded-md font-merriweather_sans bg-blue-600 text-xs inline-flex items-center">
-                    Verified
-                    <span className="material-symbols-rounded ml-1 text-sm leading-none">
-                      verified
-                    </span>
-                  </span>
-                ) : (
-                  <span className="text-white py-1 px-2 rounded-md font-merriweather_sans bg-gray-600 text-xs">
-                    Unverified
-                  </span>
-                )}
-              </div>
             </div>
             <button
               onClick={() => {
-                if (isLoggedIn) {
-                  navigate("/");
+                if (isAuthenticated) {
+                  navigate("/messages?userId=" + id);
                 }
               }}
               className={
-                isLoggedIn
+                isAuthenticated
                   ? "bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
                   : "message_anchor_element bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
               }
@@ -130,6 +124,10 @@ function Tutor() {
                     <strong>{tutor.courses?.length}</strong>
                   </span>
                 </div>
+              </div>
+              <div className="text-lg text-gray-800 mt-7">Description</div>
+              <div className="mt-1 text-md text-gray-600">
+                {tutor.description}
               </div>
               <div className="mt-10 text-2xl text-gray-800">Courses</div>
               {tutor.courses?.map((result, index) => {

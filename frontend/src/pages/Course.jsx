@@ -1,9 +1,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import NavBar from "../components/Navbar";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { Rating, StickerStar } from "@smastrom/react-rating";
-import calculateAverageRating from "../helpers/CalculateAverageRating";
+import { useAuth } from "../services/AuthContext";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -16,18 +16,20 @@ function Course() {
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
-  const isLoggedIn = false;
+  const { isAuthenticated } = useAuth();
   const [course, setCourse] = useState(false);
 
-  const fetchCourseDetails = async () => {
-    const res = await fetch("http://localhost:8080/course?id=" + id);
+  const fetchCourseDetails = useCallback(async () => {
+    const res = await fetch("http://localhost:8080/course/get-course?id=" + id);
     const data = await res.json();
     setCourse(data);
-  };
+  }, [course, id]);
 
   useEffect(() => {
-    fetchCourseDetails();
-  });
+    if (!course) {
+      fetchCourseDetails();
+    }
+  }, [course, fetchCourseDetails]);
 
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
@@ -45,11 +47,12 @@ function Course() {
                   className="cursor-pointer"
                   onClick={() =>
                     navigate(
-                      "/search?categoryName=" + course.category?.categoryName,
+                      "/search?categoryName=" +
+                        course.courseCategories[0]?.categoryName,
                     )
                   }
                 >
-                  {course.category?.categoryName}
+                  {course.courseCategories[0]?.categoryName}
                 </span>
                 <span className="mx-1">/</span>
                 <span
@@ -78,28 +81,26 @@ function Course() {
                 Link copied!
               </Tooltip>
               <div
-                onClick={() => navigate("/tutor?id=" + course.tutor.userId)}
+                onClick={() => navigate("/tutor?id=" + course.tutorId)}
                 className="text-xl text-gray-800 cursor-pointer w-auto self-start"
               >
-                By {course.tutor?.firstName} {course.tutor?.lastName}
+                By {course.tutorName}
               </div>
-              {course.ratings && (
-                <Rating
-                  readOnly={true}
-                  style={{ maxWidth: 100 }}
-                  value={calculateAverageRating(course.ratings)}
-                  itemStyles={ratingStyle}
-                />
-              )}
+              <Rating
+                readOnly={true}
+                style={{ maxWidth: 100 }}
+                value={course.averageRating}
+                itemStyles={ratingStyle}
+              />
             </div>
             <button
               onClick={() => {
-                if (isLoggedIn) {
+                if (isAuthenticated) {
                   navigate("/");
                 }
               }}
               className={
-                isLoggedIn
+                isAuthenticated
                   ? "bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
                   : "enroll_now_anchor_element bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
               }

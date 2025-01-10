@@ -48,13 +48,13 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/webjars/**",
                         "/v3/api-docs.yaml",
-                        "/chat/**")
-                    .permitAll()
-                    .requestMatchers("/course/**")
-                    .permitAll()
-                    .requestMatchers("/search/**")
-                    .permitAll()
-                    .requestMatchers("/profile")
+                        "/chat/**",
+                         "/profile/**",
+                            "/search/**",
+                            "course/**",
+                            "user/**",
+                            "/**",
+                            "/call")
                     .permitAll()
                     .requestMatchers("/student/**")
                     .hasRole("STUDENT")
@@ -92,13 +92,14 @@ public class SecurityConfig {
     configuration.setAllowedOrigins(
         List.of(
             "http://localhost:3000",
+            "http://localhost:5000",
             "http://localhost:80",
             "http://localhost",
             "http://localhost:8080")); // Add http://localhost
     configuration.setAllowedMethods(
         List.of("GET", "POST", "PUT", "DELETE")); // Allow specific HTTP methods
     configuration.setAllowedHeaders(
-        List.of("Authorization", "Content-Type")); // Allow specific headers
+        List.of("*")); // Allow specific headers
     configuration.setAllowCredentials(true); // Allow credentials for authorization headers
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
