@@ -59,7 +59,7 @@ public class SecurityConfig {
                     .requestMatchers("/student/**")
                     .hasRole("STUDENT")
                     .requestMatchers("/tutor/**")
-                    .permitAll()
+                    .hasRole("TUTOR")
                     .requestMatchers("/verifier/**")
                     .hasRole("VERIFIER")
                     .requestMatchers("/admin/**")
