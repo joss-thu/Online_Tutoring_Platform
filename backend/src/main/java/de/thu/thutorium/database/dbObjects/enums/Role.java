@@ -4,6 +4,7 @@ public enum Role {
     STUDENT,
     TUTOR,
     ADMIN,
+    USER,
     /**
      * Role for users who can verify a tutor.
      */

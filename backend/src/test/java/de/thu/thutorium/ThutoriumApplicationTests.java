@@ -37,12 +37,6 @@ public class ThutoriumApplicationTests {
     @InjectMocks
     private AdminController adminController;
 
-    @Mock
-    private AuthenticationService authService;
-
-    @InjectMocks
-    private AuthenticationController authenticationController;
-
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this); // Initialize mocks before each test
@@ -191,85 +185,5 @@ public class ThutoriumApplicationTests {
         assertEquals("Unexpected error: Unexpected error", response.getBody());
         verify(categoryService, times(1)).createCourseCategory(courseCategoryTO); // Verify the service call
     }
-
-    //NOW TESTING FOR REGISTER IN AUTHCONTROLLER CLASS
-//    @Test
-//    void testRegister_Success() {
-//        // Given
-//        RegisterRequestTO request = new RegisterRequestTO();
-//        ResponseEntity<LogInResponseTO> mockResponse = new ResponseEntity<>(new LogInResponseTO(), HttpStatus.OK);
-//        when(authService.register(request)).thenReturn(mockResponse);
-//
-//        // When
-//        ResponseEntity<?> response = authenticationController.register(request);
-//
-//        // Then
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertNotNull(response.getBody());
-//        verify(authService, times(1)).register(request);
-//    }
-//
-//    @Test
-//    void testRegister_Conflict() {
-//        // Given
-//        RegisterRequestTO request = new RegisterRequestTO();
-//        when(authService.register(request))
-//                .thenThrow(new ResourceAlreadyExistsException("User already exists"));
-//
-//        // When
-//        ResponseEntity<?> response = authenticationController.register(request);
-//
-//        // Then
-//        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-//        assertEquals("Error: User already exists", response.getBody());
-//        verify(authService, times(1)).register(request);
-//    }
-//
-//    @Test
-//    void testRegister_InternalServerError() {
-//        // Given
-//        RegisterRequestTO request = new RegisterRequestTO();
-//        when(authService.register(request)).thenThrow(new RuntimeException("Unexpected error"));
-//
-//        // When
-//        ResponseEntity<?> response = authenticationController.register(request);
-//
-//        // Then
-//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-//        assertEquals("Unexpected Error: Unexpected error", response.getBody());
-//        verify(authService, times(1)).register(request);
-//    }
-//
-//    //NOW TESTING AUTHENTICATION METHOD
-//    @Test
-//    void testAuthenticate_Success() {
-//        // Given
-//        LogInRequestTO request = new LogInRequestTO();
-//        ResponseEntity<LogInResponseTO> mockResponse = new ResponseEntity<>(new LogInResponseTO(), HttpStatus.OK);
-//        when(authService.authenticate(request)).thenReturn(mockResponse);
-//
-//        // When
-//        ResponseEntity<?> response = authenticationController.authenticate(request);
-//
-//        // Then
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertNotNull(response.getBody());
-//        verify(authService, times(1)).authenticate(request);
-//    }
-//
-//    @Test
-//    void testAuthenticate_InternalServerError() {
-//        // Given
-//        LogInRequestTO request = new LogInRequestTO();
-//        when(authService.authenticate(request)).thenThrow(new RuntimeException("Unexpected error"));
-//
-//        // When
-//        ResponseEntity<?> response = authenticationController.authenticate(request);
-//
-//        // Then
-//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-//        assertEquals("Unexpected Error: Unexpected error", response.getBody());
-//        verify(authService, times(1)).authenticate(request);
-//    }
 
 }

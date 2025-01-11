@@ -40,7 +40,6 @@ public interface MeetingTOMapper {
   @Mapping(source = "address.addressId", target = "addressId")
   @Mapping(source = "meetingDate", target = "meetingDate", dateFormat = "yyyy-MM-dd")
   @Mapping(source = "meetingTime", target = "meetingTime")
-  @Mapping(source = "endTime", target = "endTime")
   @Mapping(source = "roomNum", target = "roomNum")
   MeetingTO toDTO(MeetingDBO meetingDBO);
 
