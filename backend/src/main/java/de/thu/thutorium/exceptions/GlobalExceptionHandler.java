@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
  * SpringErrorPayload} class. This ensures that error responses are consistent and follow the
  * structure defined by the {@link SpringErrorPayload} class, which is also documented in the
  * Swagger documentation through the {@link de.thu.thutorium.swagger.CommonApiResponses} annotation.
+ *
+ * @Author Jossin Anthony
+ * @Author Nikolai Ivanov
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -78,6 +81,23 @@ public class GlobalExceptionHandler {
     SpringErrorPayload errorResponse =
         new SpringErrorPayload("Invalid argument", ex.getMessage(), HttpStatus.BAD_REQUEST.value());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(MeetingConflictException.class)
+  public ResponseEntity<String> handleMeetingConflictException(MeetingConflictException ex) {
+    return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+
+  }
+
+  // Generic Exception Handler (Fallback)
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<SpringErrorPayload> handleGenericException(Exception ex) {
+    SpringErrorPayload errorResponse =
+        new SpringErrorPayload(
+            "An unexpected error occurred.",
+            ex.getMessage(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value());
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
 
   //    /**
