@@ -20,7 +20,7 @@ function Course() {
   const [course, setCourse] = useState(false);
 
   const fetchCourseDetails = useCallback(async () => {
-    const res = await fetch("http://localhost:8080/course/get-course?id=" + id);
+    const res = await fetch("http://localhost:8080/search/get-course/" + id);
     const data = await res.json();
     setCourse(data);
   }, [course, id]);

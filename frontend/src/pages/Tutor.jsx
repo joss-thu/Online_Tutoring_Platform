@@ -20,22 +20,41 @@ function Tutor() {
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
   const [tutor, setTutor] = useState(false);
+  const [courses, setCourses] = useState([]);
   const fetchTutorDetails = useCallback(async () => {
     try {
       const res = await fetch("http://localhost:8080/user/tutor?id=" + id);
       const data = await res.json();
-      console.log(data);
       setTutor(data);
     } catch (error) {
       console.error("Error fetching tutor details:", error);
     }
   }, [id]); // Dependency on 'id'
 
+  const fetchTutorCourses = useCallback(async () => {
+    try {
+      const res = await fetch(
+        "http://localhost:8080/user/get-course/" + tutor.userId,
+      );
+      const data = await res.json();
+      setCourses(data);
+    } catch (error) {
+      console.error("Error fetching tutor courses:", error);
+    }
+  }, [tutor]); // Dependency on 'id'
+
   useEffect(() => {
     if (id) {
       fetchTutorDetails();
     }
   }, [id, fetchTutorDetails]);
+
+  useEffect(() => {
+    if (tutor) {
+      fetchTutorCourses();
+    }
+  }, [tutor, fetchTutorCourses]);
+
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar currentPage="/" />
@@ -121,7 +140,7 @@ function Tutor() {
                 <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                   <span className="text-sm">Courses</span>
                   <span className="text-md">
-                    <strong>{tutor.courses?.length}</strong>
+                    <strong>{courses?.length}</strong>
                   </span>
                 </div>
               </div>
@@ -130,7 +149,7 @@ function Tutor() {
                 {tutor.description}
               </div>
               <div className="mt-10 text-2xl text-gray-800">Courses</div>
-              {tutor.courses?.map((result, index) => {
+              {courses?.map((result, index) => {
                 return <CourseSearchResultItem course={result} key={index} />;
               })}
             </div>
