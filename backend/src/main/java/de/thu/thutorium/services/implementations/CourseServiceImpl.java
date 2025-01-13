@@ -82,6 +82,12 @@ public class CourseServiceImpl implements CourseService {
     return courses.stream().map(courseMapper::toDTO).toList();
   }
 
+  @Override
+  public List<CourseTO> getCourseByTutorId(Long tutorId) {
+    List<CourseDBO> courseDBOs = courseRepository.findByTutor_UserId(tutorId);
+    return courseMapper.toDTOList(courseDBOs);
+  }
+
   /**
    * Retrieves the total count of courses in the database.
    *
@@ -127,6 +133,7 @@ public class CourseServiceImpl implements CourseService {
     // Save the new course entity to the database
     return courseMapper.toDTO(courseRepository.save(courseDBO));
   }
+
 
   /**
    * Deletes an existing course by its ID.
@@ -230,6 +237,7 @@ public class CourseServiceImpl implements CourseService {
     // Checking if a user is enrolled as a student:
     boolean isStudent =
         student.getRoles().stream().anyMatch((role) -> role.getRoleName().equals(Role.STUDENT));
+
 
     if (!isStudent) {
       throw new IllegalArgumentException("The user is not authorized as a student!");
