@@ -1,10 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
-import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import de.thu.thutorium.api.transferObjects.common.MeetingTO;
-import de.thu.thutorium.api.transferObjects.common.MessageTO;
-import de.thu.thutorium.api.transferObjects.common.UserTO;
+import de.thu.thutorium.api.transferObjects.common.*;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.services.interfaces.*;
 import de.thu.thutorium.swagger.CommonApiResponses;
@@ -41,6 +38,7 @@ public class UserController {
   private final ChatService chatService;
   private final MessageService messageService;
   private final CourseService courseService;
+  private final RatingCourseService courseRatingService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -268,5 +266,50 @@ public class UserController {
   public ResponseEntity<List<CourseTO>> getCoursesByTutor(@PathVariable Long tutorId) {
     List<CourseTO> courses = courseService.getCourseByTutorId(tutorId);
     return ResponseEntity.ok(courses);
+  }
+
+  @Operation(
+      summary = "Retrieve ratings for a specific course",
+      description = "Fetches all ratings given to a course identified by its courseId.",
+      tags = {"Ratings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Ratings retrieved successfully",
+        content =
+            @Content(
+                array = @ArraySchema(schema = @Schema(implementation = RatingCourseTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Course not found or no ratings available",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  @GetMapping("/get-course-ratings/{courseId}")
+  public ResponseEntity<List<RatingCourseTO>> getCourseRatings(@PathVariable Long courseId) {
+    List<RatingCourseTO> ratingCourseTOS = courseRatingService.getCourseRatings(courseId);
+    return ResponseEntity.ok(ratingCourseTOS);
+  }
+
+  @Operation(
+      summary = "Retrieve ratings for a specific tutor",
+      description = "Fetches all ratings given to a tutor identified by their tutorId.",
+      tags = {"Ratings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Tutor ratings retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = RatingTutorTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Tutor not found or no ratings available",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  @GetMapping("/get-tutor-ratings/{tutorId}")
+  public ResponseEntity<List<RatingTutorTO>> getTutorRatings(@PathVariable Long tutorId) {
+    List<RatingTutorTO> ratingTutorTOS = userService.getTutorRatings(tutorId);
+    return ResponseEntity.ok(ratingTutorTOS);
   }
 }
