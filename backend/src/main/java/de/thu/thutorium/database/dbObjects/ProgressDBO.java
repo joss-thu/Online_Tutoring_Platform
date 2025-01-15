@@ -3,6 +3,8 @@ package de.thu.thutorium.database.dbObjects;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * Represents the scores achieved by a student for a course.
  *
@@ -50,4 +52,12 @@ public class ProgressDBO {
   @Column(name = "points", nullable = false)
   @Builder.Default
   private Double points = 0.0;
+
+  /** The rating points given by the student. */
+  @Column(name = "max_points")
+  @Builder.Default
+  private Double maxPoints = 100.0;
+
+  /** Last updated time */
+  private LocalDateTime lastUpdated;
 }
