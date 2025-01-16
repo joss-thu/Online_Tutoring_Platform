@@ -1,8 +1,13 @@
 package de.thu.thutorium.api.controllers;
 
+import de.thu.thutorium.Utility.AuthUtil;
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
 import de.thu.thutorium.api.transferObjects.common.*;
 import de.thu.thutorium.database.dbObjects.UserDBO;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
+import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.MessageTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.services.interfaces.*;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,9 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -109,7 +112,7 @@ public class UserController {
   public ResponseEntity<String> deleteMyAccount() {
     try {
       // Retrieve the currently authenticated user's ID
-      Long authenticatedUserId = getAuthenticatedUserId();
+      Long authenticatedUserId = AuthUtil.getAuthenticatedUserId();
       userService.deleteUser(authenticatedUserId);
       return ResponseEntity.ok(
           "User account with ID " + authenticatedUserId + " has been successfully deleted.");
@@ -228,21 +231,6 @@ public class UserController {
   public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
     List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
     return ResponseEntity.ok(messages);
-  }
-
-  /**
-   * Retrieves the authenticated user's ID.
-   *
-   * @return the ID of the authenticated user.
-   * @throws AuthenticationException if the user is not authenticated.
-   */
-  private Long getAuthenticatedUserId() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (authentication == null || !authentication.isAuthenticated()) {
-      throw new AuthenticationException("User is not authenticated") { };
-    }
-    UserDBO userDetails = (UserDBO) authentication.getPrincipal();
-    return userDetails.getUserId();
   }
 
   @Operation(

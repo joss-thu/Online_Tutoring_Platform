@@ -87,4 +87,6 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
    *     ID and role name exists, or an empty {@link Optional} if no such user is found.
    */
   Optional<UserDBO> findUserDBOByUserIdAndRoles_RoleName(Long userId, Role roleName);
+
+  List<UserDBO> findUserDBOSByRoles_RoleName(Role roleName);
 }
