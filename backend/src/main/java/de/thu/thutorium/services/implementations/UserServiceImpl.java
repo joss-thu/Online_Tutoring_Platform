@@ -340,6 +340,12 @@ public class UserServiceImpl implements UserService {
       throw new IllegalStateException("Student is not enrolled in the course.");
     }
 
+    // Fetch and delete progress associated with the student and course
+    ProgressDBO progress = progressRepository.findByUserIdAndCourseId(studentId, courseId);
+    if (progress != null) {
+      progressRepository.delete(progress);
+    }
+
     // Save the updated entities back to the database
     userRepository.save(student);
     courseRepository.save(course);

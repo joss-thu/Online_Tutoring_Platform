@@ -11,10 +11,10 @@ import java.util.Set;
 public class ChatDBMapper {
   public ChatDBO toEntity(ChatCreateTO dto, UserDBO creator, Set<UserDBO> participants) {
     return ChatDBO.builder()
-            .creator(creator)
-            .participants(participants)
-            .chatTitle(dto.getChatTitle())
-            .isGroup(dto.getIsGroup())
-            .build();
+        .creator(creator)
+        .participants(participants)
+        .chatTitle(dto.getChatTitle())
+        .isGroup(dto.getIsGroup())
+        .build();
   }
 }
