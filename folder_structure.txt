@@ -1,0 +1,33 @@
+.
+├── README.md                       # Overview and setup instructions
+├── VisionDocument.pdf              # Vision document for the project
+├── ArchitectureHandbook.pdf        # Architecture handbook (already available)
+├── TestingDocumentation/           # Testing-related files
+│   ├── TestPlan.pdf                # Detailed test plan
+│   ├── TestCases.xlsx              # Test cases and results
+│   ├── CodeCoverageReport.html     # Code coverage report
+├── SourceCode/                     # Source code for the project
+│   ├── backend/                    # Backend source code
+│   │   ├── src/                    # Java/Spring Boot application files
+│   │   ├── pom.xml                 # Maven project configuration
+│   │   ├── Dockerfile              # Dockerfile for the backend
+│   │   ├── application.properties  # Configuration file for the backend
+│   │   ├── API_DESCRIPTION.md      # Backend API documentation
+│   ├── frontend/                   # Frontend source code
+│   │   ├── src/                    # React application files
+│   │   ├── Dockerfile              # Dockerfile for the frontend
+│   │   ├── nginx.conf              # NGINX configuration (if applicable)
+│   │   ├── package.json            # Node.js project configuration
+│   ├── docker-compose.yml          # Docker Compose configuration
+├── DBModels/                       # Database-related files
+│   ├── dbschema.dbs                # Database schema definition
+├── Reports/                        # Reports tracking project progress
+│   ├── ProgressReport1.pdf         # Progress report 1
+│   ├── MilestoneAchievements.pdf   # Summary of milestones achieved
+├── Documentation/                  # Additional documentation
+│   ├── UserManual.pdf              # User manual for the platform
+│   ├── DeveloperGuide.pdf          # Developer guide for the platform
+│   ├── DeploymentGuide.pdf         # Guide for deploying the platform
+└── Misc/                           # Miscellaneous files
+    ├── folder_structure.txt        # This file for directory structure overview
+    └── any_additional_notes.txt    # Optional additional notes
