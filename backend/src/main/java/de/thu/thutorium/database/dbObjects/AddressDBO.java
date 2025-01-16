@@ -1,5 +1,6 @@
 package de.thu.thutorium.database.dbObjects;
 
+import de.thu.thutorium.Utility.DBPreProcess;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,7 +34,7 @@ import java.util.List;
 @Setter
 @Builder
 @AllArgsConstructor
-@EntityListeners(DBPreProcess.class) // Save all string fields in all entities in lower case
+@EntityListeners(DBPreProcess.class) //Save all string fields in all entities in lower case
 public class AddressDBO {
 
   /**

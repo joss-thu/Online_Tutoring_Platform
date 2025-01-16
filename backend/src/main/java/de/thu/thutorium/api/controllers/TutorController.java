@@ -286,14 +286,16 @@ public class TutorController {
    * @param progressTO the {@link ProgressTO} object containing progress details.
    * @return a success message.
    */
-  @Operation(
-      summary = "Create progress record",
-      description = "Creates a new progress record for a student in a specific course.",
-      tags = {"Progress Endpoints"})
-  @ApiResponses({
-    @ApiResponse(responseCode = "201", description = "Progress created successfully"),
-    @ApiResponse(responseCode = "400", description = "Invalid input data")
-  })
+//  @Operation(
+//          summary = "Create progress record",
+//          description = "Creates a new progress record for a student in a specific course.",
+//          tags = {"Progress Endpoints"}
+//  )
+//  @ApiResponses({
+//          @ApiResponse(responseCode = "201", description = "Progress created successfully"),
+//          @ApiResponse(responseCode = "400", description = "Invalid input data")
+//  })
+  @Deprecated //Todo: progress object should be created when  a student enrolls in a course.
   @PostMapping("/create-progress")
   public ResponseEntity<String> createProgress(@Valid @RequestBody ProgressTO progressTO) {
     progressService.createProgress(progressTO);
@@ -307,14 +309,16 @@ public class TutorController {
    * @param courseId the ID of the course.
    * @return a success message or a not-found message.
    */
-  @Operation(
-      summary = "Delete progress record",
-      description = "Deletes a student's progress record for a specific course.",
-      tags = {"Progress Endpoints"})
-  @ApiResponses({
-    @ApiResponse(responseCode = "200", description = "Progress deleted successfully"),
-    @ApiResponse(responseCode = "404", description = "Progress record not found")
-  })
+//  @Operation(
+//          summary = "Delete progress record",
+//          description = "Deletes a student's progress record for a specific course.",
+//          tags = {"Progress Endpoints"}
+//  )
+//  @ApiResponses({
+//          @ApiResponse(responseCode = "200", description = "Progress deleted successfully"),
+//          @ApiResponse(responseCode = "404", description = "Progress record not found")
+//  })
+  @Deprecated //Todo: Progress should be deleted when a student unenrolls from the course
   @DeleteMapping("/delete-progress/{studentId}/{courseId}")
   public ResponseEntity<String> deleteProgress(
       @PathVariable Long studentId, @PathVariable Long courseId) {
