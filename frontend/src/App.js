@@ -16,73 +16,77 @@ import Call from "./pages/Call";
 import { AuthProvider } from "./services/AuthContext";
 import PublicRoute from "./utils/PublicRoute";
 import CourseForm from "./components/CourseForm";
+import Call2 from "./pages/Call2";
+import { STUDENT_ROLE, TUTOR_ROLE } from "./config";
 
 export default function App() {
-    return (
-        <AuthProvider>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/createcourse"
-                           element={
-                               <ProtectedRoutes roles={["ROLE_TUTOR"]}>
-                                   <CourseForm />
-                               </ProtectedRoutes>
-                           }/>
-                    <Route
-                        path="/my-courses"
-                        element={
-                            <ProtectedRoutes roles={["ROLE_STUDENT"]}>
-                                <MyCourses />
-                            </ProtectedRoutes>
-                        }
-                    />
-                    <Route
-                        path="/tutor-centre"
-                        element={
-                            <ProtectedRoutes roles={["ROLE_TUTOR"]}>
-                                <TutorCentre />
-                            </ProtectedRoutes>
-                        }
-                    />
-                    <Route
-                        path="/messages"
-                        element={
-                            <ProtectedRoutes roles={["ROLE_TUTOR", "ROLE_STUDENT"]}>
-                                <Messages />
-                            </ProtectedRoutes>
-                        }
-                    />
-                    <Route path="/search" element={<Search />} />
-                    <Route
-                        path="/login"
-                        element={
-                            <PublicRoute>
-                                <Login />
-                            </PublicRoute>
-                        }
-                    />
-                    <Route
-                        path="/signup"
-                        element={
-                            <PublicRoute>
-                                <SignUp />
-                            </PublicRoute>
-                        }
-                    />
-                    <Route path="/course" element={<Course />} />
-                    <Route path="/tutor" element={<Tutor />} />
-                    <Route path="/call" element={<Call />} />
-                    <Route
-                        path="/profile"
-                        element={
-                            <ProtectedRoutes>
-                                <Profile />
-                            </ProtectedRoutes>
-                        }
-                    ></Route>
-                </Routes>
-            </Router>
-        </AuthProvider>
-    );
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/createcourse"
+            element={
+              <ProtectedRoutes roles={[TUTOR_ROLE]}>
+                <CourseForm />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/my-courses"
+            element={
+              <ProtectedRoutes roles={[STUDENT_ROLE]}>
+                <MyCourses />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/tutor-centre"
+            element={
+              <ProtectedRoutes roles={[TUTOR_ROLE]}>
+                <TutorCentre />
+              </ProtectedRoutes>
+            }
+          />
+          <Route
+            path="/messages"
+            element={
+              <ProtectedRoutes roles={[TUTOR_ROLE, STUDENT_ROLE]}>
+                <Messages />
+              </ProtectedRoutes>
+            }
+          />
+          <Route path="/search" element={<Search />} />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <SignUp />
+              </PublicRoute>
+            }
+          />
+          <Route path="/course" element={<Course />} />
+          <Route path="/tutor" element={<Tutor />} />
+          <Route path="/call" element={<Call2 />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoutes>
+                <Profile />
+              </ProtectedRoutes>
+            }
+          ></Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }

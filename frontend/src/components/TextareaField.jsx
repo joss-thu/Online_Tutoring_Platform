@@ -1,8 +1,8 @@
 //import React from "react";
 
-const TextareaField = ({ label, placeholder, value, onChange, name }) => {
+const TextareaField = ({ label, placeholder, value, onChange, name, rows }) => {
   return (
-    <div className="mb-4">
+    <div>
       <label className="block text-gray-700 text-sm font-medium mb-2">
         {label}
       </label>
@@ -11,9 +11,9 @@ const TextareaField = ({ label, placeholder, value, onChange, name }) => {
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-        rows="5"
-      ></textarea>
+        className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+        rows={rows}
+      />
     </div>
   );
 };

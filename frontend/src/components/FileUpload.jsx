@@ -2,7 +2,8 @@ import React, { useState } from "react";
 
 const FileUpload = ({ label, id, onChange }) => {
   const [fileName, setFileName] = useState(null);
-  //
+  const [isDragging, setIsDragging] = useState(false);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -13,6 +14,7 @@ const FileUpload = ({ label, id, onChange }) => {
 
   const handleDrop = (event) => {
     event.preventDefault();
+    setIsDragging(false);
     const file = event.dataTransfer.files[0];
     if (file) {
       setFileName(file.name);
@@ -22,17 +24,27 @@ const FileUpload = ({ label, id, onChange }) => {
 
   const handleDragOver = (event) => {
     event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 font-merriweather_sans">
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
         {label}
       </label>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
-        className="relative flex items-center justify-center w-full border-2 border-dashed border-blue-300 rounded-md p-4 cursor-pointer hover:border-blue-500 hover:bg-blue-50"
+        onDragLeave={handleDragLeave}
+        className={`relative flex items-center justify-center w-full border-2 border-dashed rounded-md p-4 cursor-pointer ${
+          isDragging
+            ? "border-blue-500 bg-blue-50"
+            : "border-blue-300 hover:border-blue-500 hover:bg-blue-50"
+        }`}
       >
         <input
           type="file"

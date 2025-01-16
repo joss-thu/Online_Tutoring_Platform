@@ -10,8 +10,9 @@ import SockJS from "sockjs-client";
 import FormatDate from "../helpers/FormatDate";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
+import { BACKEND_URL, WEBRTC_URL } from "../config";
 
-//const socket = io("http://localhost:5000");
+//const socket = io(WEBRTC_URL);
 
 function Messages() {
   const { user } = useAuth();
@@ -110,7 +111,7 @@ function Messages() {
   };
 
   useEffect(() => {
-    const socket = new SockJS("http://localhost:8080/chat");
+    const socket = new SockJS(`${BACKEND_URL}/chat`);
     const stompClient = Stomp.over(socket);
     setStompClient(stompClient);
   }, []);

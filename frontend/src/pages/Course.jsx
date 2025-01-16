@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import { useAuth } from "../services/AuthContext";
+import { BACKEND_URL } from "../config";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -18,9 +19,10 @@ function Course() {
   const id = query.get("id");
   const { isAuthenticated } = useAuth();
   const [course, setCourse] = useState(false);
+  const [ratings, setRatings] = useState(null);
 
   const fetchCourseDetails = useCallback(async () => {
-    const res = await fetch("http://localhost:8080/search/get-course/" + id);
+    const res = await fetch(`${BACKEND_URL}/search/get-course/${id}`);
     const data = await res.json();
     setCourse(data);
   }, [course, id]);
@@ -28,6 +30,18 @@ function Course() {
   useEffect(() => {
     if (!course) {
       fetchCourseDetails();
+    }
+  }, [course, fetchCourseDetails]);
+
+  const fetchCourseRatings = useCallback(async () => {
+    const res = await fetch(`${BACKEND_URL}/user/get-course-ratings/${id}`);
+    const data = await res.json();
+    setRatings(data);
+  }, [ratings, id]);
+
+  useEffect(() => {
+    if (course) {
+      fetchCourseRatings();
     }
   }, [course, fetchCourseDetails]);
 
@@ -150,15 +164,13 @@ function Course() {
               <div className="text-xl rounded-md text-black self-start w-auto">
                 Reviews
               </div>
-              {course.ratings?.length > 0 ? (
-                course.ratings?.map((result, index) => {
+              {ratings?.length > 0 ? (
+                ratings?.map((result) => {
                   return (
                     <>
-                      <div className="text-sm mt-4">
-                        {result.student.firstName} {result.student.lastName}
-                      </div>
+                      <div className="text-sm mt-4">{result.studentName}</div>
                       <Rating
-                        key={index}
+                        key={ratings.ratingId}
                         readOnly={true}
                         style={{ maxWidth: 100 }}
                         value={result.points}

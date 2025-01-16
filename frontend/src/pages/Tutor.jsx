@@ -6,6 +6,7 @@ import calculateAverageRating from "../helpers/CalculateAverageRating";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import { useAuth } from "../services/AuthContext";
+import { BACKEND_URL } from "../config";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -21,33 +22,50 @@ function Tutor() {
   const id = query.get("id");
   const [tutor, setTutor] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [ratings, setRatings] = useState(null);
   const fetchTutorDetails = useCallback(async () => {
     try {
-      const res = await fetch("http://localhost:8080/user/tutor?id=" + id);
+      const res = await fetch(`${BACKEND_URL}/user/tutor?id=${id}`);
       const data = await res.json();
       setTutor(data);
     } catch (error) {
       console.error("Error fetching tutor details:", error);
     }
-  }, [id]); // Dependency on 'id'
+  }, [id]);
 
   const fetchTutorCourses = useCallback(async () => {
     try {
-      const res = await fetch(
-        "http://localhost:8080/user/get-course/" + tutor.userId,
-      );
+      const res = await fetch(`${BACKEND_URL}/user/get-course/${tutor.userId}`);
       const data = await res.json();
       setCourses(data);
     } catch (error) {
       console.error("Error fetching tutor courses:", error);
     }
-  }, [tutor]); // Dependency on 'id'
+  }, [tutor]);
+
+  const fetchTutorRatings = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${BACKEND_URL}/user/get-tutor-ratings/${tutor.userId}`,
+      );
+      const data = await res.json();
+      setRatings(data);
+    } catch (error) {
+      console.error("Error fetching tutor courses:", error);
+    }
+  }, [tutor, id]);
 
   useEffect(() => {
     if (id) {
       fetchTutorDetails();
     }
   }, [id, fetchTutorDetails]);
+
+  useEffect(() => {
+    if (tutor) {
+      fetchTutorRatings();
+    }
+  }, [tutor, fetchTutorRatings]);
 
   useEffect(() => {
     if (tutor) {
@@ -112,20 +130,20 @@ function Tutor() {
                 {tutor.tutor_description}
               </div>
               <div className="mt-5 flex text-black">
-                {tutor.ratings?.length > 0 ? (
+                {ratings?.length > 0 ? (
                   <>
                     <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                       <span className="text-sm">Rating</span>
                       <span className="text-md">
                         <strong>
-                          {calculateAverageRating(tutor.ratings).toFixed(1)}
+                          {calculateAverageRating(ratings).toFixed(1)}
                         </strong>
                       </span>
                     </div>
                     <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                       <span className="text-sm">Reviews</span>
                       <span className="text-md">
-                        <strong>{tutor.ratings.length}</strong>
+                        <strong>{ratings.length}</strong>
                       </span>
                     </div>
                   </>
@@ -157,13 +175,11 @@ function Tutor() {
               <div className="text-xl rounded-md text-black self-start w-auto">
                 Reviews
               </div>
-              {tutor.ratings?.length > 0 ? (
-                tutor.ratings.map((result, index) => {
+              {ratings?.length > 0 ? (
+                ratings.map((result, index) => {
                   return (
                     <>
-                      <div className="text-sm mt-4">
-                        {result.student.firstName} {result.student.lastName}
-                      </div>
+                      <div className="text-sm mt-4">{result.studentName}</div>
                       <Rating
                         key={index}
                         readOnly={true}

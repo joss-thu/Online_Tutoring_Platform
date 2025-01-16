@@ -1,24 +1,70 @@
 import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 import io from "socket.io-client";
-
-const socket = io("http://localhost:5000");
+import { useAuth } from "../services/AuthContext";
+import { WEBRTC_URL } from "../config";
 
 function App() {
   const [me, setMe] = useState("");
-  const [stream, setStream] = useState();
+  const [stream, setStream] = useState(null);
   const [receivingCall, setReceivingCall] = useState(false);
   const [caller, setCaller] = useState("");
-  const [callerSignal, setCallerSignal] = useState();
+  const [callerSignal, setCallerSignal] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
+  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(true);
+
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
-  const [videoEnabled, setVideoEnabled] = useState(true);
-  const [audioEnabled, setAudioEnabled] = useState(true);
+  const socketRef = useRef();
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    socketRef.current = io(WEBRTC_URL, {
+      query: { userId: user?.id },
+    });
+
+    socketRef.current.on("me", (id) => setMe(id));
+
+    const constraints = {
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        frameRate: { ideal: 30 },
+      },
+      audio: true,
+    };
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then((currentStream) => {
+        setStream(currentStream);
+        if (myVideo.current) {
+          myVideo.current.srcObject = currentStream;
+        }
+      })
+      .catch((error) => console.error("Media devices error:", error));
+
+    socketRef.current.on("callUser", (data) => {
+      setReceivingCall(true);
+      setCaller(data.from);
+      setCallerSignal(data.signal);
+    });
+
+    socketRef.current.on("callEnded", () => {
+      setCallEnded(true);
+      if (connectionRef.current) connectionRef.current.destroy();
+    });
+
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, [user]);
 
   const toggleVideo = () => {
     if (stream) {
@@ -36,83 +82,36 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    // Set higher-quality constraints for media devices
-    const constraints = {
-      video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { ideal: 30 },
-      },
-      audio: true,
-    };
-
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then((stream) => {
-        setStream(stream);
-        if (myVideo.current) {
-          myVideo.current.srcObject = stream;
-        }
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
-
-    socket.on("me", (id) => {
-      setMe(id);
-      console.log(id);
-    });
-
-    socket.on("callUser", (data) => {
-      setReceivingCall(true);
-      setCaller(data.from);
-      setName(data.name);
-      setCallerSignal(data.signal);
-    });
-
-    return () => {
-      // Cleanup socket listeners on unmount
-      socket.off("me");
-      socket.off("callUser");
-    };
-  }, []);
-
-  const configurePeer = (peer) => {
-    peer.on("stream", (remoteStream) => {
-      if (userVideo.current) {
-        userVideo.current.srcObject = remoteStream;
-      }
-    });
-
-    peer.on("close", () => {
-      console.log("Peer connection closed");
-    });
-
-    peer.on("error", (error) => {
-      console.error("Peer connection error:", error);
-    });
-  };
-
   const callUser = (id) => {
     const peer = new Peer({
       initiator: true,
       trickle: false,
-      stream: stream,
+      stream,
     });
 
-    configurePeer(peer);
-    //TODO fetch socket id from backend here
     peer.on("signal", (data) => {
-      socket.emit("callUser", {
-        socketId: id,
+      socketRef.current.emit("callUser", {
+        userId: id,
         signalData: data,
         from: me,
-        name: name,
+        name,
       });
     });
 
-    socket.on("callAccepted", (signal) => {
+    peer.on("stream", (currentStream) => {
+      if (currentStream) {
+        console.log("Received stream from peer:", currentStream);
+        if (userVideo.current) {
+          userVideo.current.srcObject = currentStream;
+        } else {
+          console.log("userVideo.current not found");
+        }
+      } else {
+        console.error("No stream received from peer");
+      }
+    });
+
+    socketRef.current.on("callAccepted", (signal) => {
       setCallAccepted(true);
       peer.signal(signal);
     });
@@ -126,13 +125,24 @@ function App() {
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream: stream,
+      stream,
     });
 
-    configurePeer(peer);
-
     peer.on("signal", (data) => {
-      socket.emit("answerCall", { signal: data, to: caller });
+      socketRef.current.emit("answerCall", { signal: data, to: caller });
+    });
+
+    peer.on("stream", (currentStream) => {
+      if (currentStream) {
+        console.log("Received stream from peer:", currentStream);
+        if (userVideo.current) {
+          userVideo.current.srcObject = currentStream;
+        } else {
+          console.log("userVideo.current not found");
+        }
+      } else {
+        console.error("No stream received from peer");
+      }
     });
 
     peer.signal(callerSignal);
@@ -142,14 +152,14 @@ function App() {
 
   const leaveCall = () => {
     setCallEnded(true);
-
-    // Safely close the peer connection
-    if (connectionRef.current) {
-      connectionRef.current.destroy();
+    try {
+      if (connectionRef.current) {
+        connectionRef.current.destroy(); // Safely destroy the peer
+      }
+    } catch (error) {
+      console.error("Error destroying peer connection:", error);
     }
-
-    // Notify the other user that the call has ended
-    socket.emit("callEnded", { to: caller || idToCall });
+    socketRef.current.emit("callEnded", { to: caller || idToCall });
   };
 
   return (
@@ -158,7 +168,6 @@ function App() {
         WebRTC
       </h1>
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Video Section */}
         <div className="flex flex-col items-center space-y-6">
           <div className="rounded-lg overflow-hidden shadow-lg bg-black w-full max-w-[500px] aspect-video">
             {stream && (
@@ -185,47 +194,42 @@ function App() {
           </div>
         </div>
 
-        {/* Controls Section */}
         <div className="bg-white p-6 rounded-lg shadow-lg space-y-6">
-          <div className="space-y-4">
-            <input
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={() => navigator.clipboard.writeText(me)}
-              className="text-blue-600 hover:text-blue-800"
-            >
-              Copy ID
-            </button>
-          </div>
+          <input
+            placeholder="Enter your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg"
+          />
+          <button
+            onClick={() => navigator.clipboard.writeText(me)}
+            className="text-blue-600 hover:text-blue-800"
+          >
+            Copy ID
+          </button>
 
-          <div className="space-y-4">
-            <input
-              placeholder="Enter ID to call"
-              value={idToCall}
-              onChange={(e) => setIdToCall(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <div className="flex justify-between items-center">
-              {callAccepted && !callEnded ? (
-                <button
-                  onClick={leaveCall}
-                  className="px-6 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600"
-                >
-                  End Call
-                </button>
-              ) : (
-                <button
-                  onClick={() => callUser(idToCall)}
-                  className="px-6 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600"
-                >
-                  Call
-                </button>
-              )}
-            </div>
+          <input
+            placeholder="Enter ID to call"
+            value={idToCall}
+            onChange={(e) => setIdToCall(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-lg"
+          />
+          <div>
+            {callAccepted && !callEnded ? (
+              <button
+                onClick={leaveCall}
+                className="px-6 py-2 bg-red-500 text-white rounded-lg"
+              >
+                End Call
+              </button>
+            ) : (
+              <button
+                onClick={() => callUser(idToCall)}
+                className="px-6 py-2 bg-green-500 text-white rounded-lg"
+              >
+                Call
+              </button>
+            )}
           </div>
 
           {receivingCall && !callAccepted && (
@@ -233,34 +237,31 @@ function App() {
               <h1>{name} is calling...</h1>
               <button
                 onClick={answerCall}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
               >
                 Answer
               </button>
             </div>
           )}
         </div>
+
         <div className="flex justify-center space-x-4">
           <button
             onClick={toggleVideo}
-            className={`px-4 py-2 rounded-lg font-bold material-symbols-rounded cursor-pointer ${
-              videoEnabled
-                ? "bg-green-500 text-white"
-                : "bg-gray-400 text-black"
+            className={`px-4 py-2 rounded-lg ${
+              videoEnabled ? "bg-green-500 text-white" : "bg-gray-400"
             }`}
           >
-            {videoEnabled ? "video_camera_front" : "video_camera_front_off"}
+            {videoEnabled ? "Video On" : "Video Off"}
           </button>
-          <span
+          <button
             onClick={toggleAudio}
-            className={`px-4 py-2 rounded-lg font-bold material-symbols-rounded cursor-pointer ${
-              audioEnabled
-                ? "bg-green-500 text-white"
-                : "bg-gray-400 text-black"
+            className={`px-4 py-2 rounded-lg ${
+              audioEnabled ? "bg-green-500 text-white" : "bg-gray-400"
             }`}
           >
-            {audioEnabled ? "mic" : "mic_off"}
-          </span>
+            {audioEnabled ? "Audio On" : "Audio Off"}
+          </button>
         </div>
       </div>
     </div>
