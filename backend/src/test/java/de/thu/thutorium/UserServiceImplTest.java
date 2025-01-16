@@ -8,10 +8,12 @@ import de.thu.thutorium.database.dbObjects.RoleDBO;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.database.dbObjects.enums.Role;
 import de.thu.thutorium.database.repositories.CourseRepository;
+import de.thu.thutorium.database.repositories.ProgressRepository;
 import de.thu.thutorium.database.repositories.RatingTutorRepository;
 import de.thu.thutorium.database.repositories.UserRepository;
 import de.thu.thutorium.services.implementations.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +40,9 @@ class UserServiceImplTest {
 
     @Mock
     private RatingTutorRepository ratingTutorRepository;
+
+    @Mock
+    private ProgressRepository progressRepository;
 
     @Mock
     private UserTOMapper userMapper;
@@ -83,10 +88,17 @@ class UserServiceImplTest {
         setField(course, "courseId", 1L);
     }
 
+    @AfterEach
+    void tearDown() {
+        reset(userRepository, courseRepository, ratingTutorRepository);
+    }
+
     @Test
     void getStudentCount_ShouldReturnCorrectCount() {
-        when(userRepository.findAll()).thenReturn(List.of(student, tutor));
-
+//        when(userRepository.findAll()).thenReturn(List.of(student, tutor));
+        //Mock get userDBO by respective role behavior
+        when(userRepository.findUserDBOSByRoles_RoleName(Role.STUDENT))
+                .thenReturn(Collections.singletonList(student));
         Long studentCount = userService.getStudentCount();
 
         assertEquals(1, studentCount);
@@ -94,8 +106,9 @@ class UserServiceImplTest {
 
     @Test
     void getTutorCount_ShouldReturnCorrectCount() {
-        when(userRepository.findAll()).thenReturn(List.of(student, tutor));
-
+//        when(userRepository.findAll()).thenReturn(List.of(student, tutor));
+        when(userRepository.findUserDBOSByRoles_RoleName(Role.TUTOR))
+                .thenReturn(Collections.singletonList(tutor));
         Long tutorCount = userService.getTutorCount();
 
         assertEquals(1, tutorCount);
@@ -142,7 +155,9 @@ class UserServiceImplTest {
 
     @Test
     void enrollCourse_ShouldEnrollStudent_WhenValid() {
-        when(userRepository.findUserDBOByUserId(1L)).thenReturn(Optional.of(student));
+//        when(userRepository.findUserDBOByUserId(1L)).thenReturn(Optional.of(student));
+        when(userRepository.findUserDBOByUserIdAndRoles_RoleName(1L, Role.STUDENT))
+                .thenReturn(Optional.of(student));
         when(courseRepository.findCourseDBOByCourseId(1L)).thenReturn(Optional.of(course));
 
         userService.enrollCourse(1L, 1L);
