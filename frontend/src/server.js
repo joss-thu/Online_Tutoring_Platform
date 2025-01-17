@@ -1,13 +1,12 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const { FRONTEND_URL } = require("./config");
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: FRONTEND_URL,
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
 });
@@ -38,14 +37,20 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("callEnded", { userId });
   });
 
+  socket.on("callEnded", (data) => {
+    const client = clients.find((client) => client.userId === data.callEnder);
+    if (client) {
+      io.to(client.socketId).emit("callEnded");
+    }
+  });
+
   socket.on("callUser", (data) => {
-    console.log("callUser", data);
     const client = clients.find((client) => client.userId === data.toUserId);
     if (client) {
       const callUserData = {
         signal: data.signalData,
         from: data.fromUserId,
-        name: data.name,
+        socketId: client.socketId,
       };
       io.to(client.socketId).emit("callUser", callUserData);
     }
@@ -54,7 +59,10 @@ io.on("connection", (socket) => {
   socket.on("answerCall", (data) => {
     const client = clients.find((client) => client.userId === data.toUserId);
     if (client) {
-      io.to(client.socketId).emit("callAccepted", data.signal);
+      io.to(client.socketId).emit("callAccepted", {
+        signal: data.signal,
+        socketId: socket.id,
+      });
     }
   });
 });

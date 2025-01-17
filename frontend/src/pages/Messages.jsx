@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import NavBar from "../components/Navbar";
 import ChatHistoryItem from "../components/ChatHistoryItem";
-import io from "socket.io-client";
 import { getUserFromToken } from "../services/AuthService";
 import MessageItem from "../components/MessageItem";
 import apiClient from "../services/AxiosConfig";
@@ -10,9 +9,7 @@ import SockJS from "sockjs-client";
 import FormatDate from "../helpers/FormatDate";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
-import { BACKEND_URL, WEBRTC_URL } from "../config";
-
-//const socket = io(WEBRTC_URL);
+import { BACKEND_URL } from "../config";
 
 function Messages() {
   const { user } = useAuth();
@@ -22,8 +19,6 @@ function Messages() {
   const [chats, setChats] = useState();
   const [selectedChatId, setSelectedChatId] = useState("");
   const [selectedChatObject, setSelectedChatObject] = useState(null);
-  const [ongoingCall, setOngoingCall] = useState(null); // Holds call data (type, user)
-  const [userStatus, setUserStatus] = useState({}); // Tracks online status of users
   const [searchQuery, setSearchQuery] = useState("");
   const [messages, setMessages] = useState({});
   const [typedMessage, setTypedMessage] = useState("");
@@ -87,7 +82,6 @@ function Messages() {
     createChat();
   }, [idToMessage, chats]);
 
-  // Call scrollToBottom whenever messages[selectedChatId] changes
   useEffect(() => {
     if (selectedChatId && messages[selectedChatId]) {
       scrollToBottom();
@@ -134,9 +128,6 @@ function Messages() {
   }
 
   function onMessageReceived(payload) {
-    // console.log(payload);
-    // const message = JSON.parse(payload._body);
-    // console.log(message);
     const binaryBody = payload._binaryBody; // The Uint8Array payload
     const jsonString = new TextDecoder("utf-8").decode(binaryBody);
     const message = JSON.parse(jsonString);
@@ -154,28 +145,10 @@ function Messages() {
   }
 
   useEffect(() => {
-    // Load messages initially
     const user = getUserFromToken();
     if (user) {
       setCurrentUserId(user.id);
     }
-
-    // // Listen for user status updates
-    // socket.on("userStatusUpdate", ({ userId, isOnline }) => {
-    //   setUserStatus((prev) => ({
-    //     ...prev,
-    //     [userId]: isOnline,
-    //   }));
-    // });
-    //
-    // // Listen for call events (e.g., call ended by the other user)
-    // socket.on("callEnded", () => {
-    //   setOngoingCall(null);
-    // });
-    //
-    // return () => {
-    //   socket.disconnect();
-    // };
   }, []);
 
   useEffect(() => {
@@ -235,24 +208,8 @@ function Messages() {
     }
   };
 
-  const startCall = (type, userId) => {
-    // Check if the user is online
-    // if (userStatus[userId]) {
-    //   setOngoingCall({ type, userId });
-    //   // Emit call initiation to the server
-    //   socket.emit("callUser", {
-    //     userToCall: userId,
-    //     from: socket.id, // Your socket ID
-    //     type,
-    //   });
-    // } else {
-    //   alert("User is offline. You cannot call them.");
-    // }
-  };
-
-  const endCall = () => {
-    // setOngoingCall(null);
-    // socket.emit("endCall", { to: ongoingCall.userId });
+  const startCall = (userToCall) => {
+    navigate("/call?id=" + userToCall);
   };
 
   const handleSendMessage = (e) => {
@@ -295,8 +252,8 @@ function Messages() {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent the default behavior (creating a new line)
-      handleSendMessage(e); // Send the message when Enter is pressed
+      e.preventDefault();
+      handleSendMessage(e);
     }
   };
 
@@ -362,23 +319,7 @@ function Messages() {
               <div className="flex items-center space-x-3 mt-1.5">
                 <button
                   className="text-white hover:text-gray-300"
-                  onClick={() =>
-                    startCall(
-                      "audio",
-                      chats.find((c) => c.chatId === selectedChatId)?.senderId,
-                    )
-                  }
-                >
-                  <span className="material-symbols-rounded">call</span>
-                </button>
-                <button
-                  className="text-white hover:text-gray-300"
-                  onClick={() =>
-                    startCall(
-                      "video",
-                      chats.find((c) => c.chatId === selectedChatId)?.senderId,
-                    )
-                  }
+                  onClick={() => startCall(selectedChatObject.receiver.id)}
                 >
                   <span className="material-symbols-rounded">videocam</span>
                 </button>
@@ -448,24 +389,6 @@ function Messages() {
           </div>
         )}
       </div>
-
-      {/* Call Interface */}
-      {ongoingCall && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-1/3">
-            <h2 className="text-gray-800 font-medium">
-              {ongoingCall.type === "audio" ? "Audio Call" : "Video Call"} with{" "}
-              {ongoingCall.userId}
-            </h2>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded-full mt-4"
-              onClick={endCall}
-            >
-              End Call
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

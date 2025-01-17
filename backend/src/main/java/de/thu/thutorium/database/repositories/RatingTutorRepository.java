@@ -35,5 +35,7 @@ public interface RatingTutorRepository extends JpaRepository<RatingTutorDBO, Lon
    *     to the tutor.
    */
   List<RatingTutorDBO> findByTutor_UserIdAndStudent_UserId(
-      Long tutorUserId, Long studentUserId, Limit limit);
+          Long tutorUserId, Long studentUserId, Limit limit);
+
+  List<RatingTutorDBO> findByTutor_UserId(Long tutorUserId);
 }

@@ -99,8 +99,10 @@ public class SecurityConfig {
         List.of(
             "http://localhost:3000",
             "http://localhost:5000",
+            "http://localhost:5001",
             "http://localhost:80",
             "http://localhost",
+            "https://8998-2001-7c0-31ff-1-91d6-4176-1420-3c14.ngrok-free.app",
             "http://localhost:8080")); // Add http://localhost
     configuration.setAllowedMethods(
         List.of("GET", "POST", "PUT", "DELETE")); // Allow specific HTTP methods

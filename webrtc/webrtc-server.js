@@ -14,46 +14,61 @@ const io = new Server(server, {
 const clients = [];
 
 io.on("connection", (socket) => {
-    console.log("Client connected with socket id: " + socket.id);
-    const userId = socket.handshake.query.userId;
+    const id = socket.handshake.query.userId;
+    const userId = Number(id);
 
-    // Check for existing client and update or add
-    const existingClient = clients.find(client => client.userId === userId);
+    if (!id || isNaN(userId)) {
+        console.error("Invalid or missing userId in connection query.");
+        return;
+    }
+
+
+    const existingClient = clients.find((client) => client.userId === userId);
     if (existingClient) {
         existingClient.socketId = socket.id;
     } else {
-        clients.push({
-            userId: userId,
-            socketId: socket.id,
-        });
+        clients.push({ userId, socketId: socket.id });
     }
 
     socket.on("disconnect", () => {
-        const index = clients.findIndex(clientSocket => clientSocket.socketId === socket.id);
+        const index = clients.findIndex((client) => client.socketId === socket.id);
         if (index !== -1) {
             clients.splice(index, 1);
         }
-        console.log("Client disconnected with socket id: " + socket.id);
-        socket.broadcast.emit("callEnded");
+        socket.broadcast.emit("callEnded", { userId });
+    });
+
+    socket.on("callEnded", (data) => {
+        const client = clients.find((client) => client.userId === data.toUserId);
+        if (client) {
+            io.to(client.socketId).emit("callEnded");
+        }
+    });
+
+    socket.on("callRejected", (data) => {
+        const client = clients.find((client) => client.userId === data.toUserId);
+        if(client){
+            io.to(client.socketId).emit("callEnded");
+        }
     });
 
     socket.on("callUser", (data) => {
-        const client = clients.find(client => client.userId === data.userId);
+        const client = clients.find((client) => client.userId === data.toUserId);
         if (client) {
-            io.to(client.socketId).emit("callUser", {
+            const callUserData = {
                 signal: data.signalData,
-                from: data.from,
-                name: data.name,
-            });
-        } else {
-            console.log("No user found for userId: " + data.userId);
-            socket.emit("userNotFound", { userId: data.userId });
+                from: data.fromUserId,
+            };
+            io.to(client.socketId).emit("callUser", callUserData);
         }
     });
 
     socket.on("answerCall", (data) => {
-        io.to(data.to).emit("callAccepted", data.signal);
+        const client = clients.find((client) => client.userId === data.toUserId);
+        if (client) {
+            io.to(client.socketId).emit("callAccepted", data.signal);
+        }
     });
 });
 
-server.listen(5001, () => console.log("Server running on port 5001"));
+server.listen(5000, () => console.log("Server running on port 5000"));

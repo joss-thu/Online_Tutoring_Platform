@@ -1,5 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.RatingTutorTOMapper;
 import de.thu.thutorium.api.TOMappers.UserTOMapper;
 import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
   private final AffiliationDBOMapper affiliationDBOMapper;
   private final AffiliationRepository affiliationRepository;
   private final RatingTutorRepository ratingTutorRepository;
+  private final RatingTutorTOMapper ratingTutorTOMapper;
 
   /**
    * Returns the total number of students in the system.
@@ -57,10 +59,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public Long getStudentCount() {
     return userRepository.findAll().stream()
-        .filter(
-            user ->
-                user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.STUDENT)))
-        .count();
+            .filter(
+                    user ->
+                            user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.STUDENT)))
+            .count();
   }
 
   /**
@@ -74,10 +76,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public Long getTutorCount() {
     return userRepository.findAll().stream()
-        .filter(
-            user ->
-                user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.TUTOR)))
-        .count();
+            .filter(
+                    user ->
+                            user.getRoles().stream().anyMatch(role -> role.getRoleName().equals(Role.TUTOR)))
+            .count();
   }
 
   /**
@@ -97,10 +99,10 @@ public class UserServiceImpl implements UserService {
 
     // Map UserDBO to UserBaseDTO
     return user.map(userMapper::toDTO)
-        .orElseThrow(
-            () ->
-                new EntityNotFoundException(
-                    "User with ID " + userId + " does not exist in database."));
+            .orElseThrow(
+                    () ->
+                            new EntityNotFoundException(
+                                    "User with ID " + userId + " does not exist in database."));
   }
 
   /**
@@ -137,13 +139,13 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public void deleteUser(Long userId) {
     userRepository
-        .findUserDBOByUserId(userId)
-        .ifPresentOrElse(
-            userRepository::delete,
-            () -> {
-              throw new EntityNotFoundException(
-                  "User with ID " + userId + " does not exist in database.");
-            });
+            .findUserDBOByUserId(userId)
+            .ifPresentOrElse(
+                    userRepository::delete,
+                    () -> {
+                      throw new EntityNotFoundException(
+                              "User with ID " + userId + " does not exist in database.");
+                    });
   }
 
   /**
@@ -172,9 +174,9 @@ public class UserServiceImpl implements UserService {
 
       // Check if the affiliation already exists by university name and affiliation type
       Optional<AffiliationDBO> existingAffiliationOptional =
-          affiliationRepository.findByAffiliationTypeAndUniversity_UniversityName(
-              affiliationDBO.getAffiliationType(),
-              affiliationDBO.getUniversity().getUniversityName());
+              affiliationRepository.findByAffiliationTypeAndUniversity_UniversityName(
+                      affiliationDBO.getAffiliationType(),
+                      affiliationDBO.getUniversity().getUniversityName());
 
       AffiliationDBO savedAffiliationDBO = existingAffiliationOptional.orElse(affiliationDBO);
 
@@ -212,17 +214,17 @@ public class UserServiceImpl implements UserService {
   public void enrollCourse(Long studentId, Long courseId) {
     // Fetch the student and handle the case where the student is not found
     UserDBO student =
-        userRepository
-            .findUserDBOByUserId(studentId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Student with id " + studentId + " not found"));
+            userRepository
+                    .findUserDBOByUserId(studentId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Student with id " + studentId + " not found"));
 
     // Checking if a user is enrolled as a student:
     // Redundant because:
     // - Only a student can access the 'student/**' link to enroll in the course according to the
     // security config settings.
     boolean isStudent =
-        student.getRoles().stream().anyMatch((role) -> role.getRoleName().equals(Role.STUDENT));
+            student.getRoles().stream().anyMatch((role) -> role.getRoleName().equals(Role.STUDENT));
 
     if (!isStudent) {
       throw new IllegalArgumentException("The user is not authorized as a student!");
@@ -230,15 +232,15 @@ public class UserServiceImpl implements UserService {
 
     // Fetch the course and handle the case where the course is not found
     CourseDBO course =
-        courseRepository
-            .findCourseDBOByCourseId(courseId)
-            .orElseThrow(
-                () -> new EntityNotFoundException("Course with id " + courseId + " not found"));
+            courseRepository
+                    .findCourseDBOByCourseId(courseId)
+                    .orElseThrow(
+                            () -> new EntityNotFoundException("Course with id " + courseId + " not found"));
 
     // Check if the student is already enrolled in the course
     if (student.getStudentCourses().contains(course)) {
       throw new EntityExistsException(
-          "Student with id " + studentId + " is already enrolled in course with id " + courseId);
+              "Student with id " + studentId + " is already enrolled in course with id " + courseId);
     }
     student.getStudentCourses().add(course);
     userRepository.save(student);
@@ -271,21 +273,21 @@ public class UserServiceImpl implements UserService {
 
     // Fetch the student and handle the case where the student is not found
     UserDBO student =
-        userRepository
-            .findUserDBOByUserIdAndRoles_RoleName(ratingTutorTO.getStudentId(), Role.STUDENT)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        "Student with id " + ratingTutorTO.getStudentId() + " not found"));
+            userRepository
+                    .findUserDBOByUserIdAndRoles_RoleName(ratingTutorTO.getStudentId(), Role.STUDENT)
+                    .orElseThrow(
+                            () ->
+                                    new EntityNotFoundException(
+                                            "Student with id " + ratingTutorTO.getStudentId() + " not found"));
 
     // Fetch the tutor and handle the case where the tutor is not found
     UserDBO tutor =
-        userRepository
-            .findUserDBOByUserIdAndRoles_RoleName(ratingTutorTO.getTutorId(), Role.TUTOR)
-            .orElseThrow(
-                () ->
-                    new EntityNotFoundException(
-                        "Tutor with id " + ratingTutorTO.getTutorId() + " not found"));
+            userRepository
+                    .findUserDBOByUserIdAndRoles_RoleName(ratingTutorTO.getTutorId(), Role.TUTOR)
+                    .orElseThrow(
+                            () ->
+                                    new EntityNotFoundException(
+                                            "Tutor with id " + ratingTutorTO.getTutorId() + " not found"));
 
     List<CourseDBO> tutorCourses = tutor.getTutorCourses();
     List<CourseDBO> studentCourses = student.getStudentCourses();
@@ -294,29 +296,29 @@ public class UserServiceImpl implements UserService {
     // in order to be able to review the course
     if (studentCourses.stream().noneMatch(tutorCourses::contains)) {
       throw new IllegalArgumentException(
-          "Student with id "
-              + student.getUserId()
-              + "has not enrolled in any courses offered by"
-              + tutor.getUserId());
+              "Student with id "
+                      + student.getUserId()
+                      + "has not enrolled in any courses offered by"
+                      + tutor.getUserId());
     }
 
     // Retrieve existing reviews if any, by the student ID.
     // Since there can be only one review from a student, the retrieved list of reviews can be
     // limited to one.
     List<RatingTutorDBO> tutorRatingDBOExisting =
-        ratingTutorRepository.findByTutor_UserIdAndStudent_UserId(tutorId, studentId, Limit.of(1));
+            ratingTutorRepository.findByTutor_UserIdAndStudent_UserId(tutorId, studentId, Limit.of(1));
 
     // If there are no existing reviews, create a new review
     if (tutorRatingDBOExisting.isEmpty()) {
       log.info("In empty object");
       tutorRating =
-          RatingTutorDBO.builder()
-              .student(student)
-              .tutor(tutor)
-              .review(review)
-              .points(points)
-              .createdAt(LocalDateTime.now())
-              .build();
+              RatingTutorDBO.builder()
+                      .student(student)
+                      .tutor(tutor)
+                      .review(review)
+                      .points(points)
+                      .createdAt(LocalDateTime.now())
+                      .build();
     } else { // Fetch and update existing reviews
       log.info("In retrieved object");
       tutorRating = tutorRatingDBOExisting.get(0);
@@ -356,5 +358,11 @@ public class UserServiceImpl implements UserService {
     // Save the updated entities back to the database
     userRepository.save(student);
     courseRepository.save(course);
+  }
+
+  @Override
+  public List<RatingTutorTO> getTutorRatings(Long tutorId) {
+    List<RatingTutorDBO> ratingTutorDBOS = ratingTutorRepository.findByTutor_UserId(tutorId);
+    return ratingTutorDBOS.stream().map(ratingTutorTOMapper::toDTO).toList();
   }
 }

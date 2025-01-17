@@ -55,6 +55,12 @@ public class ChatServiceImpl implements ChatService {
   @Transactional
   @Override
   public void createChat(ChatCreateTO requestDTO) {
+    // Fetch the creator from the database
+    UserDBO creator =
+            userRepository
+                    .findById(requestDTO.getCreatorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Creator not found"));
+
     // Fetch participants from the database
     Set<UserDBO> participants =
             new HashSet<>(userRepository.findAllById(requestDTO.getParticipantIds()));
@@ -65,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     // Map DTO to Entity
-    ChatDBO chatDBO = chatMapper.toEntity(requestDTO, participants);
+    ChatDBO chatDBO = chatMapper.toEntity(requestDTO, creator, participants);
 
     // Save Chat Entity
     chatRepository.save(chatDBO);
@@ -97,22 +103,30 @@ public class ChatServiceImpl implements ChatService {
     List<ChatDBO> userChats = chatRepository.findByParticipants_UserId(userId);
 
     // Map chats to summaries
-    return userChats.stream().map(chat -> {
-      // Find the other participant (receiver) in one-on-one chat
-      UserDBO receiver = chat.getParticipants().stream()
-              .filter(participant -> !participant.getUserId().equals(userId))
-              .findFirst()
-              .orElse(null);
+    return userChats.stream()
+            .map(
+                    chat -> {
+                      // Find the other participant (receiver) in one-on-one chat
+                      UserDBO receiver =
+                              chat.getParticipants().stream()
+                                      .filter(participant -> !participant.getUserId().equals(userId))
+                                      .findFirst()
+                                      .orElse(null);
 
-      // Count unread messages for the user in this chat
-      int unreadMessages = messageRepository.countByChat_ChatIdAndReceiver_UserIdAndIsReadFalse(chat.getChatId(), userId);
+                      // Count unread messages for the user in this chat
+                      int unreadMessages =
+                              messageRepository.countByChat_ChatIdAndReceiver_UserIdAndIsReadFalse(
+                                      chat.getChatId(), userId);
 
-      // Create DTO
-      return new ChatSummaryTO(
-              chat.getChatId(),
-              receiver != null ? new ReceiverTO(receiver.getUserId(), receiver.getFirstName(), receiver.getLastName()) : null,
-              unreadMessages
-      );
-    }).collect(Collectors.toList());
+                      // Create DTO
+                      return new ChatSummaryTO(
+                              chat.getChatId(),
+                              receiver != null
+                                      ? new ReceiverTO(
+                                      receiver.getUserId(), receiver.getFirstName(), receiver.getLastName())
+                                      : null,
+                              unreadMessages);
+                    })
+            .collect(Collectors.toList());
   }
 }

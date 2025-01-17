@@ -1,10 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
-import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import de.thu.thutorium.api.transferObjects.common.MeetingTO;
-import de.thu.thutorium.api.transferObjects.common.MessageTO;
-import de.thu.thutorium.api.transferObjects.common.UserTO;
+import de.thu.thutorium.api.transferObjects.common.*;
 import de.thu.thutorium.database.dbObjects.UserDBO;
 import de.thu.thutorium.services.interfaces.*;
 import de.thu.thutorium.swagger.CommonApiResponses;
@@ -41,6 +38,7 @@ public class UserController {
   private final ChatService chatService;
   private final MessageService messageService;
   private final CourseService courseService;
+  private final RatingCourseService courseRatingService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -50,9 +48,9 @@ public class UserController {
    * @throws UsernameNotFoundException if the use could not be found in the database.
    */
   @Operation(
-      summary = "Retrieve the account details of an existing user",
-      description = "Retrieve an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+          summary = "Retrieve the account details of an existing user",
+          description = "Retrieve an existing user if they exist in the database",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @GetMapping("/get-user/{userId}")
   public ResponseEntity<?> getUser(@PathVariable Long userId) {
@@ -63,7 +61,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Unexpected error: " + ex.getMessage());
+              .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -77,9 +75,9 @@ public class UserController {
    * @throws UsernameNotFoundException if the use could not be found in the database.
    */
   @Operation(
-      summary = "Update an existing user",
-      description = "Update an existing user if they exist in the database",
-      tags = {" User Endpoints"})
+          summary = "Update an existing user",
+          description = "Update an existing user if they exist in the database",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @PutMapping("/update-user/{id}")
   public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserTO userTO) {
@@ -90,7 +88,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Unexpected error: " + ex.getMessage());
+              .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -103,9 +101,9 @@ public class UserController {
    *     database.
    */
   @Operation(
-      summary = "Enables an existing user to delete his account",
-      description = "Retrieves an existing and authenticated user and deletes their account.",
-      tags = {" User Endpoints"})
+          summary = "Enables an existing user to delete his account",
+          description = "Retrieves an existing and authenticated user and deletes their account.",
+          tags = {" User Endpoints"})
   @CommonApiResponses
   @DeleteMapping("/delete-my-account")
   public ResponseEntity<String> deleteMyAccount() {
@@ -114,12 +112,12 @@ public class UserController {
       Long authenticatedUserId = getAuthenticatedUserId();
       userService.deleteUser(authenticatedUserId);
       return ResponseEntity.ok(
-          "User account with ID " + authenticatedUserId + " has been successfully deleted.");
+              "User account with ID " + authenticatedUserId + " has been successfully deleted.");
     } catch (AuthenticationException ex) {
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated.");
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("An error occurred while deleting the account.");
+              .body("An error occurred while deleting the account.");
     }
   }
 
@@ -132,15 +130,15 @@ public class UserController {
    * @return the {@link UserTO} object containing tutor details.
    */
   @Operation(
-      summary = "Retrieve tutor by ID",
-      description = "Fetches tutor details by their unique ID.",
-      tags = {"User Operations"})
+          summary = "Retrieve tutor by ID",
+          description = "Fetches tutor details by their unique ID.",
+          tags = {"User Operations"})
   @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Tutor retrieved successfully",
-        content = @Content(schema = @Schema(implementation = UserTO.class))),
-    @ApiResponse(responseCode = "404", description = "Tutor not found")
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Tutor retrieved successfully",
+                  content = @Content(schema = @Schema(implementation = UserTO.class))),
+          @ApiResponse(responseCode = "404", description = "Tutor not found")
   })
   @GetMapping("tutor")
   @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
@@ -166,20 +164,21 @@ public class UserController {
    * @see de.thu.thutorium.api.transferObjects.common.MeetingTO
    */
   @Operation(
-      summary = "Retrieve all meetings for a specific user",
-      description =
-          "Fetches a list of meetings associated with a user. Includes both meetings the user participates in and meetings they have scheduled as a tutor.")
+          summary = "Retrieve all meetings for a specific user",
+          description =
+                  "Fetches a list of meetings associated with a user. Includes both meetings "
+                          + "the user participates in and meetings they have scheduled as a tutor.")
   @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Meetings retrieved successfully",
-        content =
-            @Content(array = @ArraySchema(schema = @Schema(implementation = MeetingTO.class)))),
-    @ApiResponse(
-        responseCode = "404",
-        description = "User not found or no meetings available for the user",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Meetings retrieved successfully",
+                  content =
+                  @Content(array = @ArraySchema(schema = @Schema(implementation = MeetingTO.class)))),
+          @ApiResponse(
+                  responseCode = "404",
+                  description = "User not found or no meetings available for the user",
+                  content = @Content(schema = @Schema(implementation = String.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-meetings/{userId}")
   public ResponseEntity<List<MeetingTO>> getMeetingsForUser(@PathVariable Long userId) {
@@ -189,20 +188,20 @@ public class UserController {
 
   /*chat*/
   @Operation(
-      summary = "Retrieve chat summaries for a specific user",
-      description =
-          "Fetches a list of chat summaries, showing unread message counts and the receiver of the chat.")
+          summary = "Retrieve chat summaries for a specific user",
+          description =
+                  "Fetches a list of chat summaries, showing unread message counts and the receiver of the chat.")
   @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Chat summaries retrieved successfully",
-        content =
-            @Content(array = @ArraySchema(schema = @Schema(implementation = ChatSummaryTO.class)))),
-    @ApiResponse(
-        responseCode = "404",
-        description = "User not found or no chat summaries available",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Chat summaries retrieved successfully",
+                  content =
+                  @Content(array = @ArraySchema(schema = @Schema(implementation = ChatSummaryTO.class)))),
+          @ApiResponse(
+                  responseCode = "404",
+                  description = "User not found or no chat summaries available",
+                  content = @Content(schema = @Schema(implementation = String.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-chat-summaries")
   public ResponseEntity<List<ChatSummaryTO>> getChatSummaries(@RequestParam Long userId) {
@@ -211,20 +210,20 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Retrieve messages for a specific chat",
-      description =
-          "Fetches all messages from a chat identified by the chatId. This includes sender, receiver, content, and timestamps.")
+          summary = "Retrieve messages for a specific chat",
+          description =
+                  "Fetches all messages from a chat identified by the chatId. This includes sender, receiver, content, and timestamps.")
   @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Messages retrieved successfully",
-        content =
-            @Content(array = @ArraySchema(schema = @Schema(implementation = MessageTO.class)))),
-    @ApiResponse(
-        responseCode = "404",
-        description = "Chat not found or no messages available",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Messages retrieved successfully",
+                  content =
+                  @Content(array = @ArraySchema(schema = @Schema(implementation = MessageTO.class)))),
+          @ApiResponse(
+                  responseCode = "404",
+                  description = "Chat not found or no messages available",
+                  content = @Content(schema = @Schema(implementation = String.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-messages-chat")
   public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
@@ -248,25 +247,37 @@ public class UserController {
   }
 
   @Operation(
-      summary = "Retrieve courses taught by a specific tutor",
-      description =
-          "Fetches all courses assigned to a tutor identified by their tutorId. ",
-      tags = {"Courses"})
+          summary = "Retrieve courses taught by a specific tutor",
+          description =
+                  "Fetches all courses assigned to a tutor identified by their tutorId. ",
+          tags = {"Courses"})
   @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Courses retrieved successfully",
-        content =
-            @Content(array = @ArraySchema(schema = @Schema(implementation = CourseTO.class)))),
-    @ApiResponse(
-        responseCode = "404",
-        description = "Tutor not found or no courses available",
-        content = @Content(schema = @Schema(implementation = String.class))),
-    @ApiResponse(responseCode = "500", description = "Internal server error")
+          @ApiResponse(
+                  responseCode = "200",
+                  description = "Courses retrieved successfully",
+                  content =
+                  @Content(array = @ArraySchema(schema = @Schema(implementation = CourseTO.class)))),
+          @ApiResponse(
+                  responseCode = "404",
+                  description = "Tutor not found or no courses available",
+                  content = @Content(schema = @Schema(implementation = String.class))),
+          @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-course/{tutorId}")
   public ResponseEntity<List<CourseTO>> getCoursesByTutor(@PathVariable Long tutorId) {
     List<CourseTO> courses = courseService.getCourseByTutorId(tutorId);
     return ResponseEntity.ok(courses);
+  }
+
+  @GetMapping("/get-course-ratings/{courseId}")
+  public ResponseEntity<List<RatingCourseTO>> getCourseRatings(@PathVariable Long courseId) {
+    List<RatingCourseTO> ratingCourseTOS = courseRatingService.getCourseRatings(courseId);
+    return ResponseEntity.ok(ratingCourseTOS);
+  }
+
+  @GetMapping("/get-tutor-ratings/{tutorId}")
+  public ResponseEntity<List<RatingTutorTO>> getTutorRatings(@PathVariable Long tutorId) {
+    List<RatingTutorTO> ratingTutorTOS = userService.getTutorRatings(tutorId);
+    return ResponseEntity.ok(ratingTutorTOS);
   }
 }
