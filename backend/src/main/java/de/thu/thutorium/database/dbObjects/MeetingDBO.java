@@ -128,24 +128,4 @@ public class MeetingDBO {
   public MeetingDBO() {
     this.participants = new ArrayList<>();
   }
-
-//  @Override
-//  public String toString() {
-//    return "MeetingDBO{" +
-//            "meetingId=" + meetingId +
-//            ", tutor=" + tutor +
-//            ", course=" + course +
-//            ", meetingDate=" + meetingDate +
-//            ", meetingTime=" + meetingTime +
-//            ", endTime=" + endTime +
-//            ", duration=" + duration +
-//            ", meetingType=" + meetingType +
-//            ", meetingStatus=" + meetingStatus +
-//            ", roomNum='" + roomNum + '\'' +
-//            ", meetingLink='" + meetingLink + '\'' +
-//            ", address=" + address +
-//            ", participants=" + participants +
-//            ", timeRange='" + timeRange + '\'' +
-//            '}';
-//  }
 }

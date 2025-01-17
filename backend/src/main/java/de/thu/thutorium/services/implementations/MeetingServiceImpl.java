@@ -1,7 +1,10 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.Utility.AuthUtil;
 import de.thu.thutorium.api.TOMappers.MeetingTOMapper;
+import de.thu.thutorium.api.TOMappers.UserTOMapper;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import de.thu.thutorium.database.dbObjects.AddressDBO;
 import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.database.dbObjects.MeetingDBO;
@@ -32,15 +35,20 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-// Todo: The class methods have not been tested by the developer
-//  Update documentation in both interface and implementation classes.
-//  provide the appropriate controller methods utilizing these methods.
+// Todo: test
+// TODO:Update documentation in both interface and implementation classes.
+// TODO: provide the appropriate controller methods utilizing these methods.
 public class MeetingServiceImpl implements MeetingService {
   private final MeetingRepository meetingRepository;
   private final UserRepository userRepository;
   private final CourseRepository courseRepository;
   private final AddressRepository addressRepository;
   private final MeetingTOMapper meetingTOMapper;
+  private final UserTOMapper userTOMapper;
+
+  private static final String DEFAULT_ROOM_NUM = "No room scheduled";
+  private static final String DEFAULT_MEETING_LINK = "No room scheduled";
+
   /**
    * Creates a new meeting based on the provided {@link MeetingTO}.
    *
@@ -55,41 +63,26 @@ public class MeetingServiceImpl implements MeetingService {
   @Override
   @Transactional
   public MeetingTO createMeeting(MeetingTO meetingTO) {
-    // Todo : The user should have been verified by the admin in order to be able to create a meeting for a course.
-    //  To be implemented in the verifier Service class.
-    //Check if the tutor is valid
-    UserDBO tutor = userRepository.findUserDBOByUserIdAndRoles_RoleName(meetingTO.getTutorId(), Role.TUTOR)
-            .orElseThrow(() -> new EntityNotFoundException("Tutor not found with ID: " + meetingTO.getTutorId()));
+    validateTutorVerified(meetingTO.getTutorId());
 
-    //Check if the course is valid
-    CourseDBO course = courseRepository.findByCourseIdAndTutor_UserId(meetingTO.getCourseId(), meetingTO.getTutorId())
-            .orElseThrow(() -> new EntityNotFoundException("Course with ID: " + meetingTO.getCourseId() + " not found from "
-            + " tutor with ID" + meetingTO.getTutorId()));
+    UserDBO tutor = validateAndGetTutor(meetingTO.getTutorId());
+    CourseDBO course = validateAndGetCourse(meetingTO.getCourseId(), meetingTO.getTutorId());
+    AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
 
-    //Check if the address is valid
-    AddressDBO address = addressRepository.findById(meetingTO.getAddressId())
-            .orElseThrow(() -> new EntityNotFoundException("Address not found with ID: " + meetingTO.getAddressId()));
-
-    String roomNum = Optional.ofNullable(meetingTO.getRoomNum())
-        .orElse("No room scheduled");
-    String meetingLink = Optional.ofNullable(meetingTO.getMeetingLink())
-        .orElse("No meeting link provided");
-
-
-    MeetingDBO meetingDBO = MeetingDBO.builder()
+    MeetingDBO meetingDBO =
+        MeetingDBO.builder()
             .tutor(tutor)
             .course(course)
             .startTime(meetingTO.getStartTime())
             .endTime(meetingTO.getEndTime())
             .meetingType(meetingTO.getMeetingType())
-            .roomNum(roomNum)
-            .meetingLink(meetingLink)
+            .roomNum(Optional.ofNullable(meetingTO.getRoomNum()).orElse(DEFAULT_ROOM_NUM))
+            .meetingLink(
+                Optional.ofNullable(meetingTO.getMeetingLink()).orElse(DEFAULT_MEETING_LINK))
             .address(address)
             .build();
-    MeetingDBO savedMeeting = meetingRepository.save(meetingDBO);
 
-    // Convert the saved entity back to a DTO
-    return meetingTOMapper.toDTO(savedMeeting);
+    return meetingTOMapper.toDTO(meetingRepository.save(meetingDBO));
   }
 
   /**
@@ -104,14 +97,19 @@ public class MeetingServiceImpl implements MeetingService {
   @Override
   @Transactional
   public void deleteMeeting(Long meetingId) {
-    MeetingDBO meeting = meetingRepository.findById(meetingId)
-            .orElseThrow(() -> new EntityNotFoundException("Meeting not found with ID: " + meetingId)
-    );
+    MeetingDBO meeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
 
-    for (UserDBO participant: meeting.getParticipants()) {
-      participant.getMeetings().remove(meeting);
-      userRepository.save(participant);
-    }
+    meeting
+        .getParticipants()
+        .forEach(
+            participant -> {
+              participant.getMeetings().remove(meeting);
+              userRepository.save(participant);
+            });
 
     meeting.getTutor().getMeetings().remove(meeting);
     userRepository.save(meeting.getTutor());
@@ -138,61 +136,35 @@ public class MeetingServiceImpl implements MeetingService {
   @Override
   @Transactional
   public MeetingTO updateMeeting(Long meetingId, MeetingTO meetingTO) {
-    // Fetch the existing meeting
-    MeetingDBO existingMeeting = meetingRepository.findById(meetingId)
-                    .orElseThrow(() -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
+    MeetingDBO existingMeeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
 
-    //Validate tutor, course and address
-    //Check if the tutor is valid
-    UserDBO tutor = userRepository.findUserDBOByUserIdAndRoles_RoleName(meetingTO.getTutorId(), Role.TUTOR)
-            .orElseThrow(() -> new EntityNotFoundException("Tutor not found with ID: " + meetingTO.getTutorId()));
+    UserDBO tutor = validateAndGetTutor(meetingTO.getTutorId());
+    CourseDBO course = validateAndGetCourse(meetingTO.getCourseId(), meetingTO.getTutorId());
+    AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
 
-    //Check if the course is valid
-    CourseDBO course = courseRepository.findByCourseIdAndTutor_UserId(meetingTO.getCourseId(), meetingTO.getTutorId())
-            .orElseThrow(() -> new EntityNotFoundException("Course with ID: " + meetingTO.getCourseId() + " not found from "
-                    + " tutor with ID" + meetingTO.getTutorId()));
-
-    //Check if the address is valid
-    AddressDBO address = addressRepository.findById(meetingTO.getAddressId())
-            .orElseThrow(() -> new EntityNotFoundException("Address not found with ID: " + meetingTO.getAddressId()));
-
-    //Handle the optional fields in the meetingTO
-    String roomNum = Optional.ofNullable(meetingTO.getRoomNum())
-            .orElse("No room scheduled");
-    String meetingLink = Optional.ofNullable(meetingTO.getMeetingLink())
-            .orElse("No meeting link provided");
-
-    // Update fields
-    existingMeeting = existingMeeting.toBuilder()
+    existingMeeting =
+        existingMeeting.toBuilder()
             .tutor(tutor)
             .course(course)
             .startTime(meetingTO.getStartTime())
             .endTime(meetingTO.getEndTime())
             .meetingType(meetingTO.getMeetingType())
-            .roomNum(roomNum)
-            .meetingLink(meetingLink)
+            .roomNum(Optional.ofNullable(meetingTO.getRoomNum()).orElse(DEFAULT_ROOM_NUM))
+            .meetingLink(
+                Optional.ofNullable(meetingTO.getMeetingLink()).orElse(DEFAULT_MEETING_LINK))
             .address(address)
             .build();
-    // Update participants
-    //Todo: Adding and deleting participants is not done via MeetingTO, as it can be
-    // error prone and cumbersome (e.g: editing participant details of 20 students). Define
-    // other methods e.g; bookMeeting() and cancelMeeting() (similar to enroll/unenroll courses)
-    // to achieve this.
-    // Also single responsibility principle.
 
-    //Save the updated meeting
-    MeetingDBO savedMeeting = meetingRepository.save(existingMeeting);
-    return meetingTOMapper.toDTO(savedMeeting);
+    return meetingTOMapper.toDTO(meetingRepository.save(existingMeeting));
   }
 
   /**
-   * Todo :
-   *  What is the purpose of getting all meetings both scheduled and participating?
-   *  Shouldn't these be separate functions?
-   * Retrieves all meetings associated with a specific user.
-   *
-   * <p>This method fetches both types of meetings related to the user: - Meetings in which the user
-   * is a participant. - Meetings scheduled by the user as a tutor.
+   * This method fetches both types of meetings related to the user: - Meetings in which the user is
+   * a participant. - Meetings scheduled by the user as a tutor.
    *
    * <p>The two lists are combined, and the resulting list of meetings is mapped to DTOs for easier
    * representation.
@@ -202,67 +174,137 @@ public class MeetingServiceImpl implements MeetingService {
    */
   @Override
   public List<MeetingTO> getMeetingsForUser(Long userId) {
-
-    UserDBO user = userRepository.findUserDBOByUserId(userId).orElseThrow(
-            () -> new EntityNotFoundException("User not found with ID: " + userId)
-    );
+    UserDBO user =
+        userRepository
+            .findUserDBOByUserId(userId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 
     List<MeetingDBO> allMeetings = new ArrayList<>(user.getMeetings());
     allMeetings.addAll(user.getMeetingsScheduled());
-    // @Todo : Test the alternate implementation
-    //
-//    // Get both participated and scheduled meetings
-//    List<MeetingDBO> participatedMeetings =
-//        meetingRepository.findParticipatedMeetingsByUserId(userId);
-//    List<MeetingDBO> scheduledMeetings = meetingRepository.findScheduledMeetingsByTutorId(userId);
-//
-//    // Combine both lists
-//
-//    allMeetings.addAll(participatedMeetings);
-//    allMeetings.addAll(scheduledMeetings);
 
-    // Map to DTO
     return meetingTOMapper.toDTOList(allMeetings);
   }
 
-  //Todo: Booking of a meeting by a student
   @Override
   @Transactional
   public void bookMeeting(Long meetingId) {
+    Long studentId = AuthUtil.getAuthenticatedUserId(); // Retrieve the authenticated user's ID
 
-    //Retrieve user and confirm user is a student
-    //check if meeting exist, and is in future
-    //Check if student is enrolled in a course, for which the meeting is scheduled
+    UserDBO student = validateAndGetStudent(studentId);
 
-    // Update the user meetings list
-    // update the meetings participant list
+    MeetingDBO meeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
+
+    if (!meeting.getCourse().getStudents().contains(student)) {
+      throw new IllegalStateException("Student is not enrolled in the course for this meeting.");
+    }
+
+    meeting.getParticipants().add(student);
+    student.getMeetings().add(meeting);
+
+    meetingRepository.save(meeting);
+    userRepository.save(student);
   }
 
-  //Todo: Cancellation of a meeting by a student
+  @Override
   @Transactional
-  @Override
   public void cancelMeeting(Long meetingId) {
-    //Retrieve user and confirm user is a participant of the meeting
+    Long studentId = AuthUtil.getAuthenticatedUserId(); // Retrieve the authenticated user's ID
 
-    // Update the user meetings list
-    // update the meetings participant list
+    UserDBO student = validateAndGetStudent(studentId);
+
+    MeetingDBO meeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
+
+    if (!meeting.getParticipants().contains(student)) {
+      throw new IllegalStateException("Student is not a participant of this meeting.");
+    }
+
+    meeting.getParticipants().remove(student);
+    student.getMeetings().remove(meeting);
+
+    meetingRepository.save(meeting);
+    userRepository.save(student);
   }
 
-  // Todo : Meant for the tutor -> in case if it is not implemented already
   @Override
-  public MeetingTO retrieveMeetingbyId(Long meetingId) {
-    return null;
+  public MeetingTO retrieveMeetingById(Long meetingId) {
+    return meetingRepository
+        .findById(meetingId)
+        .map(meetingTOMapper::toDTO)
+        .orElseThrow(() -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
   }
 
-  // Todo : Meant for the tutor -> in case if it is not implemented already
   @Override
-  public MeetingTO retrieveMeetingbyCourse(Long courseId) {
-    return null;
+  public List<MeetingTO> retrieveMeetingsByCourse(Long courseId) {
+    CourseDBO course =
+        courseRepository
+            .findById(courseId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Course not found with ID: " + courseId));
+
+    return meetingTOMapper.toDTOList(new ArrayList<>(course.getMeetings()));
   }
 
-  // Todo : Meant for the tutor -> in case if it is not implemented already
   @Override
-  public void retrieveAllParticipants(Long meetingId) {
-    return;
+  public List<UserTO> retrieveAllParticipants(Long meetingId) {
+    MeetingDBO meeting =
+        meetingRepository
+            .findById(meetingId)
+            .orElseThrow(
+                () -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
+
+    return meeting.getParticipants().stream().map(userTOMapper::toDTO).toList();
+  }
+
+  private void validateTutorVerified(Long tutorId) {
+    if (!isTutorVerified(tutorId)) {
+      throw new IllegalStateException("Tutor must be verified to create a meeting.");
+    }
+  }
+
+  // helper methods
+  private UserDBO validateAndGetTutor(Long tutorId) {
+    return userRepository
+        .findUserDBOByUserIdAndRoles_RoleName(tutorId, Role.TUTOR)
+        .orElseThrow(() -> new EntityNotFoundException("Tutor not found with ID: " + tutorId));
+  }
+
+  private UserDBO validateAndGetStudent(Long studentId) {
+    return userRepository
+        .findUserDBOByUserIdAndRoles_RoleName(studentId, Role.STUDENT)
+        .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+  }
+
+  private CourseDBO validateAndGetCourse(Long courseId, Long tutorId) {
+    return courseRepository
+        .findByCourseIdAndTutor_UserId(courseId, tutorId)
+        .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+  }
+
+  private AddressDBO validateAndGetAddress(Long addressId) {
+    return addressRepository
+        .findById(addressId)
+        .orElseThrow(() -> new EntityNotFoundException("Address not found with ID: " + addressId));
+  }
+
+  public boolean isTutorVerified(Long tutorId) {
+    // Find the user by tutorId
+    UserDBO tutor =
+        userRepository
+            .findById(tutorId)
+            .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + tutorId));
+
+    // Check if the user has the TUTOR role
+    boolean isTutor = tutor.getRoles().stream().anyMatch(role -> role.getRoleName() == Role.TUTOR);
+
+    // If the user is a tutor, check if they are verified
+    return isTutor && tutor.getIsVerified() != null && tutor.getIsVerified();
   }
 }

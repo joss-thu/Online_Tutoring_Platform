@@ -1,6 +1,7 @@
 package de.thu.thutorium.services.interfaces;
 
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
+import de.thu.thutorium.api.transferObjects.common.UserTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,9 +69,9 @@ public interface MeetingService {
 
   void cancelMeeting(Long meetingId);
 
-  MeetingTO retrieveMeetingbyId(Long meetingId);
+  MeetingTO retrieveMeetingById(Long meetingId);
 
-  MeetingTO retrieveMeetingbyCourse(Long courseId);
+  List<MeetingTO> retrieveMeetingsByCourse(Long courseId);
 
-  void retrieveAllParticipants(Long meetingId);
+  List<UserTO> retrieveAllParticipants(Long meetingId);
 }
