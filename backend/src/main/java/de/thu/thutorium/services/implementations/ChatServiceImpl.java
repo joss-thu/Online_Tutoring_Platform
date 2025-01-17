@@ -121,6 +121,7 @@ public class ChatServiceImpl implements ChatService {
               // Create DTO
               return new ChatSummaryTO(
                   chat.getChatId(),
+                  chat.getCreator() != null ? chat.getCreator().getUserId() : null,
                   receiver != null
                       ? new ReceiverTO(
                           receiver.getUserId(), receiver.getFirstName(), receiver.getLastName())
