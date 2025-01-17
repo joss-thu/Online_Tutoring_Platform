@@ -295,7 +295,7 @@ public class TutorController {
 //          @ApiResponse(responseCode = "201", description = "Progress created successfully"),
 //          @ApiResponse(responseCode = "400", description = "Invalid input data")
 //  })
-  @Deprecated //Todo: progress object should be created when  a student enrolls in a course.
+  @Deprecated
   @PostMapping("/create-progress")
   public ResponseEntity<String> createProgress(@Valid @RequestBody ProgressTO progressTO) {
     progressService.createProgress(progressTO);
@@ -318,7 +318,7 @@ public class TutorController {
 //          @ApiResponse(responseCode = "200", description = "Progress deleted successfully"),
 //          @ApiResponse(responseCode = "404", description = "Progress record not found")
 //  })
-  @Deprecated //Todo: Progress should be deleted when a student unenrolls from the course
+  @Deprecated
   @DeleteMapping("/delete-progress/{studentId}/{courseId}")
   public ResponseEntity<String> deleteProgress(
       @PathVariable Long studentId, @PathVariable Long courseId) {

@@ -1,10 +1,12 @@
 import NavBar from "../components/Navbar";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import calculateAverageRating from "../helpers/CalculateAverageRating";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import { Rating, StickerStar } from "@smastrom/react-rating";
+import { useAuth } from "../services/AuthContext";
+import { BACKEND_URL } from "../config";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -13,21 +15,64 @@ const ratingStyle = {
 };
 
 function Tutor() {
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
   const [tutor, setTutor] = useState(false);
-  const isLoggedIn = false;
-  const fetchTutorDetails = async () => {
-    const res = await fetch("http://localhost:8080/tutor?id=" + id);
-    const data = await res.json();
-    console.log(data);
-    setTutor(data);
-  };
+  const [courses, setCourses] = useState([]);
+  const [ratings, setRatings] = useState(null);
+  const fetchTutorDetails = useCallback(async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/user/tutor?id=${id}`);
+      const data = await res.json();
+      setTutor(data);
+    } catch (error) {
+      console.error("Error fetching tutor details:", error);
+    }
+  }, [id]);
+
+  const fetchTutorCourses = useCallback(async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/user/get-course/${tutor.userId}`);
+      const data = await res.json();
+      setCourses(data);
+    } catch (error) {
+      console.error("Error fetching tutor courses:", error);
+    }
+  }, [tutor]);
+
+  const fetchTutorRatings = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${BACKEND_URL}/user/get-tutor-ratings/${tutor.userId}`,
+      );
+      const data = await res.json();
+      setRatings(data);
+    } catch (error) {
+      console.error("Error fetching tutor courses:", error);
+    }
+  }, [tutor, id]);
+
   useEffect(() => {
-    fetchTutorDetails();
-  });
+    if (id) {
+      fetchTutorDetails();
+    }
+  }, [id, fetchTutorDetails]);
+
+  useEffect(() => {
+    if (tutor) {
+      fetchTutorRatings();
+    }
+  }, [tutor, fetchTutorRatings]);
+
+  useEffect(() => {
+    if (tutor) {
+      fetchTutorCourses();
+    }
+  }, [tutor, fetchTutorCourses]);
+
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar currentPage="/" />
@@ -55,29 +100,15 @@ function Tutor() {
               >
                 Link copied!
               </Tooltip>
-              <div className="text-xl w-auto self-start">
-                {tutor.isVerified ? (
-                  <span className="text-white py-1 px-2 rounded-md font-merriweather_sans bg-blue-600 text-xs inline-flex items-center">
-                    Verified
-                    <span className="material-symbols-rounded ml-1 text-sm leading-none">
-                      verified
-                    </span>
-                  </span>
-                ) : (
-                  <span className="text-white py-1 px-2 rounded-md font-merriweather_sans bg-gray-600 text-xs">
-                    Unverified
-                  </span>
-                )}
-              </div>
             </div>
             <button
               onClick={() => {
-                if (isLoggedIn) {
-                  navigate("/");
+                if (isAuthenticated) {
+                  navigate("/messages?userId=" + id);
                 }
               }}
               className={
-                isLoggedIn
+                isAuthenticated
                   ? "bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
                   : "message_anchor_element bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
               }
@@ -99,20 +130,20 @@ function Tutor() {
                 {tutor.tutor_description}
               </div>
               <div className="mt-5 flex text-black">
-                {tutor.ratings?.length > 0 ? (
+                {ratings?.length > 0 ? (
                   <>
                     <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                       <span className="text-sm">Rating</span>
                       <span className="text-md">
                         <strong>
-                          {calculateAverageRating(tutor.ratings).toFixed(1)}
+                          {calculateAverageRating(ratings).toFixed(1)}
                         </strong>
                       </span>
                     </div>
                     <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                       <span className="text-sm">Reviews</span>
                       <span className="text-md">
-                        <strong>{tutor.ratings.length}</strong>
+                        <strong>{ratings.length}</strong>
                       </span>
                     </div>
                   </>
@@ -127,12 +158,16 @@ function Tutor() {
                 <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
                   <span className="text-sm">Courses</span>
                   <span className="text-md">
-                    <strong>{tutor.courses?.length}</strong>
+                    <strong>{courses?.length}</strong>
                   </span>
                 </div>
               </div>
+              <div className="text-lg text-gray-800 mt-7">Description</div>
+              <div className="mt-1 text-md text-gray-600">
+                {tutor.description}
+              </div>
               <div className="mt-10 text-2xl text-gray-800">Courses</div>
-              {tutor.courses?.map((result, index) => {
+              {courses?.map((result, index) => {
                 return <CourseSearchResultItem course={result} key={index} />;
               })}
             </div>
@@ -140,13 +175,11 @@ function Tutor() {
               <div className="text-xl rounded-md text-black self-start w-auto">
                 Reviews
               </div>
-              {tutor.ratings?.length > 0 ? (
-                tutor.ratings.map((result, index) => {
+              {ratings?.length > 0 ? (
+                ratings.map((result, index) => {
                   return (
                     <>
-                      <div className="text-sm mt-4">
-                        {result.student.firstName} {result.student.lastName}
-                      </div>
+                      <div className="text-sm mt-4">{result.studentName}</div>
                       <Rating
                         key={index}
                         readOnly={true}

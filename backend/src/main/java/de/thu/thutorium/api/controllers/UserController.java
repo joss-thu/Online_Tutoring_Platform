@@ -1,7 +1,7 @@
 package de.thu.thutorium.api.controllers;
 
-import de.thu.thutorium.Utility.AuthUtil;
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
+import de.thu.thutorium.api.transferObjects.common.*;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static de.thu.thutorium.Utility.AuthUtil.getAuthenticatedUserId;
+
 /** Controller for managing user operations. */
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class UserController {
   private final ChatService chatService;
   private final MessageService messageService;
   private final CourseService courseService;
+  private final RatingCourseService courseRatingService;
 
   /**
    * Retrieves the account details of a user based on their user ID.
@@ -109,7 +112,7 @@ public class UserController {
   public ResponseEntity<String> deleteMyAccount() {
     try {
       // Retrieve the currently authenticated user's ID
-      Long authenticatedUserId = AuthUtil.getAuthenticatedUserId();
+      Long authenticatedUserId = getAuthenticatedUserId();
       userService.deleteUser(authenticatedUserId);
       return ResponseEntity.ok(
           "User account with ID " + authenticatedUserId + " has been successfully deleted.");
@@ -141,9 +144,14 @@ public class UserController {
     @ApiResponse(responseCode = "404", description = "Tutor not found")
   })
   @GetMapping("tutor")
-  @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
-  public UserTO getTutor(@RequestParam Long id) {
-    return userService.getTutorByID(id);
+  public ResponseEntity<?> getTutor(@RequestParam Long id) {
+    try {
+      UserTO tutor = userService.getTutorByID(id);
+      return ResponseEntity.status(HttpStatus.OK).body(tutor);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   /**
@@ -180,9 +188,14 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-meetings/{userId}")
-  public ResponseEntity<List<MeetingTO>> getMeetingsForUser(@PathVariable Long userId) {
-    List<MeetingTO> meetings = meetingService.getMeetingsForUser(userId);
-    return ResponseEntity.ok(meetings);
+  public ResponseEntity<?> getMeetingsForUser(@PathVariable Long userId) {
+    try {
+      List<MeetingTO> meetings = meetingService.getMeetingsForUser(userId);
+      return ResponseEntity.status(HttpStatus.OK).body(meetings);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   /*chat*/
@@ -203,9 +216,14 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-chat-summaries")
-  public ResponseEntity<List<ChatSummaryTO>> getChatSummaries(@RequestParam Long userId) {
-    List<ChatSummaryTO> summaries = chatService.getChatSummaries(userId);
-    return ResponseEntity.ok(summaries);
+  public ResponseEntity<?> getChatSummaries(@RequestParam Long userId) {
+    try {
+      List<ChatSummaryTO> summaries = chatService.getChatSummaries(userId);
+      return ResponseEntity.status(HttpStatus.OK).body(summaries);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   @Operation(
@@ -225,15 +243,19 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-messages-chat")
-  public ResponseEntity<List<MessageTO>> getChatMessages(@RequestParam Long chatId) {
-    List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
-    return ResponseEntity.ok(messages);
+  public ResponseEntity<?> getChatMessages(@RequestParam Long chatId) {
+    try {
+      List<MessageTO> messages = messageService.getMessagesByChatId(chatId);
+      return ResponseEntity.status(HttpStatus.OK).body(messages);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   @Operation(
       summary = "Retrieve courses taught by a specific tutor",
-      description =
-          "Fetches all courses assigned to a tutor identified by their tutorId. ",
+      description = "Fetches all courses assigned to a tutor identified by their tutorId. ",
       tags = {"Courses"})
   @ApiResponses({
     @ApiResponse(
@@ -248,8 +270,68 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "Internal server error")
   })
   @GetMapping("/get-course/{tutorId}")
-  public ResponseEntity<List<CourseTO>> getCoursesByTutor(@PathVariable Long tutorId) {
-    List<CourseTO> courses = courseService.getCourseByTutorId(tutorId);
-    return ResponseEntity.ok(courses);
+  public ResponseEntity<?> getCoursesByTutor(@PathVariable Long tutorId) {
+    try {
+      List<CourseTO> courses = courseService.getCourseByTutorId(tutorId);
+      return ResponseEntity.status(HttpStatus.OK).body(courses);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Retrieve ratings for a specific course",
+      description = "Fetches all ratings given to a course identified by its courseId.",
+      tags = {"Ratings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Ratings retrieved successfully",
+        content =
+            @Content(
+                array = @ArraySchema(schema = @Schema(implementation = RatingCourseTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Course not found or no ratings available",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  @GetMapping("/get-course-ratings/{courseId}")
+  public ResponseEntity<?> getCourseRatings(@PathVariable Long courseId) {
+    try {
+      List<RatingCourseTO> ratingCourseTOS = courseRatingService.getCourseRatings(courseId);
+      return ResponseEntity.status(HttpStatus.OK).body(ratingCourseTOS);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Retrieve ratings for a specific tutor",
+      description = "Fetches all ratings given to a tutor identified by their tutorId.",
+      tags = {"Ratings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Tutor ratings retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = RatingTutorTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Tutor not found or no ratings available",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
+  @GetMapping("/get-tutor-ratings/{tutorId}")
+  public ResponseEntity<?> getTutorRatings(@PathVariable Long tutorId) {
+    try {
+      List<RatingTutorTO> ratingTutorTOS = userService.getTutorRatings(tutorId);
+      return ResponseEntity.status(HttpStatus.OK).body(ratingTutorTOS);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
   }
 }

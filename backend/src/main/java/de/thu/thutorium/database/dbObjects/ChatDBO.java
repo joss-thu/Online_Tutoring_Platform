@@ -42,6 +42,10 @@ public class ChatDBO {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long chatId;
 
+  /** The user who created the chat. */
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "creator_id")
+  private UserDBO creator;
   /**
    * The list of participants in the chat.
    *

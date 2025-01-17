@@ -72,9 +72,7 @@ public class CourseCategoryDBO {
    *
    * <p>Defines a many-to-many relationship with {@link CourseDBO} using the join table
    * "courses_categories" for defining the courses associated with a category. The counterpart is
-   * denoted as a List<CourseCategoryDBO> called courseCategories in {@link CourseDBO}. TODO: The
-   * cascading action is not specified here because the course categories are set by the admin. Can
-   * the tutors also set their own course categories?
+   * denoted as a List<CourseCategoryDBO> called courseCategories in {@link CourseDBO}.
    */
   @ManyToMany(
       cascade = {CascadeType.PERSIST, CascadeType.MERGE},

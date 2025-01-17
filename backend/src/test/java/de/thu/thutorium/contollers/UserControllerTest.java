@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.contollers;
 
 import de.thu.thutorium.api.controllers.UserController;
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;
@@ -118,7 +118,7 @@ class UserControllerTest {
         List<MeetingTO> meetings = List.of(meeting);
         when(meetingService.getMeetingsForUser(1L)).thenReturn(meetings);
 
-        ResponseEntity<List<MeetingTO>> response = userController.getMeetingsForUser(1L);
+        ResponseEntity<?> response = userController.getMeetingsForUser(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(meetings, response.getBody());
@@ -131,7 +131,7 @@ class UserControllerTest {
         List<ChatSummaryTO> summaries = List.of(chatSummary);
         when(chatService.getChatSummaries(1L)).thenReturn(summaries);
 
-        ResponseEntity<List<ChatSummaryTO>> response = userController.getChatSummaries(1L);
+        ResponseEntity<?> response = userController.getChatSummaries(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(summaries, response.getBody());
@@ -144,7 +144,7 @@ class UserControllerTest {
         List<MessageTO> messages = List.of(message);
         when(messageService.getMessagesByChatId(1L)).thenReturn(messages);
 
-        ResponseEntity<List<MessageTO>> response = userController.getChatMessages(1L);
+        ResponseEntity<?> response = userController.getChatMessages(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(messages, response.getBody());
@@ -157,7 +157,7 @@ class UserControllerTest {
         List<CourseTO> courses = List.of(course);
         when(courseService.getCourseByTutorId(1L)).thenReturn(courses);
 
-        ResponseEntity<List<CourseTO>> response = userController.getCoursesByTutor(1L);
+        ResponseEntity<?> response = userController.getCoursesByTutor(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(courses, response.getBody());

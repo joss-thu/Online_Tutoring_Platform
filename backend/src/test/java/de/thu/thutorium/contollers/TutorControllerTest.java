@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.contollers;
 
 import de.thu.thutorium.api.controllers.TutorController;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;

@@ -11,14 +11,14 @@ const SelectField = ({ label, id, name, value, onChange, options }) => {
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full mt-1 p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+        className="w-full mt-2 p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
       >
         <option value="" disabled>
           Select a category
         </option>
         {options.map((option, index) => (
-          <option key={index} value={option}>
-            {option}
+          <option key={index} value={option.categoryName}>
+            {option.categoryName}
           </option>
         ))}
       </select>

@@ -4,6 +4,8 @@ import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
  * The {@code UserService} interface provides methods for managing and retrieving user data.
  *
@@ -93,4 +95,6 @@ public interface UserService {
    * @param courseId the id of the course from which the student unenrolls.
    */
   void unenrollCourse(Long studentId, Long courseId);
+
+  List<RatingTutorTO> getTutorRatings(Long tutorId);
 }

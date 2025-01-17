@@ -69,7 +69,7 @@ public class DBInitializer {
   /**
    * @Author Nikolai Ivanov (Kekschorstviy)
    */
-  private String addDatabaseConstraints() {
+  private void addDatabaseConstraints() {
     try {
       // Step 1: Create extension if not exists
       jdbcTemplate.execute("CREATE EXTENSION IF NOT EXISTS btree_gist");
@@ -118,13 +118,12 @@ public class DBInitializer {
               + "CHECK (meeting_date <= CURRENT_DATE + INTERVAL '1 year')");
 
       log.info("Database constraints added successfully.");
-      return "Database constraints added successfully.";
     } catch (DataIntegrityViolationException e) {
       log.error("Constraint violation: " + e.getMessage());
       throw new MeetingConflictException("A conflicting meeting already exists.");
     } catch (Exception e) {
       log.error("Error adding database constraints: " + e.getMessage());
-      return e.getMessage();
+      e.getMessage();
     }
   }
 }
