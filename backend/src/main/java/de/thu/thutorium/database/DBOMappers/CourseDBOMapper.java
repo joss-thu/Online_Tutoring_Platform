@@ -36,9 +36,6 @@ public class CourseDBOMapper {
     Optional<UserDBO> tutor;
 
     // check if the user exists with TUTOR role from its ID
-    // Todo:
-    // Simplify with userRepository.findUserDBOByUserIdAndRoles_RoleName(course.getTutorId(),
-    // Role.TUTOR)??
     tutor = userRepository.findUserDBOByUserId(course.getTutorId());
     tutor.ifPresentOrElse(
         (user) -> {

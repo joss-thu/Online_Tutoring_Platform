@@ -90,9 +90,9 @@ public class ChatServiceImpl implements ChatService {
   @Transactional
   public void deleteChat(Long chatId) {
     ChatDBO chatDBO =
-            chatRepository
-                    .findById(chatId)
-                    .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
+        chatRepository
+            .findById(chatId)
+            .orElseThrow(() -> new EntityNotFoundException("Chat not found"));
 
     chatRepository.delete(chatDBO);
   }
@@ -104,29 +104,30 @@ public class ChatServiceImpl implements ChatService {
 
     // Map chats to summaries
     return userChats.stream()
-            .map(
-                    chat -> {
-                      // Find the other participant (receiver) in one-on-one chat
-                      UserDBO receiver =
-                              chat.getParticipants().stream()
-                                      .filter(participant -> !participant.getUserId().equals(userId))
-                                      .findFirst()
-                                      .orElse(null);
+        .map(
+            chat -> {
+              // Find the other participant (receiver) in one-on-one chat
+              UserDBO receiver =
+                  chat.getParticipants().stream()
+                      .filter(participant -> !participant.getUserId().equals(userId))
+                      .findFirst()
+                      .orElse(null);
 
-                      // Count unread messages for the user in this chat
-                      int unreadMessages =
-                              messageRepository.countByChat_ChatIdAndReceiver_UserIdAndIsReadFalse(
-                                      chat.getChatId(), userId);
+              // Count unread messages for the user in this chat
+              int unreadMessages =
+                  messageRepository.countByChat_ChatIdAndReceiver_UserIdAndIsReadFalse(
+                      chat.getChatId(), userId);
 
-                      // Create DTO
-                      return new ChatSummaryTO(
-                              chat.getChatId(),
-                              receiver != null
-                                      ? new ReceiverTO(
-                                      receiver.getUserId(), receiver.getFirstName(), receiver.getLastName())
-                                      : null,
-                              unreadMessages);
-                    })
-            .collect(Collectors.toList());
+              // Create DTO
+              return new ChatSummaryTO(
+                  chat.getChatId(),
+                  chat.getCreator() != null ? chat.getCreator().getUserId() : null,
+                  receiver != null
+                      ? new ReceiverTO(
+                          receiver.getUserId(), receiver.getFirstName(), receiver.getLastName())
+                      : null,
+                  unreadMessages);
+            })
+        .collect(Collectors.toList());
   }
 }

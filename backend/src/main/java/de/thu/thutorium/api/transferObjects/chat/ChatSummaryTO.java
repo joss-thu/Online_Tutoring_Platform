@@ -10,7 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatSummaryTO {
-    private Long chatId;
-    private ReceiverTO receiver;
-    private int unreadMessages;
+  private Long chatId;
+  private Long creator;
+  private ReceiverTO receiver;
+  private int unreadMessages;
 }

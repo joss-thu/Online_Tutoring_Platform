@@ -19,8 +19,17 @@ public class ProgressTO {
   @NotNull(message = "Course ID cannot be null")
   private Long courseId;
 
-  /** The points scored by the student in the course. */
-  @NotNull(message = "Points cannot be null")
-  @PositiveOrZero(message = "Points must be zero or positive")
-  private Double points = 0.0;
+    /**
+     * The points scored by the student in the course.
+     */
+    @NotNull(message = "Points cannot be null")
+    @PositiveOrZero(message = "Points must be zero or positive")
+    private Double points = 0.0;
+
+    /**
+     * The max points scored by the student in the course.
+     */
+    @NotNull(message = "Points cannot be null")
+    @PositiveOrZero(message = "Points must be zero or positive")
+    private Double maxPoints = 100.0;
 }

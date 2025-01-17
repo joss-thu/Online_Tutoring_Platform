@@ -44,7 +44,7 @@ public class ChatDBO {
 
   /** The user who created the chat. */
   @ManyToOne(optional = false)
-  @JoinColumn(name = "creator_id", nullable = false)
+  @JoinColumn(name = "creator_id")
   private UserDBO creator;
   /**
    * The list of participants in the chat.
@@ -53,9 +53,9 @@ public class ChatDBO {
    */
   @ManyToMany
   @JoinTable(
-          name = "chat_participants",
-          joinColumns = @JoinColumn(name = "chat_id"),
-          inverseJoinColumns = @JoinColumn(name = "user_id"))
+      name = "chat_participants",
+      joinColumns = @JoinColumn(name = "chat_id"),
+      inverseJoinColumns = @JoinColumn(name = "user_id"))
   @Builder.Default
   private Set<UserDBO> participants = new HashSet<>();
 

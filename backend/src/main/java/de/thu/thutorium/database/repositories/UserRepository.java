@@ -66,8 +66,7 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
    * @param tutorName The search string to match against the tutor's full name. This parameter is
    *     compared case-insensitively and supports partial matching.
    * @return A list of {@link UserDBO} objects representing tutors whose full names match the search
-   *     string. Todo: The method will match for any substring provided by the parameter, is this
-   *     the expected behavior?
+   *     string.
    */
   @Query(
       "SELECT u FROM UserDBO u JOIN u.roles r WHERE r.roleName = 'TUTOR' AND "
@@ -87,4 +86,6 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
    *     ID and role name exists, or an empty {@link Optional} if no such user is found.
    */
   Optional<UserDBO> findUserDBOByUserIdAndRoles_RoleName(Long userId, Role roleName);
+
+  List<UserDBO> findUserDBOSByRoles_RoleName(Role roleName);
 }

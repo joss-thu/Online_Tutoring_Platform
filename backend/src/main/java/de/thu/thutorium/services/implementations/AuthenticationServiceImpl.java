@@ -109,6 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
    * @return a {@link ResponseEntity} containing the registration response transfer object with the
    *     JWT token and expiration time
    */
+  //TODO: Add validation for an email
   @Override
   @Transactional
   public ResponseEntity<LogInResponseTO> register(RegisterRequestTO registerRequestTO) {
