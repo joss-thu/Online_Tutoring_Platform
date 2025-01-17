@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.services;
 
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
 import de.thu.thutorium.database.DBOMappers.ProgressDBMapper;
