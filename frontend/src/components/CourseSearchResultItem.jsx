@@ -1,6 +1,5 @@
 import formatDate from "../helpers/FormatDate";
 import { useNavigate } from "react-router-dom";
-import calculateAverageRating from "../helpers/CalculateAverageRating";
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import React from "react";
 
@@ -23,22 +22,17 @@ function CourseSearchResultItem({ course }) {
     >
       <div>
         <span className="text-blue-100 py-1 px-2 rounded-sm font-merriweather_sans bg-blue-600 bg-opacity-40 text-xs">
-          {"Programming"}
+          {course.courseCategories[0]?.categoryName}
         </span>
-        {course.ratings?.length > 0 ? (
-          <div className="font-merriweather_sans text-sm text-gray-400 mt-2">
-            <Rating
-              readOnly={true}
-              style={{ maxWidth: 100 }}
-              value={calculateAverageRating(course.ratings)}
-              itemStyles={ratingStyle}
-            />
-          </div>
-        ) : (
-          <div className="font-merriweather_sans text-sm text-gray-400 mt-1">
-            Not yet rated
-          </div>
-        )}
+
+        <div className="font-merriweather_sans text-sm text-gray-400 mt-2">
+          <Rating
+            readOnly={true}
+            style={{ maxWidth: 100 }}
+            value={course.averageRating}
+            itemStyles={ratingStyle}
+          />
+        </div>
 
         <div className="font-merriweather_sans text-xl text-white">
           {course.courseName}
@@ -47,7 +41,7 @@ function CourseSearchResultItem({ course }) {
           {course.descriptionShort}
         </div>
         <span className="inline-flex items-center font-merriweather_sans text-sm bg-white text-black px-2 rounded-md">
-          By {course.tutor?.firstName} {course.tutor?.lastName}
+          By {course.tutorName}
           {course.tutor?.isVerified && (
             <span className="material-symbols-rounded ml-1 text-xl">
               verified

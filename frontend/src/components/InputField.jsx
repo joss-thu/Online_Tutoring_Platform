@@ -10,7 +10,7 @@ const InputField = ({
 }) => {
   return (
     <div className="mb-4">
-      <label className="block text-gray-700 text-sm font-medium mb-2">
+      <label className="block text-gray-700 text-sm font-medium mb-2 mt-4">
         {label}
       </label>
       <input

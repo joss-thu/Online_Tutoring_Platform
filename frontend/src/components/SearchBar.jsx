@@ -1,5 +1,4 @@
 import React from "react";
-import SearchIcon from '@mui/icons-material/Search';
 
 //
 export default function SearchBar({
@@ -18,11 +17,12 @@ export default function SearchBar({
         {...props}
       />
 
-
-        <SearchIcon
-        className="absolute left-4 top-1/2 transform -translate-y-1/2"
+      <span
+        className="material-symbols-rounded absolute left-4 top-1/2 transform -translate-y-1/2"
         style={{ left: "10px", width: "20px", height: "20px" }}
-        />
+      >
+        search
+      </span>
     </div>
   );
 }
