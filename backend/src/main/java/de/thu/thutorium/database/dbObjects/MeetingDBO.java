@@ -24,7 +24,7 @@ import java.util.List;
     uniqueConstraints =
         @UniqueConstraint(
             name = "unique_meeting_constraint",
-            columnNames = {"meeting_date", "meeting_time", "room_number", "address_id"}))
+            columnNames = {"meeting_date", "meeting_start_time", "room_number", "address_id"}))
 @Getter
 @Setter
 @AllArgsConstructor
@@ -66,7 +66,7 @@ public class MeetingDBO {
   private LocalDateTime endTime;
 
   /** The duration of the meeting in minutes. This field cannot be null. */
-  @Column(name = "duration_minutes", nullable = false)
+  @Column(name = "duration_minutes")
   @Builder.Default
   private Integer duration = 90;
 

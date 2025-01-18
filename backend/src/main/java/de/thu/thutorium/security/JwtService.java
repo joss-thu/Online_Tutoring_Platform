@@ -82,7 +82,7 @@ public class JwtService {
   /**
    * Retrieves the signing key for JWT operations.
    *
-   * @return the signing key ToDO: Remove the logging
+   * @return the signing key
    */
   private Key getSignInKey() {
     byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);

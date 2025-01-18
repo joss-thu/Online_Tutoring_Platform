@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import NavBar from "../components/Navbar";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import TutorSearchResultItem from "../components/TutorSearchResultItem";
+import { BACKEND_URL } from "../config";
 
 function Search() {
   const [searchResults, setSearchResults] = useState(null);
@@ -28,10 +29,10 @@ function Search() {
         let response;
         if (categoryName) {
           response = await fetch(
-            `http://localhost:8080/search/category/${categoryName}`,
+            `${BACKEND_URL}/search/category/${categoryName}`,
           );
         } else {
-          response = await fetch(`http://localhost:8080/search?${queryParams}`);
+          response = await fetch(`${BACKEND_URL}/search?${queryParams}`);
         }
         const data = await response.json();
         console.log(data);

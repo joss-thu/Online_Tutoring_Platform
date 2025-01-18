@@ -27,4 +27,6 @@ public interface RatingCourseRepository extends JpaRepository<RatingCourseDBO, L
 
   List<RatingCourseDBO> findByCourse_CourseIdAndStudent_UserId(
       Long courseCourseId, Long studentUserId, Limit limit);
+
+  List<RatingCourseDBO> findByCourse_CourseId(Long courseId);
 }
