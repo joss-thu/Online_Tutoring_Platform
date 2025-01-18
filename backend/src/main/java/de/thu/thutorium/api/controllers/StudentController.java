@@ -1,10 +1,11 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.Utility.AuthUtil;
+import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.RatingCourseTO;
 import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
-import de.thu.thutorium.services.implementations.UserServiceImpl;
 import de.thu.thutorium.services.interfaces.CourseService;
+import de.thu.thutorium.services.interfaces.UserService;
 import de.thu.thutorium.swagger.CommonApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /** Controller for managing user operations. */
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @CommonApiResponses
 public class StudentController {
 
-  private final UserServiceImpl studentService;
+  private final UserService studentService;
   private final CourseService courseService;
 
   /**
@@ -271,5 +274,11 @@ public class StudentController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Unexpected error: " + ex.getMessage());
     }
+  }
+
+  @GetMapping("/{studentId}/courses")
+  public ResponseEntity<List<CourseTO>> getCoursesEnrolled(@PathVariable Long studentId) {
+    List<CourseTO> courses = studentService.getCoursesEnrolled(studentId);
+    return ResponseEntity.ok(courses);
   }
 }
