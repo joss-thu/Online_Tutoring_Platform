@@ -5,6 +5,7 @@ import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
+import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.MeetingService;
 import de.thu.thutorium.services.interfaces.ProgressService;
@@ -367,12 +368,20 @@ public class TutorController {
   @GetMapping("/get-students-enrolled/{courseId}")
   public ResponseEntity<?> getStudentsEnrolled(@PathVariable Long courseId) {
     try {
-      // Ensure the user is authenticated
+      // Ensure the user is authenticated and retrieve the authenticated user's ID
       Long authenticatedUserId = AuthUtil.getAuthenticatedUserId();
 
+      // Check if the authenticatedUserId is not null (i.e., user is authenticated)
       if (authenticatedUserId == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("User is not authenticated.");
+      }
+
+      // Check if the authenticated user is the creator of the course
+      CourseTO course = courseService.findCourseById(courseId); // Fetch course by ID
+      if (course == null || !course.getTutorId().equals(authenticatedUserId)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("You are not authorized to access the students of this course.");
       }
 
       // Call the service to get the list of students enrolled in the course
@@ -380,7 +389,7 @@ public class TutorController {
 
       return ResponseEntity.ok(students);
     } catch (AuthenticationException e) {
-      // If the user is not authenticated
+      // If the user is not authenticated (authentication exception will already be thrown by AuthUtil)
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
               .body("User is not authenticated: " + e.getMessage());
     } catch (EntityNotFoundException e) {
@@ -392,5 +401,6 @@ public class TutorController {
               .body("An error occurred while retrieving students: " + e.getMessage());
     }
   }
+
 
 }
