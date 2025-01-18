@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.security.sasl.AuthenticationException;
+import java.util.Collections;
 import java.util.List;
 
 /** Controller for managing user operations. */
@@ -276,9 +278,17 @@ public class StudentController {
     }
   }
 
-  @GetMapping("/{studentId}/courses")
-  public ResponseEntity<List<CourseTO>> getCoursesEnrolled(@PathVariable Long studentId) {
-    List<CourseTO> courses = studentService.getCoursesEnrolled(studentId);
-    return ResponseEntity.ok(courses);
+  @GetMapping("/enrolled-courses")
+  public ResponseEntity<List<CourseTO>> getCoursesEnrolled() {
+    try {
+      // Retrieve the authenticated user's ID
+      Long studentId = AuthUtil.getAuthenticatedUserId();
+      // Fetch courses for the authenticated user
+      List<CourseTO> courses = studentService.getCoursesEnrolled(studentId);
+      return ResponseEntity.ok(courses);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body(Collections.emptyList()); // Return an empty list for other errors
+    }
   }
 }
