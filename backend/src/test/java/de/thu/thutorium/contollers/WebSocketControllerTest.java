@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.contollers;
 
 import de.thu.thutorium.api.controllers.WebSocketController;
 import de.thu.thutorium.api.transferObjects.chat.ChatSummaryTO;

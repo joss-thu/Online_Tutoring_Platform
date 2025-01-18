@@ -1,48 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "./InputField";
 import TextareaField from "./TextareaField";
 import SelectField from "./SelectField";
-import FileUpload from "./FileUpload";
-import { useAuth } from "../services/AuthContext"; //
+import { useAuth } from "../services/AuthContext";
 import apiClient from "../services/AxiosConfig";
+import NavBar from "./Navbar";
+import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
-//TO verify functionality i used mock testing:)
 const CourseForm = () => {
-  const [formSchema, setFormSchema] = useState([])
-  const [courseDetails, setCourseDetails] = useState({}); //dynamically updated
-  const { user} = useAuth();
-  const [conflictError, setConflictError] = useState(false);
+  const navigate = useNavigate();
+  const [courseDetails, setCourseDetails] = useState({});
+  const { user } = useAuth();
+  const [validationError, setValidationError] = useState("");
+  const [shortDescriptionLength, setShortDescriptionLength] = useState(0);
+  const [longDescriptionLength, setLongDescriptionLength] = useState(0);
 
-  //fetch the form schema from the backend API
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    const response = await fetch(`${BACKEND_URL}/search/categories`);
+    const data = await response.json();
+    setCategories(data);
+  };
+
   useEffect(() => {
-    async function fetchSchema() {
-      try {
-        const response = await fetch("http://localhost:8080/tutor/course/create");
-        if (!response.ok) {
-          throw new Error(`Failed to fetch schema. Status: ${response.status}`);
-        }
-        const schema = await response.json();
-        setFormSchema(schema);
-      } catch (error) {
-        console.error("Error fetching form schema:", error);
-        alert("Failed to fetch form schema. Please check your backend.");
-      }
-    }
-    fetchSchema();
+    fetchCategories();
   }, []);
+
+  const MAX_SHORT_DESC = 150;
+  const MAX_LONG_DESC = 2000;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourseDetails({ ...courseDetails, [name]: value });
-  };
 
-  const handleImageUpload = (file) => {
-    setCourseDetails({ ...courseDetails, image: file });
+    if (name === "shortDescription") {
+      if (value.length <= MAX_SHORT_DESC) {
+        setShortDescriptionLength(value.length);
+        setCourseDetails({ ...courseDetails, [name]: value });
+      }
+    } else if (name === "longDescription") {
+      if (value.length <= MAX_LONG_DESC) {
+        setLongDescriptionLength(value.length);
+        setCourseDetails({ ...courseDetails, [name]: value });
+      }
+    } else {
+      setCourseDetails({ ...courseDetails, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setConflictError(false);
+    setValidationError("");
+
+    const startDate = new Date(courseDetails.startDate);
+    const endDate = new Date(courseDetails.endDate);
+
+    if (startDate >= endDate) {
+      setValidationError("End date must be after start date.");
+      return;
+    }
 
     const requestBody = {
       courseName: courseDetails.courseName,
@@ -51,32 +68,24 @@ const CourseForm = () => {
       descriptionLong: courseDetails.longDescription,
       startDate: courseDetails.startDate,
       endDate: courseDetails.endDate,
+      averageRating: 0,
+      courseCategories: [
+        {
+          categoryId:
+            categories.find(
+              (category) => category.name === courseDetails.category,
+            )?.id || 0,
+          categoryName: courseDetails.category,
+        },
+      ],
     };
 
     try {
+      await apiClient.post("/tutor/course/create", requestBody);
 
-      const { data } = await apiClient.post(
-          "/tutor/course/create",
-          requestBody
-      );
-      // If successful, you can handle success here
-      alert("Course successfully created!");
-      console.log("Response:", data);
-
-      // Reset form fields
-      setCourseDetails({
-        courseName: "",
-        shortDescription: "",
-        longDescription: "",
-        category: "",
-        startDate: "",
-        endDate: "",
-        image: null,
-      });
+      navigate("/tutor-centre");
     } catch (error) {
-      // Handle conflict or other errors
       if (error.response?.status === 409) {
-        setConflictError(true);
         alert("A course with similar details already exists.");
       } else {
         console.error("Error submitting data:", error);
@@ -86,88 +95,96 @@ const CourseForm = () => {
   };
 
   return (
-      <div className="flex flex-col justify-center items-center w-full h-full">
-        <div className="mb-6">
-          <h1 className="text-3xl font-semibold text-gray-800 mb-2">
-            Tell us about your course
-          </h1>
-          <p className="text-gray-600">
-            We'll use this information to customize your course. You can change it any time.
-          </p>
-        </div>
-        <form onSubmit={handleSubmit} className="w-full max-w-4xl space-y-4">
-          {formSchema.map((field, index) => {                         //different fields are dynamically generated based on schema fetched frombackend API
-            switch (field.type) {
-              case "text":
-                return (
-                    <InputField
-                        key={index}
-                        label={field.label}
-                        placeholder={field.placeholder || ""}
-                        name={field.name}
-                        value={courseDetails[field.name] || ""}
-                        onChange={handleChange}
-                        required={field.required}
-                    />
-                );
-              case "textarea":
-                return (
-                    <TextareaField
-                        key={index}
-                        label={field.label}
-                        placeholder={field.placeholder || ""}
-                        name={field.name}
-                        value={courseDetails[field.name] || ""}
-                        onChange={handleChange}
-                        maxLength={field.maxLength}
-                        hint={field.maxLength ? `Max ${field.maxLength} characters.` : ""}
-                    />
-                );
-              case "select":
-                return (
-                    <SelectField
-                        key={index}
-                        label={field.label}
-                        name={field.name}
-                        value={courseDetails[field.name] || ""}
-                        onChange={handleChange}
-                        options={field.options || []}
-                        required={field.required}
-                    />
-                );
-              case "date":
-                return (
-                    <InputField
-                        key={index}
-                        label={field.label}
-                        type="date"
-                        name={field.name}
-                        value={courseDetails[field.name] || ""}
-                        onChange={handleChange}
-                        required={field.required}
-                    />
-                );
-              case "file":
-                return (
-                    <FileUpload
-                        key={index}
-                        label={field.label}
-                        onFileSelect={handleImageUpload}
-                    />
-                );
-              default:
-                return null;
-            }
-          })}
-
-          <button
-              type="submit"
-              className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
-          >
-            Submit
-          </button>
-        </form>
+    <div className="flex flex-col items-center w-full bg-white overflow-hidden font-merriweather_sans">
+      <NavBar currentPage="/tutor-centre" />
+      <div className="mb-6 mt-[120px]">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-2">
+          Create a New Course
+        </h1>
       </div>
+      <form onSubmit={handleSubmit} className="w-full max-w-4xl">
+        {validationError && (
+          <div className="text-red-500 text-sm">{validationError}</div>
+        )}
+
+        <InputField
+          label="Course Name *"
+          placeholder="Software Engineering"
+          name="courseName"
+          value={courseDetails.courseName || ""}
+          onChange={handleChange}
+          required={true}
+        />
+
+        <TextareaField
+          label="Short Description *"
+          placeholder="Enter a short description"
+          name="shortDescription"
+          value={courseDetails.shortDescription || ""}
+          onChange={handleChange}
+          rows={2}
+          maxLength={MAX_SHORT_DESC}
+          hint={`Max ${MAX_SHORT_DESC} characters.`}
+          required={true}
+        />
+        <p
+          className={`text-xs mb-4 ${
+            shortDescriptionLength === MAX_SHORT_DESC ? "text-red-500" : ""
+          }`}
+        >
+          {shortDescriptionLength}/{MAX_SHORT_DESC}
+        </p>
+
+        <TextareaField
+          label="Long Description *"
+          placeholder="Enter a detailed description"
+          name="longDescription"
+          rows={6}
+          value={courseDetails.longDescription || ""}
+          onChange={handleChange}
+          maxLength={MAX_LONG_DESC}
+          hint={`Max ${MAX_LONG_DESC} characters.`}
+          required={true}
+        />
+        <p className="text-xs mb-4">
+          {longDescriptionLength}/{MAX_LONG_DESC}
+        </p>
+
+        <SelectField
+          label="Category *"
+          name="category"
+          value={courseDetails.category || ""}
+          onChange={handleChange}
+          options={categories}
+          required={true}
+        />
+
+        <InputField
+          label="Start Date *"
+          type="date"
+          name="startDate"
+          value={courseDetails.startDate || ""}
+          onChange={handleChange}
+          required={true}
+        />
+
+        <InputField
+          label="End Date *"
+          type="date"
+          name="endDate"
+          value={courseDetails.endDate || ""}
+          onChange={handleChange}
+          required={true}
+        />
+
+        <button
+          type="submit"
+          className="bg-blue-800 max-h-12 w-full max-w-xs rounded-full text-white py-2 px-4"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 

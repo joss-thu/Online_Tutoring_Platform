@@ -1,5 +1,6 @@
 package de.thu.thutorium.services.implementations;
 
+import de.thu.thutorium.api.TOMappers.RatingTutorTOMapper;
 import de.thu.thutorium.api.TOMappers.UserTOMapper;
 import de.thu.thutorium.api.transferObjects.common.RatingTutorTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
@@ -33,13 +34,14 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final CourseRepository courseRepository;
-    private final UserTOMapper userMapper;
-    private final AffiliationDBOMapper affiliationDBOMapper;
-    private final AffiliationRepository affiliationRepository;
-    private final RatingTutorRepository ratingTutorRepository;
-    private final ProgressRepository progressRepository;
+  private final UserRepository userRepository;
+  private final CourseRepository courseRepository;
+  private final UserTOMapper userMapper;
+  private final AffiliationDBOMapper affiliationDBOMapper;
+  private final AffiliationRepository affiliationRepository;
+  private final RatingTutorRepository ratingTutorRepository;
+  private final RatingTutorTOMapper ratingTutorTOMapper;
+  private final ProgressRepository progressRepository;
 
     /**
      * Returns the total number of students in the system.
@@ -338,8 +340,20 @@ public class UserServiceImpl implements UserService {
       throw new IllegalStateException("Student is not enrolled in the course.");
     }
 
+    // Fetch and delete progress associated with the student and course
+    ProgressDBO progress = progressRepository.findByUserIdAndCourseId(studentId, courseId);
+    if (progress != null) {
+      progressRepository.delete(progress);
+    }
+
     // Save the updated entities back to the database
     userRepository.save(student);
     courseRepository.save(course);
+  }
+
+  @Override
+  public List<RatingTutorTO> getTutorRatings(Long tutorId) {
+    List<RatingTutorDBO> ratingTutorDBOS = ratingTutorRepository.findByTutor_UserId(tutorId);
+    return ratingTutorDBOS.stream().map(ratingTutorTOMapper::toDTO).toList();
   }
 }

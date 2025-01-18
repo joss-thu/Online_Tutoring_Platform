@@ -55,9 +55,15 @@ public class ChatServiceImpl implements ChatService {
   @Transactional
   @Override
   public void createChat(ChatCreateTO requestDTO) {
+    // Fetch the creator from the database
+    UserDBO creator =
+            userRepository
+                    .findById(requestDTO.getCreatorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Creator not found"));
+
     // Fetch participants from the database
     Set<UserDBO> participants =
-        new HashSet<>(userRepository.findAllById(requestDTO.getParticipantIds()));
+            new HashSet<>(userRepository.findAllById(requestDTO.getParticipantIds()));
 
     // Ensure all participants are valid
     if (participants.size() != requestDTO.getParticipantIds().size()) {
@@ -65,7 +71,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     // Map DTO to Entity
-    ChatDBO chatDBO = chatMapper.toEntity(requestDTO, participants);
+    ChatDBO chatDBO = chatMapper.toEntity(requestDTO, creator, participants);
 
     // Save Chat Entity
     chatRepository.save(chatDBO);
@@ -115,6 +121,7 @@ public class ChatServiceImpl implements ChatService {
               // Create DTO
               return new ChatSummaryTO(
                   chat.getChatId(),
+                  chat.getCreator() != null ? chat.getCreator().getUserId() : null,
                   receiver != null
                       ? new ReceiverTO(
                           receiver.getUserId(), receiver.getFirstName(), receiver.getLastName())

@@ -67,9 +67,7 @@ public class SearchController {
    *     or both, depending on the provided parameters. Results may include duplicates if multiple
    *     entities match the search criteria.
    * @throws jakarta.persistence.EntityNotFoundException if the searched parameters are not found.
-   *     Todo: Review: - The method will find match for any course and tutor names, even if the
-   *     courses are not being offered by the respective tutors; is this by design? - Passing of
-   *     special characters 'C++' seem to cause internal errors?
+
    */
   @Operation(
       summary = "Search tutors or courses",
@@ -158,10 +156,7 @@ public class SearchController {
    * Retrieves a list of courses based on the specified category name.
    *
    * @param categoryName The name of the category for which courses are to be retrieved.
-   * @return A list of {@link CourseTO} objects that belong to the specified category. Todo: Is the
-   *     method case-insensitive for parameters? Does it provide/ need to provide partial matches?
-   *     Todo: Review the repository method? Todo: The url is misleading? Shouldn't it be
-   *     course/Category name?
+   * @return A list of {@link CourseTO} objects that belong to the specified category.
    */
   @Operation(
       summary = "Retrieve courses by category",
@@ -201,8 +196,14 @@ public class SearchController {
         content = @Content(schema = @Schema(implementation = Long.class))),
   })
   @GetMapping("students/count")
-  public Long getStudentCount() {
-    return userService.getStudentCount();
+  public ResponseEntity<?> getStudentCount() {
+    try {
+      Long studentCount = userService.getStudentCount();
+      return ResponseEntity.status(HttpStatus.OK).body(studentCount);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   /**
@@ -221,9 +222,16 @@ public class SearchController {
         content = @Content(schema = @Schema(implementation = Long.class))),
   })
   @GetMapping("tutors/count")
-  public Long getTutorsCount() {
-    return userService.getTutorCount();
+  public ResponseEntity<?> getTutorsCount() {
+    try {
+      Long tutorCount = userService.getTutorCount();
+      return ResponseEntity.status(HttpStatus.OK).body(tutorCount);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
+
 
   /**
    * Handles a GET request to retrieve the total count of courses.
@@ -240,9 +248,15 @@ public class SearchController {
         description = "Course count retrieved successfully",
         content = @Content(schema = @Schema(implementation = Long.class))),
   })
-  @GetMapping("/courses/count")
-  public Long getCoursesCount() {
-    return courseService.getTotalCountOfCourses();
+  @GetMapping("courses/count")
+  public ResponseEntity<?> getCoursesCount() {
+    try {
+      Long courseCount = courseService.getTotalCountOfCourses();
+      return ResponseEntity.status(HttpStatus.OK).body(courseCount);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body("Unexpected error: " + ex.getMessage());
+    }
   }
 
   /**

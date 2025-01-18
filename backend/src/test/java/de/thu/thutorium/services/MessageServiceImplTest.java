@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.services;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;

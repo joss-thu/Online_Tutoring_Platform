@@ -4,6 +4,7 @@ import de.thu.thutorium.database.dbObjects.enums.AffiliationType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,4 +56,7 @@ public class AffiliationDBO {
    */
   @OneToMany(mappedBy = "affiliation")
   private List<UserDBO> affiliatedUsers;
+
+  @OneToMany(mappedBy = "affiliation", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<AllowedDomainDBO> allowedDomains = new ArrayList<>();
 }

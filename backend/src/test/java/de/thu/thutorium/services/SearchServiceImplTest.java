@@ -1,4 +1,4 @@
-package de.thu.thutorium;
+package de.thu.thutorium.services;
 
 import de.thu.thutorium.api.TOMappers.CourseTOMapper;
 import de.thu.thutorium.api.TOMappers.TutorTOMapper;

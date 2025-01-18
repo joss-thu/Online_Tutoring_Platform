@@ -36,6 +36,9 @@ public class ChatCreateTO {
   @Size(min = 2, message = "A chat must have at least two participants.")
   private List<Long> participantIds;
 
+  /** The ID of the user creating the chat. */
+  private Long creatorId;
+
   /** Optional title for group chats. Can be null or empty for non-group chats. */
   private String chatTitle;
 
