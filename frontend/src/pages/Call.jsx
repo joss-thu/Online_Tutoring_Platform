@@ -66,7 +66,7 @@ function CallPage() {
       setCallAccepted(false);
 
       if (stream) {
-        stream.getTracks().forEach((track) => track.stop()); // Stop all tracks
+        stream.getTracks().forEach((track) => track.stop());
         setStream(null);
       }
 
@@ -151,8 +151,8 @@ function CallPage() {
       setStream(null);
     }
 
-    if (userVideo.current) userVideo.current.srcObject = null; // Clear remote video
-    if (myVideo.current) myVideo.current.srcObject = null; // Clear local video
+    if (userVideo.current) userVideo.current.srcObject = null;
+    if (myVideo.current) myVideo.current.srcObject = null;
 
     if (connectionRef.current) {
       connectionRef.current.destroy();
