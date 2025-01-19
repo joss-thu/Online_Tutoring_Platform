@@ -117,11 +117,6 @@ public class DBInitializer {
               + "ADD CONSTRAINT meeting_date_limit "
               + "CHECK (meeting_date <= CURRENT_DATE + INTERVAL '1 year')");
 
-      // Step 10: Add unique constraint to the progress table
-      jdbcTemplate.execute(
-              "ALTER TABLE progess "
-                      + "ADD CONSTRAINT unique_user_course UNIQUE (student_id, course_id)");
-
       log.info("Database constraints added successfully.");
     } catch (DataIntegrityViolationException e) {
       log.error("Constraint violation: " + e.getMessage());
