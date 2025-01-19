@@ -67,7 +67,7 @@ public class CourseServiceTest {
     @Test
     void testFindCourseById() {
         // Arrange
-        when(courseRepository.findCoursesByCategoryName(String.valueOf(1L))).thenReturn((List<CourseDBO>) courseDBO);
+        when(courseRepository.findCourseDBOByCourseId(1L)).thenReturn(Optional.of(courseDBO));
         when(courseTOMapper.toDTO(courseDBO)).thenReturn(courseTO);
 
         // Act
@@ -76,7 +76,7 @@ public class CourseServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals("Test Course", result.getCourseName());
-        verify(courseRepository, times(1)).findCoursesByCategoryName(String.valueOf(1L));
+        verify(courseRepository, times(1)).findCourseDBOByCourseId(1L);
     }
 
     @Test
@@ -157,16 +157,25 @@ public class CourseServiceTest {
         updatedCourseTO.setCourseName("Updated Course");
         updatedCourseTO.setTutorId(1L);
 
+        // Mock behaviors
         when(courseRepository.findById(1L)).thenReturn(Optional.of(courseDBO));
         when(userRepository.findById(1L)).thenReturn(Optional.of(tutor));
+        when(courseDBOMapper.toDBO(updatedCourseTO)).thenReturn(courseDBO);
+        when(courseRepository.save(courseDBO)).thenReturn(courseDBO);
+        when(courseTOMapper.toDTO(courseDBO)).thenReturn(courseTO);
 
         // Act
-        courseService.updateCourse(1L, updatedCourseTO);
+        CourseTO updatedCourse = courseService.updateCourse(1L, updatedCourseTO);
+
+        // Debugging line: Check if the returned updatedCourse is null
+        System.out.println("Updated course: " + updatedCourse);
 
         // Assert
-        assertEquals("Updated Course", courseDBO.getCourseName());
+        assertNotNull(updatedCourse, "The updated course should not be null");
+        assertEquals("Updated Course", updatedCourse.getCourseName());
         verify(courseRepository, times(1)).save(courseDBO);
     }
+
 
     @Test
     void testUpdateCourse_CourseNotFound() {
