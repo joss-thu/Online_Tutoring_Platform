@@ -5,7 +5,6 @@ import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
-import de.thu.thutorium.database.dbObjects.CourseDBO;
 import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.MeetingService;
 import de.thu.thutorium.services.interfaces.ProgressService;
@@ -22,10 +21,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.security.core.AuthenticationException;
 import java.util.List;
 
 /**
@@ -401,6 +400,4 @@ public class TutorController {
               .body("An error occurred while retrieving students: " + e.getMessage());
     }
   }
-
-
 }

@@ -70,7 +70,7 @@ public class MeetingDBO {
   @Column(name = "meeting_end_time", nullable = false)
   private LocalDateTime endTime;
 
-  /** The duration of the meeting in minutes. This field cannot be null. */
+  /** The duration of the meeting in minutes. */
   @Transient
   private Long duration;
 
@@ -78,6 +78,7 @@ public class MeetingDBO {
    * Initializes transient fields after the entity is loaded from the database.
    */
   @PostLoad
+  @PostPersist
   private void onLoad() {
     this.duration = Duration.between(startTime, endTime).toMinutes();
     this.meetingDate = startTime.toLocalDate();

@@ -36,6 +36,7 @@ public interface MeetingTOMapper {
           @Mapping(source = "tutor.fullName", target = "tutorName"),
           @Mapping(source = "course.courseId", target = "courseId"),
           @Mapping(source = "course.courseName", target = "courseName"),
+          @Mapping(source = "duration", target = "duration_in_minutes"),
           @Mapping(source = "address.addressId", target = "addressId"),
           @Mapping(source = "address.university.universityName", target = "universityName"),
           @Mapping(source = "address.campusName", target = "campusName"),
