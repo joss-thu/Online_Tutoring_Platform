@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import java.util.List;
 @Validated
 public class MeetingTO {
   /** The tutor who created the meeting. */
-  @NotNull(message = "Tutor cannot be null")
+
   private Long tutorId;
 
   private String tutorName;
@@ -28,6 +28,8 @@ public class MeetingTO {
   private Long courseId;
 
   private String courseName;
+
+  private LocalDate meetingDate;
 
   /** The time of the meeting. */
   @NotNull(message = "Meeting time cannot be null")
@@ -41,13 +43,11 @@ public class MeetingTO {
   private LocalDateTime endTime;
 
   /** The duration of the meeting in minutes. */
-  private Integer duration;
+  private Long duration_in_minutes;
 
   /** The types of the meeting. */
   @NotNull(message = "Meeting types cannot be null")
   private MeetingType meetingType;
-
-  private List<Long> participantIds;
 
   /** The address ID where the meeting is being held. */
   private Long addressId;

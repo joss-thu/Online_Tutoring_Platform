@@ -63,11 +63,10 @@ public class MeetingServiceImpl implements MeetingService {
   @Override
   @Transactional
   public MeetingTO createMeeting(MeetingTO meetingTO) {
-    validateTutorVerified(meetingTO.getTutorId());
 
+    validateTutorVerified(meetingTO.getTutorId());
     UserDBO tutor = validateAndGetTutor(meetingTO.getTutorId());
     CourseDBO course = validateAndGetCourse(meetingTO.getCourseId(), meetingTO.getTutorId());
-    AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
 
     MeetingDBO meetingDBO =
         MeetingDBO.builder()
@@ -79,10 +78,15 @@ public class MeetingServiceImpl implements MeetingService {
             .roomNum(Optional.ofNullable(meetingTO.getRoomNum()).orElse(DEFAULT_ROOM_NUM))
             .meetingLink(
                 Optional.ofNullable(meetingTO.getMeetingLink()).orElse(DEFAULT_MEETING_LINK))
-            .address(address)
             .build();
 
+    if (meetingTO.getAddressId() != null) {
+      AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
+      meetingDBO.setAddress(address);
+    }
+
     return meetingTOMapper.toDTO(meetingRepository.save(meetingDBO));
+
   }
 
   /**
@@ -144,7 +148,6 @@ public class MeetingServiceImpl implements MeetingService {
 
     UserDBO tutor = validateAndGetTutor(meetingTO.getTutorId());
     CourseDBO course = validateAndGetCourse(meetingTO.getCourseId(), meetingTO.getTutorId());
-    AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
 
     existingMeeting =
         existingMeeting.toBuilder()
@@ -156,8 +159,12 @@ public class MeetingServiceImpl implements MeetingService {
             .roomNum(Optional.ofNullable(meetingTO.getRoomNum()).orElse(DEFAULT_ROOM_NUM))
             .meetingLink(
                 Optional.ofNullable(meetingTO.getMeetingLink()).orElse(DEFAULT_MEETING_LINK))
-            .address(address)
             .build();
+
+    if (meetingTO.getAddressId() != null) {
+      AddressDBO address = validateAndGetAddress(meetingTO.getAddressId());
+      existingMeeting.setAddress(address);
+    }
 
     return meetingTOMapper.toDTO(meetingRepository.save(existingMeeting));
   }
@@ -185,6 +192,18 @@ public class MeetingServiceImpl implements MeetingService {
     return meetingTOMapper.toDTOList(allMeetings);
   }
 
+
+  /**
+   * Books a meeting for the authenticated student.
+   *
+   * <p>This method retrieves the authenticated student's ID, validates the student, and checks if the student is
+   * enrolled in the course for the meeting. If the student is enrolled, the student is added to the meeting's
+   * participants and the meeting is added to the student's meetings. The changes are then saved to the repository.
+   *
+   * @param meetingId the ID of the meeting to be booked
+   * @throws EntityNotFoundException if the meeting or student is not found
+   * @throws IllegalStateException if the student is not enrolled in the course for the meeting
+   */
   @Override
   @Transactional
   public void bookMeeting(Long meetingId) {
@@ -209,6 +228,17 @@ public class MeetingServiceImpl implements MeetingService {
     userRepository.save(student);
   }
 
+  /**
+   * Cancels a meeting for the authenticated student.
+   *
+   * <p>This method retrieves the authenticated student's ID, validates the student, and checks if the student is a
+   * participant of the meeting. If the student is a participant, the student is removed from the meeting's participants
+   * and the meeting is removed from the student's meetings. The changes are then saved to the repository.
+   *
+   * @param meetingId the ID of the meeting to be canceled
+   * @throws EntityNotFoundException if the meeting or student is not found
+   * @throws IllegalStateException if the student is not a participant of the meeting
+   */
   @Override
   @Transactional
   public void cancelMeeting(Long meetingId) {
@@ -233,6 +263,15 @@ public class MeetingServiceImpl implements MeetingService {
     userRepository.save(student);
   }
 
+  /**
+   * Retrieves a meeting by its ID.
+   *
+   * <p>This method retrieves a meeting by its ID and maps it to a transfer object (DTO).
+   *
+   * @param meetingId the ID of the meeting to be retrieved
+   * @return the meeting transfer object
+   * @throws EntityNotFoundException if the meeting is not found
+   */
   @Override
   public MeetingTO retrieveMeetingById(Long meetingId) {
     return meetingRepository
@@ -241,6 +280,15 @@ public class MeetingServiceImpl implements MeetingService {
         .orElseThrow(() -> new EntityNotFoundException("Meeting not found with ID: " + meetingId));
   }
 
+  /**
+   * Retrieves all meetings for a specific course.
+   *
+   * <p>This method retrieves a course by its ID and returns a list of meetings for that course, mapped to transfer objects (DTOs).
+   *
+   * @param courseId the ID of the course
+   * @return a list of meeting transfer objects
+   * @throws EntityNotFoundException if the course is not found
+   */
   @Override
   public List<MeetingTO> retrieveMeetingsByCourse(Long courseId) {
     CourseDBO course =
@@ -252,6 +300,15 @@ public class MeetingServiceImpl implements MeetingService {
     return meetingTOMapper.toDTOList(new ArrayList<>(course.getMeetings()));
   }
 
+  /**
+   * Retrieves all participants for a specific meeting.
+   *
+   * <p>This method retrieves a meeting by its ID and returns a list of participants for that meeting, mapped to transfer objects (DTOs).
+   *
+   * @param meetingId the ID of the meeting
+   * @return a list of user transfer objects
+   * @throws EntityNotFoundException if the meeting is not found
+   */
   @Override
   public List<UserTO> retrieveAllParticipants(Long meetingId) {
     MeetingDBO meeting =
@@ -263,6 +320,14 @@ public class MeetingServiceImpl implements MeetingService {
     return meeting.getParticipants().stream().map(userTOMapper::toDTO).toList();
   }
 
+  /**
+   * Validates if a tutor is verified.
+   *
+   * <p>This method checks if a tutor is verified by their ID.
+   *
+   * @param tutorId the ID of the tutor
+   * @throws IllegalStateException if the tutor is not verified
+   */
   private void validateTutorVerified(Long tutorId) {
     if (!isTutorVerified(tutorId)) {
       throw new IllegalStateException("Tutor must be verified to create a meeting.");
@@ -270,30 +335,66 @@ public class MeetingServiceImpl implements MeetingService {
   }
 
   // helper methods
+  /**
+   * Validates and retrieves a tutor by their ID.
+   *
+   * @param tutorId the ID of the tutor
+   * @return the tutor entity
+   * @throws EntityNotFoundException if the tutor is not found
+   */
   private UserDBO validateAndGetTutor(Long tutorId) {
     return userRepository
         .findUserDBOByUserIdAndRoles_RoleName(tutorId, Role.TUTOR)
         .orElseThrow(() -> new EntityNotFoundException("Tutor not found with ID: " + tutorId));
   }
 
+  /**
+   * Validates and retrieves a student by their ID.
+   *
+   * @param studentId the ID of the student
+   * @return the student entity
+   * @throws EntityNotFoundException if the student is not found
+   */
   private UserDBO validateAndGetStudent(Long studentId) {
     return userRepository
         .findUserDBOByUserIdAndRoles_RoleName(studentId, Role.STUDENT)
         .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
   }
 
+  /**
+   * Validates and retrieves a course by its ID and tutor ID.
+   *
+   * @param courseId the ID of the course
+   * @param tutorId the ID of the tutor
+   * @return the course entity
+   * @throws EntityNotFoundException if the course is not found
+   */
   private CourseDBO validateAndGetCourse(Long courseId, Long tutorId) {
     return courseRepository
         .findByCourseIdAndTutor_UserId(courseId, tutorId)
         .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
   }
 
+  /**
+   * Validates and retrieves an address by its ID.
+   *
+   * @param addressId the ID of the address
+   * @return the address entity
+   * @throws EntityNotFoundException if the address is not found
+   */
   private AddressDBO validateAndGetAddress(Long addressId) {
     return addressRepository
         .findById(addressId)
         .orElseThrow(() -> new EntityNotFoundException("Address not found with ID: " + addressId));
   }
 
+  /**
+   * Checks if a tutor is verified.
+   *
+   * @param tutorId the ID of the tutor
+   * @return true if the tutor is verified, false otherwise
+   * @throws EntityNotFoundException if the tutor is not found
+   */
   public boolean isTutorVerified(Long tutorId) {
     // Find the user by tutorId
     UserDBO tutor =
