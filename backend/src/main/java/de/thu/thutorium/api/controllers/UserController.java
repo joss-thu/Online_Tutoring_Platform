@@ -337,7 +337,6 @@ public class UserController {
     }
   }
 
-
   @Operation(
       summary = "Retrieve addresses by ID",
       description = "Fetches all addresses for a given ID.",
