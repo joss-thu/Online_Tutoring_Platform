@@ -224,7 +224,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.OK).body(summaries);
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body("Unexpected error: " + ex.getMessage());
+          .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -251,7 +251,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.OK).body(messages);
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body("Unexpected error: " + ex.getMessage());
+          .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -306,7 +306,7 @@ public class UserController {
       return ResponseEntity.status(HttpStatus.OK).body(ratingCourseTOS);
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body("Unexpected error: " + ex.getMessage());
+          .body("Unexpected error: " + ex.getMessage());
     }
   }
 
@@ -337,17 +337,193 @@ public class UserController {
     }
   }
 
+
+  @Operation(
+      summary = "Retrieve addresses by ID",
+      description = "Fetches all addresses for a given ID.",
+      tags = {"Addresses"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Addresses retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = AddressTO.class)))),
+    @ApiResponse(
+        responseCode = "204",
+        description = "No addresses found for the given ID",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(responseCode = "500", description = "Internal server error")
+  })
   @GetMapping("/address/{id}")
-  public ResponseEntity<List<AddressTO>> getAddressesById(@PathVariable Long id) {
-    List<AddressTO> addresses = addressService.getAddressesById(id);
-    if (addresses.isEmpty()) {
-      return ResponseEntity.noContent().build();
+  public ResponseEntity<?> getAddressesById(@PathVariable Long id) {
+    try {
+      List<AddressTO> addresses = addressService.getAddressesById(id);
+      if (addresses.isEmpty()) {
+        return ResponseEntity.noContent().build();
+      }
+      return ResponseEntity.ok(addresses);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
     }
-    return ResponseEntity.ok(addresses);
   }
 
+  @Operation(
+      summary = "Retrieve all addresses",
+      description = "Fetches all available addresses.",
+      tags = {"Addresses"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "All addresses retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = AddressTO.class)))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
   @GetMapping("/get-addresses")
-  public List<AddressTO> getAllAddresses() {
-    return addressService.getAllAddresses();
+  public ResponseEntity<?> getAllAddresses() {
+    try {
+      List<AddressTO> addresses = addressService.getAllAddresses();
+      return ResponseEntity.ok(addresses);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Book a meeting",
+      description = "Books a meeting identified by the provided meetingId.",
+      tags = {"Meetings"})
+  @ApiResponses({
+    @ApiResponse(responseCode = "201", description = "Meeting booked successfully"),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
+  @PostMapping("/meetings/book/{meetingId}")
+  public ResponseEntity<?> bookMeeting(@PathVariable Long meetingId) {
+    try {
+      meetingService.bookMeeting(meetingId);
+      return ResponseEntity.status(HttpStatus.CREATED).build();
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Cancel a meeting",
+      description = "Cancels a meeting identified by the provided meetingId.",
+      tags = {"Meetings"})
+  @ApiResponses({
+    @ApiResponse(responseCode = "204", description = "Meeting canceled successfully"),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
+  @DeleteMapping("/meetings/cancel/{meetingId}")
+  public ResponseEntity<?> cancelMeeting(@PathVariable Long meetingId) {
+    try {
+      meetingService.cancelMeeting(meetingId);
+      return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Retrieve meeting details by ID",
+      description = "Fetches the details of a meeting identified by the provided meetingId.",
+      tags = {"Meetings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Meeting details retrieved successfully",
+        content = @Content(schema = @Schema(implementation = MeetingTO.class))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Meeting not found",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
+  @GetMapping("/meetings/{meetingId}")
+  public ResponseEntity<?> retrieveMeetingById(@PathVariable Long meetingId) {
+    try {
+      MeetingTO meeting = meetingService.retrieveMeetingById(meetingId);
+      return ResponseEntity.ok(meeting);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Retrieve meetings by course ID",
+      description = "Fetches all meetings associated with the given courseId.",
+      tags = {"Meetings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Meetings retrieved successfully",
+        content =
+            @Content(array = @ArraySchema(schema = @Schema(implementation = MeetingTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "No meetings found for the given course ID",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
+  @GetMapping("/meetings/course/{courseId}")
+  public ResponseEntity<?> retrieveMeetingsByCourse(@PathVariable Long courseId) {
+    try {
+      List<MeetingTO> meetings = meetingService.retrieveMeetingsByCourse(courseId);
+      return ResponseEntity.ok(meetings);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
+  }
+
+  @Operation(
+      summary = "Retrieve all participants of a meeting",
+      description =
+          "Fetches the list of participants for a specific meeting identified by its meetingId.",
+      tags = {"Meetings"})
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Participants retrieved successfully",
+        content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserTO.class)))),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Meeting not found or no participants available",
+        content = @Content(schema = @Schema(implementation = String.class))),
+    @ApiResponse(
+        responseCode = "500",
+        description = "Internal server error",
+        content = @Content(schema = @Schema(implementation = String.class)))
+  })
+  @GetMapping("/meetings/{meetingId}/participants")
+  public ResponseEntity<?> retrieveAllParticipants(@PathVariable Long meetingId) {
+    try {
+      List<UserTO> participants = meetingService.retrieveAllParticipants(meetingId);
+      return ResponseEntity.ok(participants);
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Unexpected error: " + ex.getMessage());
+    }
   }
 }

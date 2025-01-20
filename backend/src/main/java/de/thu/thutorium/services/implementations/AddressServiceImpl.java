@@ -75,17 +75,32 @@ public class AddressServiceImpl implements AddressService {
     }
   }
 
+
+  /**
+   * Retrieves a list of address transfer objects (AddressTO) by the given address ID.
+   *
+   * @param addressId the ID of the address to retrieve.
+   * @return a list of AddressTO objects mapped from the database entities. If no addresses are
+   *     found for the given ID, returns an empty list.
+   */
   @Override
   public List<AddressTO> getAddressesById(Long addressId) {
     List<AddressDBO> addressDBOs = addressRepository.findByAddressId(addressId);
     return addressDBOs.stream().map(addressTOMapper::toDTO).collect(Collectors.toList());
   }
 
+
+  /**
+   * Retrieves all address transfer objects (AddressTO) from the database.
+   *
+   * @return a list of AddressTO objects mapped from all database entities. If no addresses are
+   *     found, returns an empty list.
+   */
   @Override
   public List<AddressTO> getAllAddresses() {
-    return addressRepository.findAll()
-            .stream()
-            .map(addressTOMapper::toDTO)
-            .collect(Collectors.toList());
+    return addressRepository.findAll().stream()
+        .map(addressTOMapper::toDTO)
+        .collect(Collectors.toList());
+
   }
 }

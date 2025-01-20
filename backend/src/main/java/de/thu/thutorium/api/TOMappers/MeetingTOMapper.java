@@ -32,15 +32,17 @@ public interface MeetingTOMapper {
    * @return a {@link MeetingTO} transfer object with mapped fields
    */
   @Mappings({
-          @Mapping(source = "tutor.userId", target = "tutorId"),
-          @Mapping(source = "meetingId", target = "meetingId"),
-          @Mapping(source = "tutor.fullName", target = "tutorName"),
-          @Mapping(source = "course.courseId", target = "courseId"),
-          @Mapping(source = "course.courseName", target = "courseName"),
-          @Mapping(source = "duration", target = "duration_in_minutes"),
-          @Mapping(source = "address.addressId", target = "addressId"),
-          @Mapping(source = "address.university.universityName", target = "universityName"),
-          @Mapping(source = "address.campusName", target = "campusName"),
+
+    @Mapping(source = "tutor.userId", target = "tutorId"),
+    @Mapping(source = "meetingId", target = "meetingId"),
+    @Mapping(source = "tutor.fullName", target = "tutorName"),
+    @Mapping(source = "course.courseId", target = "courseId"),
+    @Mapping(source = "course.courseName", target = "courseName"),
+    @Mapping(source = "duration", target = "duration_in_minutes"),
+    @Mapping(source = "address.addressId", target = "addressId"),
+    @Mapping(source = "address.university.universityName", target = "universityName"),
+    @Mapping(source = "address.campusName", target = "campusName"),
+
   })
   MeetingTO toDTO(MeetingDBO meetingDBO);
 

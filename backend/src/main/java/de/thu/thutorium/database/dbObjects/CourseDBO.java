@@ -1,6 +1,5 @@
 package de.thu.thutorium.database.dbObjects;
 
-import de.thu.thutorium.Utility.DBPreProcess;
 import jakarta.persistence.*;
 import lombok.*;
 
