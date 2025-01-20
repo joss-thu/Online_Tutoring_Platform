@@ -10,7 +10,6 @@ import DateTimePicker from "../components/DateTimePicker";
 
 const CreateMeeting = () => {
   const meetingTypes = ["ONLINE", "OFFLINE", "HYBRID"];
-  const campuses = ["PWS", "AEA"];
   const navigate = useNavigate();
   const [meetingDetails, setMeetingDetails] = useState({});
   const { user } = useAuth();
