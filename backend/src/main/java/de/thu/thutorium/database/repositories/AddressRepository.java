@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,4 +29,6 @@ public interface AddressRepository extends JpaRepository<AddressDBO, Long> {
           @NotNull String postalCode,
           @NotEmpty(message = "The country cannot be empty") String country,
           @NotEmpty(message = "The university name cannot be empty") String universityName);
+
+  List<AddressDBO> findByAddressId(Long addressId);
 }

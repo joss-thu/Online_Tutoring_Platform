@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /** Service implementation for managing addresses. */
 @RequiredArgsConstructor
@@ -45,19 +47,19 @@ public class AddressServiceImpl implements AddressService {
     // Check if the university already exists by name
     // If else, create a new one
     UniversityDBO universityDBO =
-        universityRepository
-            .findByUniversityName(address.getUniversity().getUniversityName())
-            .orElseGet(() -> new UniversityDBO(address.getUniversity().getUniversityName()));
+            universityRepository
+                    .findByUniversityName(address.getUniversity().getUniversityName())
+                    .orElseGet(() -> new UniversityDBO(address.getUniversity().getUniversityName()));
 
     // Check if the address already exists by address and university
     Optional<AddressDBO> resultAddressDBO =
-        addressRepository
-            .findByHouseNumAndStreetNameIgnoreCaseAndPostalCodeAndCountryIgnoreCaseAndUniversity_UniversityNameIgnoreCase(
-                address.getHouseNum(),
-                address.getStreetName(),
-                address.getPostalCode(),
-                address.getCountry(),
-                address.getUniversity().getUniversityName());
+            addressRepository
+                    .findByHouseNumAndStreetNameIgnoreCaseAndPostalCodeAndCountryIgnoreCaseAndUniversity_UniversityNameIgnoreCase(
+                            address.getHouseNum(),
+                            address.getStreetName(),
+                            address.getPostalCode(),
+                            address.getCountry(),
+                            address.getUniversity().getUniversityName());
 
     AddressDBO addressDBO;
 
@@ -69,7 +71,36 @@ public class AddressServiceImpl implements AddressService {
       return addressTOMapper.toDTO(savedAddress);
     } else {
       throw new EntityExistsException(
-          "Address already exists with the university " + universityDBO.getUniversityName());
+              "Address already exists with the university " + universityDBO.getUniversityName());
     }
+  }
+
+
+  /**
+   * Retrieves a list of address transfer objects (AddressTO) by the given address ID.
+   *
+   * @param addressId the ID of the address to retrieve.
+   * @return a list of AddressTO objects mapped from the database entities. If no addresses are
+   *     found for the given ID, returns an empty list.
+   */
+  @Override
+  public List<AddressTO> getAddressesById(Long addressId) {
+    List<AddressDBO> addressDBOs = addressRepository.findByAddressId(addressId);
+    return addressDBOs.stream().map(addressTOMapper::toDTO).collect(Collectors.toList());
+  }
+
+
+  /**
+   * Retrieves all address transfer objects (AddressTO) from the database.
+   *
+   * @return a list of AddressTO objects mapped from all database entities. If no addresses are
+   *     found, returns an empty list.
+   */
+  @Override
+  public List<AddressTO> getAllAddresses() {
+    return addressRepository.findAll().stream()
+        .map(addressTOMapper::toDTO)
+        .collect(Collectors.toList());
+
   }
 }
