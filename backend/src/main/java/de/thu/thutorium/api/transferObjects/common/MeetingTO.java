@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Validated
 public class MeetingTO {
   /** The tutor who created the meeting. */
+  private Long meetingId;
 
   private Long tutorId;
 

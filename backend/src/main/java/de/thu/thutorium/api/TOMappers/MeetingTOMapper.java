@@ -18,11 +18,11 @@ import java.util.List;
  * <p>The mapper is configured to be a Spring component using {@code componentModel = "spring"}.
  */
 @Mapper(
-    componentModel = "spring",
-    uses = {
-      AddressTOMapper.class,
-      UniversityTOMapper.class,
-    })
+        componentModel = "spring",
+        uses = {
+                AddressTOMapper.class,
+                UniversityTOMapper.class,
+        })
 public interface MeetingTOMapper {
 
   /**
@@ -33,6 +33,7 @@ public interface MeetingTOMapper {
    */
   @Mappings({
           @Mapping(source = "tutor.userId", target = "tutorId"),
+          @Mapping(source = "meetingId", target = "meetingId"),
           @Mapping(source = "tutor.fullName", target = "tutorName"),
           @Mapping(source = "course.courseId", target = "courseId"),
           @Mapping(source = "course.courseName", target = "courseName"),

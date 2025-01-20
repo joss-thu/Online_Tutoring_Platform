@@ -8,11 +8,14 @@ const CourseTabs = ({
   ratings,
   enrolledStudents,
   meetings,
+  bookedMeetings,
+  fetchStudentBookingStatus,
+  user,
 }) => {
   const [activeTab, setActiveTab] = useState(visibleTabs[0]);
 
   return (
-    <div className="fixed right-[2%] top-[48%] bottom-[5%] w-[30%] mx-auto p-6 border border-gray-400 bg-gray-900 rounded-3xl max-h-[70vh] flex flex-col">
+    <div className="fixed right-[2%] top-[48%] bottom-[5%] w-[36%] mx-auto p-6 border border-gray-400 bg-gray-900 rounded-3xl max-h-[70vh] flex flex-col">
       {/* Tabs (Fixed at Top) */}
       {visibleTabs.length > 0 && (
         <div
@@ -46,7 +49,14 @@ const CourseTabs = ({
         {activeTab === "students" && (
           <EnrolledStudents enrolledStudents={enrolledStudents} />
         )}
-        {activeTab === "meetings" && <Meetings meetings={meetings} />}
+        {activeTab === "meetings" && (
+          <Meetings
+            user={user}
+            meetings={meetings}
+            bookedMeetings={bookedMeetings}
+            fetchStudentBookingStatus={fetchStudentBookingStatus}
+          />
+        )}
       </div>
     </div>
   );

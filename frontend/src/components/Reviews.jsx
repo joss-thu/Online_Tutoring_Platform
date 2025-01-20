@@ -14,7 +14,7 @@ const Reviews = ({ ratings }) => {
           <img
             src={emptyReviews}
             alt="No meetings yet"
-            className="w-3/5 h-auto"
+            className="w-1/2 h-auto"
           />
         </div>
       )}

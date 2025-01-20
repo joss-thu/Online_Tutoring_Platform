@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "../components/InputField";
 import SelectField from "../components/SelectField";
 import { useAuth } from "../services/AuthContext";
@@ -17,6 +17,23 @@ const CreateMeeting = () => {
   const [validationError, setValidationError] = useState("");
   const [searchParams] = useSearchParams();
   const courseId = searchParams.get("courseId");
+  const [addresses, setAddresses] = useState(null);
+
+  const getAddresses = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/user/get-addresses`);
+      if (res.status === 200) {
+        const data = await res.json();
+        setAddresses(data);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getAddresses();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,8 +76,8 @@ const CreateMeeting = () => {
         startTime: meetingDetails.startDateTime + ":00",
         endTime: meetingDetails.endDateTime + ":00",
         meetingType: meetingDetails.meetingType,
-        campusName: meetingDetails.campusName,
         roomNum: meetingDetails.roomNum,
+        addressId: meetingDetails.addressId,
       };
     }
     try {
@@ -110,11 +127,11 @@ const CreateMeeting = () => {
             <div className="mt-4" />
 
             <SelectField
-              label="Campus *"
-              name="campusName"
-              value={meetingDetails.campusName || "PWS"}
+              label="Address *"
+              name="addressId"
+              value={meetingDetails.addressId}
               onChange={handleChange}
-              options={campuses}
+              options={addresses}
               required={true}
             />
 

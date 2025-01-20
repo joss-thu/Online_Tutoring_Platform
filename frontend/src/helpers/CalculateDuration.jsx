@@ -1,8 +1,4 @@
-import {
-  differenceInDays,
-  differenceInWeeks,
-  differenceInMonths,
-} from "date-fns";
+import { differenceInDays, differenceInMonths } from "date-fns";
 
 export default function getCourseDuration(start, end) {
   if (!start || !end) return "Duration not available";

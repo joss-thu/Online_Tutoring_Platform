@@ -45,6 +45,7 @@ function Course() {
   const [enrolledStudents, setEnrolledStudents] = useState(null);
   const [meetings, setMeetings] = useState(null);
   const [visibleTabs, setVisibleTabs] = useState(null);
+  const [bookedMeetings, setBookedMeetings] = useState(null);
 
   const fetchStudentEnrollStatus = async (courseData) => {
     if (!courseData) return;
@@ -52,15 +53,19 @@ function Course() {
     setEnrolled(false);
     try {
       const res = await apiClient.get(`/student/enrolled-courses`);
+      let localEnrollStatus;
       if (res.status === 200) {
         res.data.forEach((enrolledCourse) => {
           if (enrolledCourse.courseId === courseData.courseId) {
             setEnrolled(true);
+            localEnrollStatus = true;
           }
         });
       } else {
         setEnrolled(false);
+        localEnrollStatus = false;
       }
+      await fetchCourseMeetings(courseData, localEnrollStatus);
     } catch (error) {
       console.log(error);
     }
@@ -82,20 +87,46 @@ function Course() {
     }
   };
 
-  const fetchCourseMeetings = async (courseData) => {
+  const fetchCourseMeetings = async (courseData, localEnrollStatus) => {
     if (!courseData) return;
     setMeetings(null);
+
     if (
       (checkRole(TUTOR_ROLE) && user.id === courseData.tutorId) ||
-      (checkRole(STUDENT_ROLE) && enrolled)
+      (checkRole(STUDENT_ROLE) && localEnrollStatus)
     ) {
       try {
         const res = await apiClient.get(
           `/user/meetings/course/${courseData.courseId}`,
         );
         if (res.status === 200) {
-          setMeetings(res.data);
+          // Sort meetings by startTime (ascending order)
+          const sortedMeetings = res.data.sort(
+            (a, b) => new Date(a.startTime) - new Date(b.startTime),
+          );
+
+          if (
+            sortedMeetings.length > 0 &&
+            checkRole(STUDENT_ROLE) &&
+            localEnrollStatus
+          ) {
+            await fetchStudentBookingStatus();
+          }
+
+          setMeetings(sortedMeetings);
         }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const fetchStudentBookingStatus = async () => {
+    if (user) {
+      try {
+        const res = await fetch(`${BACKEND_URL}/user/get-meetings/${user.id}`);
+        const data = await res.json();
+        setBookedMeetings(data);
       } catch (error) {
         console.log(error);
       }
@@ -144,8 +175,9 @@ function Course() {
       }
       if (checkRole(STUDENT_ROLE)) {
         await fetchStudentEnrollStatus(data);
+      } else {
+        await fetchCourseMeetings(data, false);
       }
-      await fetchCourseMeetings(data);
     } catch (error) {
       console.error("Error fetching course details:", error);
     }
@@ -317,7 +349,7 @@ function Course() {
 
           {/* Course Content */}
           <div className="flex mt-5">
-            <div className="flex flex-col w-3/4 pr-10">
+            <div className="flex flex-col w-2/3 pr-10">
               {/* Class Description */}
               <div className="text-xl font-semibold text-gray-800">
                 Class Description
@@ -373,11 +405,14 @@ function Course() {
                 </ul>
               </div>
             </div>
-            {visibleTabs && (
+            {visibleTabs && user && (
               <CourseTabs
                 ratings={ratings}
                 enrolledStudents={enrolledStudents}
                 meetings={meetings}
+                bookedMeetings={bookedMeetings}
+                fetchStudentBookingStatus={fetchStudentBookingStatus}
+                user={user}
                 visibleTabs={visibleTabs}
               />
             )}
@@ -388,18 +423,18 @@ function Course() {
             relatedCourses.filter((c) => c.courseId !== course.courseId)
               .length > 0 &&
             user.id !== course.tutorId && (
-              <div className="mt-10">
+              <div className="mt-10 w-2/3">
                 <div className="text-xl font-semibold">
                   🎓 You might also like:
                 </div>
                 <div className="flex mt-3 space-x-4">
                   {relatedCourses
                     .filter((c) => c.courseId !== course.courseId) // Remove current course
-                    .slice(0, 2) // Get first 2 courses
+                    .slice(0, 3) // Get first 2 courses
                     .map((related) => (
                       <div
                         key={related.courseId}
-                        className="bg-gray-100 p-4 rounded-lg shadow-md w-1/3 cursor-pointer"
+                        className="bg-gray-100 p-4 rounded-xl border border-gray-200 w-1/3 cursor-pointer"
                         onClick={() =>
                           navigate(`/course?id=${related.courseId}`)
                         }

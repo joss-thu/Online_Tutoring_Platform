@@ -1,8 +1,20 @@
 import { format } from "date-fns";
 
-function FormatDateTime(dateString) {
+const addOrdinalSuffix = (day) => {
+  if (day > 3 && day < 21) return `${day}th`;
+  const suffixes = ["st", "nd", "rd"];
+  const lastDigit = day % 10;
+  return `${day}${suffixes[lastDigit - 1] || "th"}`;
+};
+
+const FormatDateTime = (dateString) => {
   const date = new Date(dateString);
-  return format(date, "dd MMM • HH:mm"); // Example: "20 Jan, 13:00"
-}
+  const day = addOrdinalSuffix(date.getDate());
+  const month = format(date, "MMM");
+  const year = format(date, "''yy");
+  const time = format(date, "HH:mm");
+
+  return `${day} ${month} ${year}\u00A0\u00A0 •\u00A0\u00A0 ${time}`;
+};
 
 export default FormatDateTime;
