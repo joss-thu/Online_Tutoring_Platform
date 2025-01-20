@@ -142,6 +142,8 @@ function Course() {
       if (res.status === 200) {
         setEnrolled(true);
       }
+
+      await fetchCourseMeetings(course, true);
     } catch (error) {
       console.log(error);
     }
@@ -157,6 +159,9 @@ function Course() {
       if (res.status === 200) {
         setEnrolled(false);
       }
+      setVisibleTabs((prevTabs) =>
+        prevTabs.filter((tab) => tab !== "meetings"),
+      );
     } catch (error) {
       console.log(error);
     }

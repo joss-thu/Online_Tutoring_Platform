@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Reviews from "./Reviews";
 import EnrolledStudents from "./EnrolledStudents";
 import Meetings from "./Meetings";
@@ -13,6 +13,13 @@ const CourseTabs = ({
   user,
 }) => {
   const [activeTab, setActiveTab] = useState(visibleTabs[0]);
+
+  // Update activeTab when visibleTabs changes
+  useEffect(() => {
+    if (!visibleTabs.includes(activeTab)) {
+      setActiveTab(visibleTabs[0]); // Set the first available tab as active
+    }
+  }, [visibleTabs, activeTab]);
 
   return (
     <div className="fixed right-[2%] top-[48%] bottom-[5%] w-[36%] mx-auto p-6 border border-gray-400 bg-gray-900 rounded-3xl max-h-[70vh] flex flex-col">
@@ -49,7 +56,7 @@ const CourseTabs = ({
         {activeTab === "students" && (
           <EnrolledStudents enrolledStudents={enrolledStudents} />
         )}
-        {activeTab === "meetings" && (
+        {activeTab === "meetings" && visibleTabs.includes("meetings") && (
           <Meetings
             user={user}
             meetings={meetings}
@@ -61,4 +68,5 @@ const CourseTabs = ({
     </div>
   );
 };
+
 export default CourseTabs;
