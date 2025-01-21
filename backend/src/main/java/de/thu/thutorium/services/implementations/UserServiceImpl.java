@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
   private final RatingTutorTOMapper ratingTutorTOMapper;
   private final ProgressRepository progressRepository;
   private final CourseTOMapper courseTOMapper;
+  private final ChatRepository chatRepository;
 
     /**
      * Returns the total number of students in the system.
@@ -128,15 +129,35 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void deleteUser(Long userId) {
-    userRepository
-        .findUserDBOByUserId(userId)
-        .ifPresentOrElse(
-            userRepository::delete,
-            () -> {
-              throw new EntityNotFoundException(
-                  "User with ID " + userId + " does not exist in database.");
-            });
+    UserDBO user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "User with ID " + userId + " does not exist in database."));
+
+    // Clear relationships in other entities before deleting the user
+    // Clear roles
+    user.getRoles().forEach(role -> role.getUsers().remove(user));
+    user.getRoles().clear();
+
+    // Clear verifiers
+    user.getVerifiers().forEach(verifier -> verifier.getVerifiers().remove(user));
+    user.getVerifiers().clear();
+
+    // Clear courses
+    user.getStudentCourses().forEach(course -> course.getStudents().remove(user));
+    user.getStudentCourses().clear();
+
+    // Clear meetings
+    user.getMeetings().forEach(meeting -> meeting.getParticipants().remove(user));
+    user.getMeetings().clear();
+
+    // Clear chat participants
+    List<ChatDBO> chats = chatRepository.findByParticipants_UserId(user.getUserId()); // Custom repository query
+    chats.forEach(chat -> chat.getParticipants().remove(user));
+
+    // Delete the user
+    userRepository.delete(user);
   }
+
 
   /**
    * Updates the details of an existing user in the system.
