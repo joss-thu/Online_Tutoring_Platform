@@ -1,14 +1,8 @@
 package de.thu.thutorium.api.controllers;
 
 import de.thu.thutorium.Utility.AuthUtil;
-import de.thu.thutorium.api.transferObjects.common.CourseTO;
-import de.thu.thutorium.api.transferObjects.common.MeetingTO;
-import de.thu.thutorium.api.transferObjects.common.ProgressTO;
-import de.thu.thutorium.api.transferObjects.common.UserTO;
-import de.thu.thutorium.services.interfaces.CourseService;
-import de.thu.thutorium.services.interfaces.MeetingService;
-import de.thu.thutorium.services.interfaces.ProgressService;
-import de.thu.thutorium.services.interfaces.UserService;
+import de.thu.thutorium.api.transferObjects.common.*;
+import de.thu.thutorium.services.interfaces.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,6 +54,8 @@ public class TutorController {
 
   /** Service for managing progress-related operations. */
   private final ProgressService progressService;
+
+  private final ReportService reportService;
 
   /**
    * Creates a new meeting.
@@ -399,5 +395,31 @@ public class TutorController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
               .body("An error occurred while retrieving students: " + e.getMessage());
     }
+  }
+
+  /**
+   * Endpoint to create a new report.
+   *
+   * @param reportTO the report transfer object to be created
+   * @return the created report in the response body
+   */
+  @PostMapping("/reporting/create-report")
+  public ResponseEntity<ReportTO> createReport(@RequestBody ReportTO reportTO) {
+    // Create the report and return the created report object
+    ReportTO createdReport = reportService.createReport(reportTO);
+    return new ResponseEntity<>(createdReport, HttpStatus.CREATED);
+  }
+
+  /**
+   * Endpoint to delete a report by ID.
+   *
+   * @param reportId the ID of the report to be deleted
+   * @return a response indicating the success of the operation
+   */
+  @DeleteMapping("/reporting/delete-report/{reportId}")
+  public ResponseEntity<Void> deleteReport(@PathVariable Long reportId) {
+    // Delete the report by ID
+    reportService.deleteReport(reportId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }
