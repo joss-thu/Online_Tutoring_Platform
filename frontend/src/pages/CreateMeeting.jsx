@@ -7,32 +7,101 @@ import NavBar from "../components/Navbar";
 import { BACKEND_URL } from "../config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DateTimePicker from "../components/DateTimePicker";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const CreateMeeting = () => {
   const meetingTypes = ["ONLINE", "OFFLINE", "HYBRID"];
   const navigate = useNavigate();
-  const [meetingDetails, setMeetingDetails] = useState({});
   const { user } = useAuth();
-  const [validationError, setValidationError] = useState("");
   const [searchParams] = useSearchParams();
-  const courseId = searchParams.get("courseId");
-  const [addresses, setAddresses] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const getAddresses = async () => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/user/get-addresses`);
-      if (res.status === 200) {
-        const data = await res.json();
-        setAddresses(data);
+  const courseId = searchParams.get("courseId");
+  const meetingId = searchParams.get("meetingId");
+  const isEditMode = searchParams.get("edit") === "true";
+
+  const [meetingDetails, setMeetingDetails] = useState({});
+  const [addresses, setAddresses] = useState(null);
+  const [validationError, setValidationError] = useState("");
+
+  const ensureSeconds = (dateTime) => {
+    if (!dateTime) return "";
+    const dateTimeParts = dateTime.split("T");
+    if (dateTimeParts.length !== 2) return dateTime;
+
+    const [date, time] = dateTimeParts;
+    const timeParts = time.split(":");
+
+    if (timeParts.length === 2) {
+      return `${date}T${time}:00`;
+    }
+    return dateTime;
+  };
+
+  useEffect(() => {
+    const getAddresses = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/user/get-addresses`);
+        if (res.status === 200) {
+          const data = await res.json();
+          setAddresses(data);
+        }
+      } catch (err) {
+        console.log("Error fetching addresses:", err);
       }
-    } catch (err) {
-      console.log(err);
+    };
+    getAddresses();
+  }, []);
+
+  const handleDelete = async () => {
+    if (
+      isEditMode &&
+      courseId &&
+      meetingId &&
+      user &&
+      meetingDetails &&
+      meetingDetails?.tutorId === user?.id &&
+      meetingDetails?.courseId === courseId
+    ) {
+      try {
+        const res = await apiClient.delete(
+          `/tutor/delete-meeting/${meetingId}`,
+        );
+        if (res.status === 204) {
+          setIsOpen(false);
+          navigate("/course?id=" + courseId);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setIsOpen(false);
+      navigate("/course?id=" + courseId);
     }
   };
 
   useEffect(() => {
-    getAddresses();
-  }, []);
+    const fetchMeetingDetails = async () => {
+      if (isEditMode && meetingId && courseId && user) {
+        try {
+          const res = await apiClient.get(`user/meetings/${meetingId}`);
+          if (res.status === 200) {
+            if (
+              res.data.tutorId === user.id &&
+              res.data.courseId === Number(courseId)
+            ) {
+              setMeetingDetails(res.data);
+            } else {
+              navigate("/course?id=" + courseId);
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching meeting details:", err);
+        }
+      }
+    };
+    fetchMeetingDetails();
+  }, [isEditMode, meetingId, courseId, user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,48 +113,40 @@ const CreateMeeting = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!courseId) return;
+    if (!courseId && !meetingId) return;
     setValidationError("");
 
-    const startDate = new Date(meetingDetails.startDateTime);
-    const endDate = new Date(meetingDetails.endDateTime);
+    const startDate = new Date(meetingDetails.startTime);
+    const endDate = new Date(meetingDetails.endTime);
 
     if (startDate >= endDate) {
       setValidationError("End date must be after start date.");
       return;
     }
 
-    let requestBody;
+    let requestBody = {
+      tutorId: user?.id,
+      courseId: Number(courseId),
+      startTime: ensureSeconds(meetingDetails.startTime),
+      endTime: ensureSeconds(meetingDetails.endTime),
+      meetingType: meetingDetails.meetingType,
+    };
 
-    if (meetingDetails.meetingType === "ONLINE") {
-      requestBody = {
-        tutorId: user?.id,
-        courseId: Number(courseId),
-        startTime: meetingDetails.startDateTime + ":00",
-        endTime: meetingDetails.endDateTime + ":00",
-        meetingType: meetingDetails.meetingType,
-      };
-    } else if (
-      meetingDetails.meetingType === "OFFLINE" ||
-      meetingDetails.meetingType === "HYBRID"
-    ) {
-      requestBody = {
-        tutorId: user?.id,
-        courseId: Number(courseId),
-        startTime: meetingDetails.startDateTime + ":00",
-        endTime: meetingDetails.endDateTime + ":00",
-        meetingType: meetingDetails.meetingType,
-        roomNum: meetingDetails.roomNum,
-        addressId: meetingDetails.addressId,
-      };
+    if (meetingDetails.meetingType !== "ONLINE") {
+      requestBody.roomNum = meetingDetails.roomNum;
+      requestBody.addressId = meetingDetails.addressId;
     }
+
     try {
-      console.log(requestBody);
-      await apiClient.post("/tutor/create-meeting", requestBody);
-      navigate("/course?id=" + courseId);
+      if (isEditMode) {
+        await apiClient.put(`/tutor/update-meeting/${meetingId}`, requestBody);
+      } else {
+        await apiClient.post("/tutor/create-meeting", requestBody);
+      }
+      navigate(`/course?id=${courseId}`);
     } catch (error) {
       if (error.response?.status === 409) {
-        alert("A course with similar details already exists.");
+        alert("A meeting with similar details already exists.");
       } else {
         console.error("Error submitting data:", error);
         alert("An error occurred. Please try again.");
@@ -98,7 +159,7 @@ const CreateMeeting = () => {
       <NavBar currentPage="/tutor-centre" />
       <div className="mb-6 mt-[120px]">
         <h1 className="text-3xl font-semibold text-gray-800 mb-2">
-          Create a New Meetings
+          {isEditMode ? "Edit Your Meeting" : "Create a New Meeting"}
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
@@ -107,7 +168,7 @@ const CreateMeeting = () => {
         )}
 
         <SelectField
-          label="Meetings Type *"
+          label="Meeting Type *"
           name="meetingType"
           value={meetingDetails.meetingType || ""}
           onChange={handleChange}
@@ -128,7 +189,7 @@ const CreateMeeting = () => {
             <SelectField
               label="Address *"
               name="addressId"
-              value={meetingDetails.addressId}
+              value={meetingDetails.addressId || ""}
               onChange={handleChange}
               options={addresses}
               required={true}
@@ -138,7 +199,7 @@ const CreateMeeting = () => {
               label="Room Number *"
               placeholder="A108"
               name="roomNum"
-              value={meetingDetails.roomNum}
+              value={meetingDetails.roomNum || ""}
               onChange={handleChange}
               required={true}
             />
@@ -149,25 +210,45 @@ const CreateMeeting = () => {
           label="Start Date/Time *"
           onChange={handleChange}
           required={true}
-          name="startDateTime"
-          value={meetingDetails.startDateTime}
+          name="startTime"
+          value={meetingDetails.startTime || ""}
         />
 
         <DateTimePicker
           label="End Date/Time *"
           onChange={handleChange}
           required={true}
-          name="endDateTime"
-          value={meetingDetails.endDateTime}
+          name="endTime"
+          value={meetingDetails.endTime || ""}
         />
 
         <button
           type="submit"
-          className="bg-blue-800 max-h-12 mt-4 w-full max-w-xs rounded-full text-white py-2 px-4"
+          className="bg-blue-800 max-h-12 my-4 rounded-full text-white py-2 px-6"
         >
-          Submit
+          {isEditMode ? "Update Meeting" : "Create Meeting"}
         </button>
+        {isEditMode && meetingDetails && meetingId && courseId && user && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsOpen(true);
+            }}
+            className="bg-red-800 ml-4 max-h-12 rounded-full text-white py-2 px-6"
+          >
+            Delete Meeting
+          </button>
+        )}
       </form>
+      <ConfirmationDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Delete Meeting?"
+        message="Are you sure you want to delete this meeting? All associated data will be removed."
+        confirmText="Delete"
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

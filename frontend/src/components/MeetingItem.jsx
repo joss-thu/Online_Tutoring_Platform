@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import apiClient from "../services/AxiosConfig";
 import { Tooltip } from "react-tooltip";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const MeetingItem = ({
   result,
@@ -19,6 +20,7 @@ const MeetingItem = ({
     roomNum,
     campusName,
     universityName,
+    courseId,
   } = result;
 
   const tooltipText =
@@ -27,6 +29,8 @@ const MeetingItem = ({
         ? null
         : "Contact your tutor for meeting link"
       : `${roomNum}, ${universityName} (${campusName})`;
+
+  const navigate = useNavigate();
 
   const handleActionClick = async () => {
     if (!isYourMeeting) {
@@ -47,6 +51,10 @@ const MeetingItem = ({
       } catch (e) {
         console.error(e);
       }
+    } else {
+      navigate(
+        `/create-meeting?edit=true&courseId=${courseId}&meetingId=${meetingId}`,
+      );
     }
   };
 

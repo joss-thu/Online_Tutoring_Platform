@@ -8,6 +8,8 @@ import { BACKEND_URL, STUDENT_ROLE, TUTOR_ROLE } from "../config";
 import getCourseDuration from "../helpers/CalculateDuration";
 import apiClient from "../services/AxiosConfig";
 import CourseTabs from "../components/CourseTabs";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import RatingDialog from "../components/RatingDialog";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -46,6 +48,8 @@ function Course() {
   const [meetings, setMeetings] = useState(null);
   const [visibleTabs, setVisibleTabs] = useState(null);
   const [bookedMeetings, setBookedMeetings] = useState(null);
+  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
+  const [isOpenRating, setIsOpenRating] = useState(false);
 
   const fetchStudentEnrollStatus = async (courseData) => {
     if (!courseData) return;
@@ -289,20 +293,62 @@ function Course() {
                 >
                   link
                 </span>
+                {user && user.id === course.tutorId && (
+                  <span
+                    onClick={() =>
+                      navigate(
+                        "/create-course?edit=true&courseId=" + course.courseId,
+                      )
+                    }
+                    className="material-symbols-rounded text-2xl ml-3 cursor-pointer text-gray-600"
+                  >
+                    edit_square
+                  </span>
+                )}
+
                 {/* Enroll Button */}
                 {user &&
                   isAuthenticated &&
                   checkRole(STUDENT_ROLE) &&
                   course.tutorId !== user.id && (
                     <button
-                      onClick={
-                        enrolled ? handleStudentUnenroll : handleStudentEnroll
-                      }
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (enrolled) {
+                          setIsOpenWithdraw(true);
+                        } else {
+                          handleStudentEnroll();
+                        }
+                      }}
                       className={`ml-auto max-h-12 rounded-full text-white py-2 px-4 ${enrolled ? "bg-red-900" : "bg-blue-800"}`}
                     >
-                      {enrolled ? "Unenroll" : "Enroll Now"}
+                      {enrolled ? "Withdraw" : "Enroll Now"}
                     </button>
                   )}
+                {/* Rate Button */}
+                {user &&
+                  isAuthenticated &&
+                  checkRole(STUDENT_ROLE) &&
+                  course.tutorId !== user.id &&
+                  enrolled && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpenRating(true);
+                      }}
+                      className={`ml-4 max-h-12 rounded-full text-white py-2 px-4 bg-blue-800`}
+                    >
+                      Rate Course
+                    </button>
+                  )}
+                <ConfirmationDialog
+                  isOpen={isOpenWithdraw}
+                  setIsOpen={setIsOpenWithdraw}
+                  title="Withdraw from Course?"
+                  message="Are you sure you want to withdraw from this course? All associated data will be removed."
+                  confirmText="Withdraw"
+                  onConfirm={handleStudentUnenroll}
+                />
 
                 {/* Meetings Button */}
                 {user &&
@@ -341,6 +387,14 @@ function Course() {
                   </div>
                 </div>
               </div>
+
+              <RatingDialog
+                isOpen={isOpenRating}
+                setIsOpen={setIsOpenRating}
+                user={user}
+                courseId={course.courseId}
+                refreshRatings={fetchCourseRatings}
+              />
 
               {/* Rating */}
               <Rating

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InputField from "../components/InputField";
 import TextareaField from "../components/TextareaField";
 import SelectField from "../components/SelectField";
@@ -6,7 +6,8 @@ import { useAuth } from "../services/AuthContext";
 import apiClient from "../services/AxiosConfig";
 import NavBar from "../components/Navbar";
 import { BACKEND_URL } from "../config";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
@@ -15,8 +16,14 @@ const CreateCourse = () => {
   const [validationError, setValidationError] = useState("");
   const [shortDescriptionLength, setShortDescriptionLength] = useState(0);
   const [longDescriptionLength, setLongDescriptionLength] = useState(0);
+  const [course, setCourse] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [categories, setCategories] = useState([]);
+  const [searchParams] = useSearchParams();
+  const editParam = searchParams.get("edit");
+  const isEditMode = editParam ? editParam === "true" : false;
+  const courseId = searchParams.get("courseId");
 
   const fetchCategories = async () => {
     const response = await fetch(`${BACKEND_URL}/search/categories`);
@@ -24,9 +31,79 @@ const CreateCourse = () => {
     setCategories(data);
   };
 
+  const handleDelete = async () => {
+    if (
+      isEditMode &&
+      courseId &&
+      course &&
+      user &&
+      course?.tutorId === user?.id
+    ) {
+      try {
+        const res = await apiClient.delete(`/tutor/delete-course/${courseId}`);
+        if (res.status === 204) {
+          setIsOpen(false);
+          navigate("/tutor-centre");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      setIsOpen(false);
+      navigate("/course?id=" + courseId);
+    }
+  };
+
+  const fetchCourseDetails = useCallback(async () => {
+    if (!courseId || !user) return;
+    try {
+      const res = await fetch(`${BACKEND_URL}/search/get-course/${courseId}`);
+      const data = await res.json();
+      if (data.tutorId === user.id) {
+        setCourse(data);
+        setCourseDetails({
+          courseName: data.courseName || "",
+          shortDescription: data.descriptionShort || "",
+          longDescription: data.descriptionLong || "",
+          category: data.courseCategories?.[0]?.categoryName || "",
+          startDate: data.startDate || "",
+          endDate: data.endDate || "",
+        });
+      } else {
+        navigate("/course?id=" + courseId);
+      }
+    } catch (error) {
+      console.error("Error fetching course details:", error);
+    }
+  }, [courseId, user]);
+
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (user && courseId) {
+      fetchCourseDetails();
+    }
+  }, [courseId, user]);
+
+  useEffect(() => {
+    if (isEditMode && course) {
+      setCourseDetails({
+        courseName: course.courseName || "",
+        shortDescription: course.descriptionShort || "",
+        longDescription: course.descriptionLong || "",
+        category: course.courseCategories?.[0]?.categoryName || "",
+        startDate: course.startDate || "",
+        endDate: course.endDate || "",
+      });
+    }
+  }, [course, isEditMode]);
+
+  useEffect(() => {
+    setShortDescriptionLength(courseDetails.shortDescription?.length || 0);
+    setLongDescriptionLength(courseDetails.longDescription?.length || 0);
+  }, [courseDetails]);
 
   const MAX_SHORT_DESC = 150;
   const MAX_LONG_DESC = 2000;
@@ -68,7 +145,7 @@ const CreateCourse = () => {
       descriptionLong: courseDetails.longDescription,
       startDate: courseDetails.startDate,
       endDate: courseDetails.endDate,
-      averageRating: 0,
+      averageRating: course?.averageRating || 0,
       courseCategories: [
         {
           categoryId:
@@ -81,7 +158,11 @@ const CreateCourse = () => {
     };
 
     try {
-      await apiClient.post("/tutor/course/create", requestBody);
+      if (isEditMode && courseId) {
+        await apiClient.put(`/tutor/update-course/${courseId}`, requestBody);
+      } else {
+        await apiClient.post("/tutor/course/create", requestBody);
+      }
 
       navigate("/tutor-centre");
     } catch (error) {
@@ -99,7 +180,7 @@ const CreateCourse = () => {
       <NavBar currentPage="/tutor-centre" />
       <div className="mb-6 mt-[120px]">
         <h1 className="text-3xl font-semibold text-gray-800 mb-2">
-          Create a New Course
+          {isEditMode ? "Edit Your Course" : "Create a New Course"}
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
@@ -179,11 +260,31 @@ const CreateCourse = () => {
 
         <button
           type="submit"
-          className="bg-blue-800 max-h-12 w-full max-w-xs rounded-full text-white py-2 px-4"
+          className="bg-blue-800 max-h-12 mb-4 rounded-full text-white py-2 px-6"
         >
-          Submit
+          {isEditMode ? "Update Course" : "Create Course"}
         </button>
+        {isEditMode && course && courseId && user && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsOpen(true);
+            }}
+            className="bg-red-800 ml-4 max-h-12 rounded-full text-white py-2 px-6"
+          >
+            Delete Course
+          </button>
+        )}
       </form>
+      <ConfirmationDialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        title="Delete Course?"
+        message="Are you sure you want to delete this course? All associated data will be removed."
+        confirmText="Delete"
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
