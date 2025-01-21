@@ -97,8 +97,33 @@ public interface UserService {
    */
   void unenrollCourse(Long studentId, Long courseId);
 
+  /**
+   * Retrieves the ratings for a specific tutor.
+   *
+   * <p>This method retrieves all ratings associated with the specified tutor and returns them as a list of transfer objects (DTOs).
+   *
+   * @param tutorId the ID of the tutor whose ratings are to be retrieved
+   * @return a list of rating transfer objects for the specified tutor
+   */
   List<RatingTutorTO> getTutorRatings(Long tutorId);
 
+  /**
+   * Retrieves the courses a student is enrolled in.
+   *
+   * <p>This method retrieves all courses that the specified student is enrolled in and returns them as a list of transfer objects (DTOs).
+   *
+   * @param studentId the ID of the student whose enrolled courses are to be retrieved
+   * @return a list of course transfer objects for the specified student
+   */
   List<CourseTO> getCoursesEnrolled(Long studentId);
 
+  /**
+   * Verifies a tutor.
+   *
+   * <p>This method verifies the specified tutor by their ID.
+   *
+   * @param tutorId the ID of the tutor to be verified
+   * @return true if the tutor is successfully verified, false otherwise
+   */
+  boolean verifyTutor(Long tutorId);
 }
