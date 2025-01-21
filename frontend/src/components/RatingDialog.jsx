@@ -5,7 +5,7 @@ import {
   Description,
 } from "@headlessui/react";
 import { Rating, StickerStar } from "@smastrom/react-rating";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import apiClient from "../services/AxiosConfig";
 
 const ratingStyle = {
