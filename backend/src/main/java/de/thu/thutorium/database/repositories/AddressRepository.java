@@ -30,5 +30,5 @@ public interface AddressRepository extends JpaRepository<AddressDBO, Long> {
           @NotEmpty(message = "The country cannot be empty") String country,
           @NotEmpty(message = "The university name cannot be empty") String universityName);
 
-    List<AddressDBO> findByAddressId(Long addressId);
+  List<AddressDBO> findByAddressId(Long addressId);
 }
