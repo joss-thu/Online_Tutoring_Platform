@@ -8,6 +8,9 @@ import { BACKEND_URL, STUDENT_ROLE, TUTOR_ROLE } from "../config";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ActionButton from "../components/ActionButton";
 import SelectField from "../components/SelectField";
+import InputField from "../components/InputField";
+import TextareaField from "../components/TextareaField";
+import { Tooltip } from "react-tooltip";
 
 function Profile() {
   const { user, logout, checkRole } = useAuth();
@@ -25,6 +28,10 @@ function Profile() {
   const MAX_SHORT_DESC = 100;
   const [universities, setUniversities] = useState(null);
   const affiliationTypes = ["STUDENT", "PROFESSOR", "EXTERNAL"];
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [affiliationTypeError, setAffiliationTypeError] = useState(false);
+  const [universityNameError, setUniversityNameError] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({
@@ -155,6 +162,26 @@ function Profile() {
   };
 
   const handleSave = async () => {
+    const firstNameInvalid =
+      !editedProfile.firstName || editedProfile.firstName.length === 0;
+    const lastNameInvalid =
+      !editedProfile.lastName || editedProfile.lastName.length === 0;
+    const affiliationTypeInvalid = !editedProfile.affiliation.affiliationType;
+    const universityNameInvalid = !editedProfile.affiliation.universityName;
+
+    setFirstNameError(firstNameInvalid);
+    setLastNameError(lastNameInvalid);
+    setAffiliationTypeError(affiliationTypeInvalid);
+    setUniversityNameError(universityNameInvalid);
+
+    if (
+      firstNameInvalid ||
+      lastNameInvalid ||
+      affiliationTypeInvalid ||
+      universityNameInvalid
+    )
+      return;
+
     try {
       await apiClient.put(`/user/update-user/${user.id}`, editedProfile);
 
@@ -206,29 +233,74 @@ function Profile() {
           <div className="w-24 h-24 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-800 text-3xl">
             {initials}
           </div>
-          <div>
+          <div className={"w-full"}>
             {isEditing && editedProfile ? (
               <div>
-                <input
-                  type="text"
+                <Tooltip
+                  anchorSelect=".first_name_anchor_element"
+                  place="left"
+                  isOpen={firstNameError}
+                >
+                  Enter your first name
+                </Tooltip>
+                <Tooltip
+                  anchorSelect=".last_name_anchor_element"
+                  place="left"
+                  isOpen={lastNameError}
+                >
+                  Enter your last name
+                </Tooltip>
+                <Tooltip
+                  anchorSelect=".affiliation_type_anchor_element"
+                  place="left"
+                  isOpen={affiliationTypeError}
+                >
+                  Choose an affiliation type
+                </Tooltip>
+                <Tooltip
+                  anchorSelect=".university_name_anchor_element"
+                  place="left"
+                  isOpen={universityNameError}
+                >
+                  Choose your university
+                </Tooltip>
+                <InputField
+                  className={"first_name_anchor_element"}
+                  label="First Name *"
+                  placeholder={profile.firstName}
                   name="firstName"
-                  value={editedProfile.firstName}
-                  onChange={handleInputChange}
-                  className="border p-2 rounded w-full mb-2"
+                  value={editedProfile.firstName || ""}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setFirstNameError(false);
+                  }}
+                  required={true}
                 />
-                <input
-                  type="text"
+                <InputField
+                  className={"last_name_anchor_element"}
+                  label="Last Name *"
+                  placeholder={profile.lastName}
                   name="lastName"
-                  value={editedProfile.lastName}
-                  onChange={handleInputChange}
-                  className="border p-2 rounded w-full mb-2"
+                  value={editedProfile.lastName || ""}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setLastNameError(false);
+                  }}
+                  required={true}
                 />
-                <textarea
+                <TextareaField
+                  className={"mt-4"}
+                  label="Short Description *"
+                  placeholder="Enter a short description"
                   name="description"
-                  value={editedProfile.description}
-                  onChange={handleInputChange}
+                  value={editedProfile.description || ""}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                  }}
                   rows={1}
-                  className="border p-2 rounded w-full resize-none"
+                  maxLength={MAX_SHORT_DESC}
+                  hint={`Max ${MAX_SHORT_DESC} characters.`}
+                  required={true}
                 />
                 <p
                   className={`text-xs mb-4 ${
@@ -241,14 +313,19 @@ function Profile() {
                 </p>
 
                 <SelectField
+                  className={"university_name_anchor_element"}
                   label={"University Name *"}
                   name={"universityName"}
                   value={editedProfile.affiliation?.universityName || ""}
                   options={universities}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setAffiliationTypeError(false);
+                  }}
                 />
                 <div className="mt-4"></div>
                 <SelectField
+                  className={"affiliation_type_anchor_element"}
                   label={"Affiliation Type *"}
                   name={"affiliationType"}
                   value={
@@ -256,7 +333,10 @@ function Profile() {
                     affiliationTypes[0]
                   }
                   options={affiliationTypes}
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setUniversityNameError(false);
+                  }}
                 />
               </div>
             ) : (
