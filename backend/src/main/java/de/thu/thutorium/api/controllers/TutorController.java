@@ -4,11 +4,9 @@ import de.thu.thutorium.Utility.AuthUtil;
 import de.thu.thutorium.api.transferObjects.common.CourseTO;
 import de.thu.thutorium.api.transferObjects.common.MeetingTO;
 import de.thu.thutorium.api.transferObjects.common.ProgressTO;
+import de.thu.thutorium.api.transferObjects.common.ReportTO;
 import de.thu.thutorium.api.transferObjects.common.UserTO;
-import de.thu.thutorium.services.interfaces.CourseService;
-import de.thu.thutorium.services.interfaces.MeetingService;
-import de.thu.thutorium.services.interfaces.ProgressService;
-import de.thu.thutorium.services.interfaces.UserService;
+import de.thu.thutorium.services.interfaces.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,10 +59,12 @@ public class TutorController {
   /** Service for managing progress-related operations. */
   private final ProgressService progressService;
 
+  private final ReportService reportService;
+
   /**
    * Creates a new meeting.
    *
-   * @param meetingTO the {@link MeetingTO} object containing meeting details.
+   * @param meetingTO the {@link de.thu.thutorium.api.transferObjects.common.MeetingTO} object containing meeting details.
    * @return a success message.
    */
   @Operation(
@@ -179,7 +179,7 @@ public class TutorController {
   /**
    * Creates a new course.
    *
-   * @param courseTO the {@link CourseTO} object containing course details.
+   * @param courseTO the {@link de.thu.thutorium.api.transferObjects.common.CourseTO} object containing course details.
    * @return a success message.
    */
   @Operation(
@@ -288,7 +288,7 @@ public class TutorController {
   /**
    * Creates a new progress record.
    *
-   * @param progressTO the {@link ProgressTO} object containing progress details.
+   * @param progressTO the {@link de.thu.thutorium.api.transferObjects.common.ProgressTO} object containing progress details.
    * @return a success message.
    */
 //  @Operation(
@@ -398,6 +398,46 @@ public class TutorController {
       // For any other unexpected errors
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
               .body("An error occurred while retrieving students: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Endpoint to create a new report.
+   *
+   * @param reportTO the report transfer object to be created
+   * @return the created report in the response body
+   */
+  @PostMapping("/reporting/create-report")
+  public ResponseEntity<?> createReport(@RequestBody ReportTO reportTO) {
+    try {
+      // Create the report and return the created report object
+      ReportTO createdReport = reportService.createReport(reportTO);
+      return new ResponseEntity<>(createdReport, HttpStatus.CREATED);
+    } catch (Exception e) {
+      // Log the exception and return an error response
+      e.printStackTrace();
+      return new ResponseEntity<>(
+          "Failed to create report: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * Endpoint to delete a report by ID.
+   *
+   * @param reportId the ID of the report to be deleted
+   * @return a response indicating the success of the operation
+   */
+  @DeleteMapping("/reporting/delete-report/{reportId}")
+  public ResponseEntity<?> deleteReport(@PathVariable Long reportId) {
+    try {
+      // Delete the report by ID
+      reportService.deleteReport(reportId);
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    } catch (Exception e) {
+      // Log the exception and return an error response
+      e.printStackTrace();
+      return new ResponseEntity<>(
+          "Failed to delete report: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

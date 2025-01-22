@@ -7,10 +7,13 @@ const InputField = ({
   onChange,
   name,
   type = "text",
+  className,
 }) => {
   return (
-    <div className="mb-4">
-      <label className="block text-gray-700 text-sm font-medium mb-2 mt-4">
+    <div>
+      <label
+        className={`block text-gray-700 text-sm font-medium mb-2 mt-4 ${className}`}
+      >
         {label}
       </label>
       <input

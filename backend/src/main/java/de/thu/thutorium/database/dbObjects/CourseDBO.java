@@ -130,6 +130,10 @@ public class CourseDBO {
       cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   private List<CourseCategoryDBO> courseCategories = new ArrayList<>();
 
+  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<ReportDBO> reports = new ArrayList<>();
+
   /** Constructs a CourseDBO object with empty lists. */
   public CourseDBO() {
     this.students = new ArrayList<>();

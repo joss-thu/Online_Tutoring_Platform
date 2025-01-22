@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import { useAuth } from "../services/AuthContext";
 import apiClient from "../services/AxiosConfig";
+import ActionButton from "../components/ActionButton";
 
 function Login() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ function Login() {
       login(data.token);
       navigate("/profile");
     } catch (error) {
-      if (error.response?.status === 403) {
+      if (error.response?.status === 500) {
         setAuthFailedError(true);
       } else {
         console.error("Login failed", error);
@@ -50,7 +51,7 @@ function Login() {
 
   return (
     <div className="relative min-h-screen bg-white overflow-hidden">
-      <NavBar />
+      <NavBar currentPage={"/login"} />
       <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full px-4">
         <div className="flex flex-col justify-center w-full max-w-xl bg-gray-100 p-10 rounded-2xl font-merriweather_sans">
           <div className="flex items-center justify-center text-2xl">
@@ -119,13 +120,12 @@ function Login() {
               Incorrect email or password, try again.
             </p>
           )}
-          <button
-            type="button"
-            className="bg-blue-900 text-white py-2 px-1 rounded-md mt-7 hover:bg-blue-800 focus:outline-none"
+          <ActionButton
+            className={"items-center justify-center mt-4"}
             onClick={handleLoginClick}
-          >
-            Log In
-          </button>
+            text={"Log In"}
+            design={"action"}
+          />
           <div
             className="inline-flex items-center justify-center text-sm mt-3 cursor-pointer w-fit mx-auto"
             onClick={() => navigate("/signup")}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../components/Navbar";
 import { BACKEND_URL } from "../config";
 import CustomDropdown from "../components/CustomDropdown";
+import ActionButton from "../components/ActionButton";
 
 const SearchSection = () => {
   const navigate = useNavigate();
@@ -61,41 +62,39 @@ const SearchSection = () => {
         />
       </div>
 
-      <div className="mt-[30px] flex flex-wrap justify-center items-start w-full max-w-2xl mx-auto bg-white">
+      <div className="mt-[30px] flex flex-wrap justify-center items-start font-merriweather_sans w-full max-w-3xl mx-auto bg-white">
         {categories &&
           categories
             .map((label, index) => (
-              <button
+              <ActionButton
                 key={index}
-                className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
+                className={"m-2"}
                 onClick={() => handleCategoryClick(label.categoryName)}
-              >
-                {label.categoryName}
-              </button>
+                text={label.categoryName}
+                design={"neutral"}
+              />
             ))
             .splice(0, 4)}
 
         {expanded &&
           categories
-            .map((label) => (
-              <button
-                key={label.categoryId}
-                className="bg-gray-200 rounded-full px-4 py-2 text-md font-merriweather_sans m-2 hover:bg-gray-300"
+            .map((label, index) => (
+              <ActionButton
+                key={index}
+                className={"m-2"}
                 onClick={() => handleCategoryClick(label.categoryName)}
-              >
-                {label.categoryName}
-              </button>
+                text={label.categoryName}
+                design={"neutral"}
+              />
             ))
             .splice(4)}
-
-        <button
-          className={`${
-            expanded ? "bg-red-800" : "bg-black"
-          } text-white rounded-full px-4 py-2 text-md font-merriweather_sans m-2`}
+        <ActionButton
+          className={"m-1.5"}
+          icon={expanded ? "collapse_content" : "expand_content"}
           onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "See Less" : "See All"}
-        </button>
+          text={expanded ? "See Less" : "See All"}
+          design={expanded ? "alert" : "action"}
+        />
       </div>
     </>
   );
