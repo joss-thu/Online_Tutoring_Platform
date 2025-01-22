@@ -1,0 +1,342 @@
+.
+├── Documentation
+│   ├── 00_ArchitectureHandbook_v241230.pdf
+│   ├── 01_VisionDocument.pdf
+│   ├── 03_QualityStandards.pdf
+│   ├── ComplianceDocumentation(Anastasiya)
+│   │   ├── GDPR.pdf
+│   │   └── WCAG.pdf
+│   └── HelpFiles
+│       ├── HowToBuildAPoject(OBSOLETE).pdf
+│       ├── HowToGitHub.pdf
+│       └── LearningSuggestionsAndSomeResourcesForBackendTeam.pdf
+├── folder_structure.txt
+├── LICENSE
+├── new_structure.txt
+├── README.md
+├── Reports
+│   ├── 00_ProgressReport.pdf
+│   ├── 02_LessonsLearned.pdf
+│   ├── 04_MeetingMinutes.pdf
+│   └── TimeLog_2025_01_22_15_50.pdf
+├── SourceCode
+│   ├── backend
+│   │   ├── API_DESCRIPTION.md
+│   │   ├── checkstyle.xml
+│   │   ├── Dockerfile
+│   │   ├── .gitattributes
+│   │   ├── .gitignore
+│   │   ├── .mvn
+│   │   │   └── wrapper
+│   │   │       └── maven-wrapper.properties
+│   │   ├── mvnw
+│   │   ├── mvnw.cmd
+│   │   ├── package.json
+│   │   ├── package-lock.json
+│   │   ├── pom.xml
+│   │   └── src
+│   │       ├── main
+│   │       │   ├── java
+│   │       │   │   └── de
+│   │       │   │       └── thu
+│   │       │   │           └── thutorium
+│   │       │   │               ├── api
+│   │       │   │               │   ├── controllers
+│   │       │   │               │   │   ├── AdminController.java
+│   │       │   │               │   │   ├── AuthenticationController.java
+│   │       │   │               │   │   ├── package-info.java
+│   │       │   │               │   │   ├── SearchController.java
+│   │       │   │               │   │   ├── StudentController.java
+│   │       │   │               │   │   ├── TutorController.java
+│   │       │   │               │   │   ├── UserController.java
+│   │       │   │               │   │   ├── VerifierController.java
+│   │       │   │               │   │   └── WebSocketController.java
+│   │       │   │               │   ├── package-info.java
+│   │       │   │               │   ├── TOMappers
+│   │       │   │               │   │   ├── AddressTOMapper.java
+│   │       │   │               │   │   ├── AffiliationTOMapper.java
+│   │       │   │               │   │   ├── CourseCategoryTOMapper.java
+│   │       │   │               │   │   ├── CourseTOMapper.java
+│   │       │   │               │   │   ├── MeetingTOMapper.java
+│   │       │   │               │   │   ├── MessageTOMapper.java
+│   │       │   │               │   │   ├── RatingCourseTOMapper.java
+│   │       │   │               │   │   ├── RatingTutorTOMapper.java
+│   │       │   │               │   │   ├── ReportTOMapper.java
+│   │       │   │               │   │   ├── TutorTOMapper.java
+│   │       │   │               │   │   ├── UniversityTOMapper.java
+│   │       │   │               │   │   └── UserTOMapper.java
+│   │       │   │               │   └── transferObjects
+│   │       │   │               │       ├── authentication
+│   │       │   │               │       │   ├── LogInRequestTO.java
+│   │       │   │               │       │   ├── LogInResponseTO.java
+│   │       │   │               │       │   └── RegisterRequestTO.java
+│   │       │   │               │       ├── chat
+│   │       │   │               │       │   ├── ChatSummaryTO.java
+│   │       │   │               │       │   └── ReceiverTO.java
+│   │       │   │               │       ├── common
+│   │       │   │               │       │   ├── AddressTO.java
+│   │       │   │               │       │   ├── AffiliationTO.java
+│   │       │   │               │       │   ├── ChatCreateTO.java
+│   │       │   │               │       │   ├── CourseCategoryTO.java
+│   │       │   │               │       │   ├── CourseTO.java
+│   │       │   │               │       │   ├── MeetingTO.java
+│   │       │   │               │       │   ├── MessageTO.java
+│   │       │   │               │       │   ├── ProgressTO.java
+│   │       │   │               │       │   ├── RatingCourseTO.java
+│   │       │   │               │       │   ├── RatingTutorTO.java
+│   │       │   │               │       │   ├── ReportTO.java
+│   │       │   │               │       │   ├── TutorTO.java
+│   │       │   │               │       │   ├── UniversityTO.java
+│   │       │   │               │       │   └── UserTO.java
+│   │       │   │               │       └── package-info.java
+│   │       │   │               ├── database
+│   │       │   │               │   ├── dbObjects
+│   │       │   │               │   │   ├── AddressDBO.java
+│   │       │   │               │   │   ├── AffiliationDBO.java
+│   │       │   │               │   │   ├── AllowedDomainDBO.java
+│   │       │   │               │   │   ├── ChatDBO.java
+│   │       │   │               │   │   ├── CourseCategoryDBO.java
+│   │       │   │               │   │   ├── CourseDBO.java
+│   │       │   │               │   │   ├── enums
+│   │       │   │               │   │   │   ├── AffiliationType.java
+│   │       │   │               │   │   │   ├── MeetingType.java
+│   │       │   │               │   │   │   ├── package-info.java
+│   │       │   │               │   │   │   └── Role.java
+│   │       │   │               │   │   ├── MeetingDBO.java
+│   │       │   │               │   │   ├── MessageDBO.java
+│   │       │   │               │   │   ├── package-info.java
+│   │       │   │               │   │   ├── ProgressDBO.java
+│   │       │   │               │   │   ├── RatingCourseDBO.java
+│   │       │   │               │   │   ├── RatingTutorDBO.java
+│   │       │   │               │   │   ├── ReportDBO.java
+│   │       │   │               │   │   ├── RoleDBO.java
+│   │       │   │               │   │   ├── UniversityDBO.java
+│   │       │   │               │   │   └── UserDBO.java
+│   │       │   │               │   ├── DBOMappers
+│   │       │   │               │   │   ├── AddressDBOMapper.java
+│   │       │   │               │   │   ├── AffiliationDBOMapper.java
+│   │       │   │               │   │   ├── CategoryDBOMapper.java
+│   │       │   │               │   │   ├── ChatDBMapper.java
+│   │       │   │               │   │   ├── CourseDBOMapper.java
+│   │       │   │               │   │   ├── MeetingDBMapper.java
+│   │       │   │               │   │   ├── ProgressDBMapper.java
+│   │       │   │               │   │   ├── RatingCourseDBOMapper.java
+│   │       │   │               │   │   ├── RatingTutorDBOMapper.java
+│   │       │   │               │   │   ├── ReportDBOMapper.java
+│   │       │   │               │   │   ├── UniversityDBOMapper.java
+│   │       │   │               │   │   └── UserDBOMapper.java
+│   │       │   │               │   ├── package-info.java
+│   │       │   │               │   └── repositories
+│   │       │   │               │       ├── AddressRepository.java
+│   │       │   │               │       ├── AffiliationRepository.java
+│   │       │   │               │       ├── CategoryRepository.java
+│   │       │   │               │       ├── ChatRepository.java
+│   │       │   │               │       ├── CourseRepository.java
+│   │       │   │               │       ├── MeetingRepository.java
+│   │       │   │               │       ├── MessageRepository.java
+│   │       │   │               │       ├── package-info.java
+│   │       │   │               │       ├── ProgressRepository.java
+│   │       │   │               │       ├── RatingCourseRepository.java
+│   │       │   │               │       ├── RatingTutorRepository.java
+│   │       │   │               │       ├── ReportRepository.java
+│   │       │   │               │       ├── RoleRepository.java
+│   │       │   │               │       ├── UniversityRepository.java
+│   │       │   │               │       └── UserRepository.java
+│   │       │   │               ├── DBInitializer.java
+│   │       │   │               ├── exceptions
+│   │       │   │               │   ├── GlobalExceptionHandler.java
+│   │       │   │               │   ├── InvalidMeetingRequestException.java
+│   │       │   │               │   ├── MeetingConflictException.java
+│   │       │   │               │   ├── MeetingNotFoundException.java
+│   │       │   │               │   ├── package-info.java
+│   │       │   │               │   ├── ResourceAlreadyExistsException.java
+│   │       │   │               │   ├── ResourceNotFoundException.java
+│   │       │   │               │   └── SpringErrorPayload.java
+│   │       │   │               ├── security
+│   │       │   │               │   ├── AuthConfig.java
+│   │       │   │               │   ├── JwtAuthenticationFilter.java
+│   │       │   │               │   ├── JwtService.java
+│   │       │   │               │   ├── package-info.java
+│   │       │   │               │   └── SecurityConfig.java
+│   │       │   │               ├── services
+│   │       │   │               │   ├── implementations
+│   │       │   │               │   │   ├── AddressServiceImpl.java
+│   │       │   │               │   │   ├── AuthenticationServiceImpl.java
+│   │       │   │               │   │   ├── CategoryServiceImpl.java
+│   │       │   │               │   │   ├── ChatServiceImpl.java
+│   │       │   │               │   │   ├── CourseServiceImpl.java
+│   │       │   │               │   │   ├── MeetingServiceImpl.java
+│   │       │   │               │   │   ├── MessageServiceImpl.java
+│   │       │   │               │   │   ├── package-info.java
+│   │       │   │               │   │   ├── ProgressServiceImpl.java
+│   │       │   │               │   │   ├── RatingCourseServiceImpl.java
+│   │       │   │               │   │   ├── ReportServiceImpl.java
+│   │       │   │               │   │   ├── SearchServiceImpl.java
+│   │       │   │               │   │   ├── UniversityServiceImpl.java
+│   │       │   │               │   │   └── UserServiceImpl.java
+│   │       │   │               │   ├── interfaces
+│   │       │   │               │   │   ├── AddressService.java
+│   │       │   │               │   │   ├── AuthenticationService.java
+│   │       │   │               │   │   ├── CategoryService.java
+│   │       │   │               │   │   ├── ChatService.java
+│   │       │   │               │   │   ├── CourseService.java
+│   │       │   │               │   │   ├── MeetingService.java
+│   │       │   │               │   │   ├── MessageService.java
+│   │       │   │               │   │   ├── package-info.java
+│   │       │   │               │   │   ├── ProgressService.java
+│   │       │   │               │   │   ├── RatingCourseService.java
+│   │       │   │               │   │   ├── ReportService.java
+│   │       │   │               │   │   ├── SearchService.java
+│   │       │   │               │   │   ├── UniversityService.java
+│   │       │   │               │   │   └── UserService.java
+│   │       │   │               │   └── package-info.java
+│   │       │   │               ├── swagger
+│   │       │   │               │   ├── CommonApiResponses.java
+│   │       │   │               │   └── SwaggerConfig.java
+│   │       │   │               ├── ThutoriumApplication.java
+│   │       │   │               ├── Utility
+│   │       │   │               │   ├── AuthUtil.java
+│   │       │   │               │   └── DBPreProcess.java
+│   │       │   │               └── WebSocket
+│   │       │   │                   └── WebSocketConfig.java
+│   │       │   └── resources
+│   │       │       └── application.properties
+│   │       └── test
+│   │           └── java
+│   │               └── de
+│   │                   └── thu
+│   │                       └── thutorium
+│   │                           ├── contollers
+│   │                           │   ├── AuthenticationControllerTest.java
+│   │                           │   ├── SearchCategoryTest.java
+│   │                           │   ├── TutorControllerTest.java
+│   │                           │   ├── UserControllerTest.java
+│   │                           │   └── WebSocketControllerTest.java
+│   │                           ├── services
+│   │                           │   ├── AddressServiceTest.java
+│   │                           │   ├── AuthenticationServiceTest.java
+│   │                           │   ├── ChatServiceTest.java
+│   │                           │   ├── CourseServiceTest.java
+│   │                           │   ├── MeetingServiceTest.java
+│   │                           │   ├── MessageServiceImplTest.java
+│   │                           │   ├── ProgressServiceImplTest.java
+│   │                           │   ├── SearchServiceImplTest.java
+│   │                           │   ├── UniversityServiceImplTest.java
+│   │                           │   └── UserServiceImplTest.java
+│   │                           └── ThutoriumApplicationTests.java
+│   ├── DBModels
+│   │   └── dbschema.dbs
+│   ├── docker-compose.yml
+│   ├── frontend
+│   │   ├── Dockerfile
+│   │   ├── .gitignore
+│   │   ├── nginx.conf
+│   │   ├── package.json
+│   │   ├── public
+│   │   │   ├── index.html
+│   │   │   ├── logo.png
+│   │   │   ├── manifest.json
+│   │   │   └── robots.txt
+│   │   ├── README.md
+│   │   ├── src
+│   │   │   ├── App.css
+│   │   │   ├── App.js
+│   │   │   ├── assets
+│   │   │   │   ├── empty_meetings.svg
+│   │   │   │   ├── empty_reviews.svg
+│   │   │   │   ├── empty_students.svg
+│   │   │   │   ├── error404.svg
+│   │   │   │   ├── logo512.png
+│   │   │   │   ├── logo.png
+│   │   │   │   └── profile.png
+│   │   │   ├── components
+│   │   │   │   ├── ActionButton.jsx
+│   │   │   │   ├── CallNotification.jsx
+│   │   │   │   ├── ChatHistoryItem.jsx
+│   │   │   │   ├── ConfirmationDialog.jsx
+│   │   │   │   ├── CourseSearchResultItem.jsx
+│   │   │   │   ├── CustomDropdown.jsx
+│   │   │   │   ├── DateTimePicker.jsx
+│   │   │   │   ├── EnrolledStudentItem.jsx
+│   │   │   │   ├── EnrolledStudents.jsx
+│   │   │   │   ├── FileUpload.jsx
+│   │   │   │   ├── InfoTabs.jsx
+│   │   │   │   ├── InputField.jsx
+│   │   │   │   ├── MeetingCard.jsx
+│   │   │   │   ├── MeetingItem.jsx
+│   │   │   │   ├── Meetings.jsx
+│   │   │   │   ├── MessageItem.jsx
+│   │   │   │   ├── Navbar.jsx
+│   │   │   │   ├── RatingDialog.jsx
+│   │   │   │   ├── ReviewItem.jsx
+│   │   │   │   ├── Reviews.jsx
+│   │   │   │   ├── SearchBar.jsx
+│   │   │   │   ├── SelectField.jsx
+│   │   │   │   ├── TextareaField.jsx
+│   │   │   │   └── TutorSearchResultItem.js
+│   │   │   ├── config.js
+│   │   │   ├── fonts
+│   │   │   │   ├── lato.ttf
+│   │   │   │   ├── merriweather_sans.ttf
+│   │   │   │   └── merriweather.ttf
+│   │   │   ├── helpers
+│   │   │   │   ├── CalculateAverageRating.jsx
+│   │   │   │   ├── CalculateDuration.jsx
+│   │   │   │   ├── CapitalizeFirstLetter.js
+│   │   │   │   ├── FormatDate.jsx
+│   │   │   │   └── FormatDateTime.jsx
+│   │   │   ├── index.css
+│   │   │   ├── index.js
+│   │   │   ├── logo.svg
+│   │   │   ├── pages
+│   │   │   │   ├── Call.jsx
+│   │   │   │   ├── Course.jsx
+│   │   │   │   ├── CreateCourse.jsx
+│   │   │   │   ├── CreateMeeting.jsx
+│   │   │   │   ├── Home.jsx
+│   │   │   │   ├── Login.jsx
+│   │   │   │   ├── Messages.jsx
+│   │   │   │   ├── Profile.jsx
+│   │   │   │   ├── Search.jsx
+│   │   │   │   ├── SignUp.jsx
+│   │   │   │   ├── StudentCentre.jsx
+│   │   │   │   ├── StudentMeetings.jsx
+│   │   │   │   ├── TutorCentre.jsx
+│   │   │   │   ├── Tutor.jsx
+│   │   │   │   └── TutorMeetings.jsx
+│   │   │   ├── reportWebVitals.js
+│   │   │   ├── server.js
+│   │   │   ├── services
+│   │   │   │   ├── AuthContext.js
+│   │   │   │   ├── AuthService.js
+│   │   │   │   ├── AxiosConfig.js
+│   │   │   │   └── SocketContext.js
+│   │   │   ├── setupTests.js
+│   │   │   ├── styles
+│   │   │   │   └── fonts.css
+│   │   │   ├── __tests__
+│   │   │   │   ├── CalculateAverageRating.test.js
+│   │   │   │   ├── CustomDropdown.test.js
+│   │   │   │   ├── InputField.test.js
+│   │   │   │   ├── MessageItem.test.js
+│   │   │   │   ├── SearchBar.test.js
+│   │   │   │   ├── SelectField.test.js
+│   │   │   │   └── TextareaField.test.js
+│   │   │   └── utils
+│   │   │       ├── ProtectedRoutes.jsx
+│   │   │       └── PublicRoute.jsx
+│   │   └── tailwind.config.js
+│   ├── LICENSE
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── README.md
+│   └── webrtc
+│       ├── Dockerfile
+│       ├── package.json
+│       └── webrtc-server.js
+└── TestingDocumentation
+    ├── 00_TestPlan.pdf
+    ├── 01_SonarGateResult.png
+    └── 02_CodeCoverageReport.png
+
+58 directories, 282 files

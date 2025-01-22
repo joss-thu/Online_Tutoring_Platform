@@ -1,33 +1,44 @@
 .
 ├── README.md                       # Overview and setup instructions
-├── VisionDocument.pdf              # Vision document for the project
-├── ArchitectureHandbook.pdf        # Architecture handbook (already available)
-├── TestingDocumentation/           # Testing-related files
-│   ├── TestPlan.pdf                # Detailed test plan
-│   ├── TestCases.xlsx              # Test cases and results
-│   ├── CodeCoverageReport.html     # Code coverage report
+├── folder_structure.txt            # Directory structure overview
+├── LICENSE                         # License information for the project
+├── Documentation/                  # Documentation for architecture, vision, and quality standards
+│   ├── 00_ArchitectureHandbook_v241230.pdf   # Detailed architecture handbook
+│   ├── 01_VisionDocument.pdf                # Vision document for the project
+│   ├── 03_QualityStandards.pdf              # Quality standards and guidelines
+│   ├── ComplianceDocumentation(Anastasiya)/ # Compliance-related documentation
+│   │   ├── GDPR.pdf                         # GDPR compliance details
+│   │   └── WCAG.pdf                         # WCAG compliance details
+│   └── HelpFiles/                           # Help and guidance files
+│       ├── HowToBuildAPoject(OBSOLETE).pdf  # Obsolete guide for building the project
+│       ├── HowToGitHub.pdf                  # Guide on using GitHub
+│       └── LearningSuggestionsAndSomeResourcesForBackendTeam.pdf  # Learning resources for the backend team
+├── Reports/                        # Project reports and logs
+│   ├── 00_ProgressReport.pdf       # First progress report
+│   ├── 02_LessonsLearned.pdf       # Lessons learned from the project
+│   ├── 04_MeetingMinutes.pdf       # Minutes from project meetings
+│   └── TimeLog_2025_01_22_15_50.pdf # Time log for project activities
 ├── SourceCode/                     # Source code for the project
 │   ├── backend/                    # Backend source code
 │   │   ├── src/                    # Java/Spring Boot application files
-│   │   ├── pom.xml                 # Maven project configuration
-│   │   ├── Dockerfile              # Dockerfile for the backend
-│   │   ├── application.properties  # Configuration file for the backend
 │   │   ├── API_DESCRIPTION.md      # Backend API documentation
+│   │   ├── checkstyle.xml          # Checkstyle configuration for code quality
+│   │   ├── Dockerfile              # Docker configuration for backend deployment
+│   │   ├── mvnw, mvnw.cmd          # Maven wrapper scripts
+│   │   ├── pom.xml                 # Maven project configuration
+│   │   └── application.properties  # Configuration file for the backend
 │   ├── frontend/                   # Frontend source code
 │   │   ├── src/                    # React application files
-│   │   ├── Dockerfile              # Dockerfile for the frontend
-│   │   ├── nginx.conf              # NGINX configuration (if applicable)
+│   │   ├── Dockerfile              # Docker configuration for frontend deployment
+│   │   ├── nginx.conf              # NGINX configuration for serving frontend
 │   │   ├── package.json            # Node.js project configuration
-│   ├── docker-compose.yml          # Docker Compose configuration
-├── DBModels/                       # Database-related files
-│   ├── dbschema.dbs                # Database schema definition
-├── Reports/                        # Reports tracking project progress
-│   ├── ProgressReport1.pdf         # Progress report 1
-│   ├── MilestoneAchievements.pdf   # Summary of milestones achieved
-├── Documentation/                  # Additional documentation
-│   ├── UserManual.pdf              # User manual for the platform
-│   ├── DeveloperGuide.pdf          # Developer guide for the platform
-│   ├── DeploymentGuide.pdf         # Guide for deploying the platform
-└── Misc/                           # Miscellaneous files
-    ├── folder_structure.txt        # This file for directory structure overview
-    └── any_additional_notes.txt    # Optional additional notes
+│   │   ├── public/                 # Static assets for the frontend
+│   │   └── __tests__/              # Test cases for frontend components
+│   ├── docker-compose.yml          # Docker Compose configuration for the project
+│   └── DBModels/                   # Database schema files
+│       └── dbschema.dbs            # Database schema definition
+├── TestingDocumentation/           # Documentation related to testing
+    ├── 00_TestPlan.pdf             # Test plan for the project
+    ├── 01_SonarGateResult.png      # SonarQube analysis results
+    └── 02_CodeCoverageReport.png   # Code coverage report
+
