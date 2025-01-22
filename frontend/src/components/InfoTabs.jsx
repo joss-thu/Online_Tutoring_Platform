@@ -3,7 +3,7 @@ import Reviews from "./Reviews";
 import EnrolledStudents from "./EnrolledStudents";
 import Meetings from "./Meetings";
 
-const CourseTabs = ({
+const InfoTabs = ({
   visibleTabs = ["reviews", "students", "meetings"],
   ratings,
   enrolledStudents,
@@ -22,7 +22,7 @@ const CourseTabs = ({
   }, [visibleTabs, activeTab]);
 
   return (
-    <div className="fixed right-[2%] top-[48%] bottom-[5%] w-[36%] mx-auto p-6 border border-gray-400 bg-gray-900 rounded-3xl max-h-[70vh] flex flex-col">
+    <div className="fixed right-[2%] top-[48%] bottom-[3%] w-[36%] mx-auto p-6 border border-gray-400 bg-gray-900 rounded-3xl max-h-[70vh] flex flex-col">
       {/* Tabs (Fixed at Top) */}
       {visibleTabs.length > 0 && (
         <div
@@ -42,9 +42,12 @@ const CourseTabs = ({
                 }`}
               onClick={() => setActiveTab(tab)}
             >
-              {tab === "reviews" && "⭐ Reviews"}
-              {tab === "students" && "🧑🏼‍🎓 Students"}
-              {tab === "meetings" && "📅 Meetings"}
+              {tab === "reviews" &&
+                `⭐ Reviews (${ratings ? ratings.length : 0})`}
+              {tab === "students" &&
+                `🧑🏼‍🎓 Students (${enrolledStudents ? enrolledStudents.length : 0})`}
+              {tab === "meetings" &&
+                `📅 Meetings (${meetings ? meetings.length : 0})`}
             </button>
           ))}
         </div>
@@ -69,4 +72,4 @@ const CourseTabs = ({
   );
 };
 
-export default CourseTabs;
+export default InfoTabs;

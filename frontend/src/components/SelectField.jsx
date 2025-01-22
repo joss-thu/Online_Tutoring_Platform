@@ -1,9 +1,20 @@
 import React from "react";
 
-const SelectField = ({ label, id, name, value, onChange, options }) => {
+const SelectField = ({
+  label,
+  id,
+  name,
+  value,
+  onChange,
+  options,
+  className,
+}) => {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={id}
+        className={`block text-sm font-medium text-gray-700 ${className}`}
+      >
         {label}
       </label>
       <select
@@ -50,6 +61,14 @@ const SelectField = ({ label, id, name, value, onChange, options }) => {
             return (
               <option key={index} value={option.addressId}>
                 {formattedAddress}
+              </option>
+            );
+          }
+
+          if (option.affiliation.universityName) {
+            return (
+              <option key={index} value={option.affiliation.universityName}>
+                {option.affiliation.universityName}
               </option>
             );
           }

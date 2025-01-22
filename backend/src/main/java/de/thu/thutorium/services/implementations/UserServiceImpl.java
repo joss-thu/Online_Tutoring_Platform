@@ -138,7 +138,6 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new EntityNotFoundException(
                     "User with ID " + userId + " does not exist in database."));
 
-    // clear courses
     if (!user.getTutorCourses().isEmpty()) {
       List<CourseDBO> tutorCourses = new ArrayList<>(user.getTutorCourses());
       tutorCourses.forEach(course -> courseService.deleteCourse(course.getCourseId()));
@@ -156,7 +155,7 @@ public class UserServiceImpl implements UserService {
     user.getMeetings().forEach(meeting -> meeting.getParticipants().remove(user));
     user.getMeetings().clear();
 
-    //Clear chats
+    // Clear chats
     List<ChatDBO> chats = chatRepository.findByParticipants_UserId(user.getUserId()); // Custom repository query
     chats.forEach(chat -> chatService.deleteChat(chat.getChatId()));
 

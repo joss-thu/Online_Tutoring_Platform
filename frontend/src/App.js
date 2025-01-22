@@ -2,7 +2,7 @@ import "./App.css";
 import "@smastrom/react-rating/style.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import MyCourses from "./pages/MyCourses";
+import StudentCentre from "./pages/StudentCentre";
 import TutorCentre from "./pages/TutorCentre";
 import Messages from "./pages/Messages";
 import Search from "./pages/Search";
@@ -20,6 +20,8 @@ import { STUDENT_ROLE, TUTOR_ROLE } from "./config";
 import { SocketProvider } from "./services/SocketContext";
 import CallNotification from "./components/CallNotification";
 import CreateMeeting from "./pages/CreateMeeting";
+import TutorMeetings from "./pages/TutorMeetings";
+import StudentMeetings from "./pages/StudentMeetings";
 
 export default function App() {
   return (
@@ -38,6 +40,22 @@ export default function App() {
               }
             />
             <Route
+              path="/tutor-meetings"
+              element={
+                <ProtectedRoutes roles={[TUTOR_ROLE]}>
+                  <TutorMeetings />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/student-meetings"
+              element={
+                <ProtectedRoutes roles={[STUDENT_ROLE]}>
+                  <StudentMeetings />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
               path="/create-meeting"
               element={
                 <ProtectedRoutes roles={[TUTOR_ROLE]}>
@@ -46,10 +64,10 @@ export default function App() {
               }
             />
             <Route
-              path="/my-courses"
+              path="/student-centre"
               element={
                 <ProtectedRoutes roles={[STUDENT_ROLE]}>
-                  <MyCourses />
+                  <StudentCentre />
                 </ProtectedRoutes>
               }
             />
