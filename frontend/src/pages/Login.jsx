@@ -41,7 +41,7 @@ function Login() {
       login(data.token);
       navigate("/profile");
     } catch (error) {
-      if (error.response?.status === 403) {
+      if (error.response?.status === 500) {
         setAuthFailedError(true);
       } else {
         console.error("Login failed", error);

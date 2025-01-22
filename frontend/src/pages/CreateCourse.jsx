@@ -9,17 +9,24 @@ import { BACKEND_URL } from "../config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ActionButton from "../components/ActionButton";
+import { Tooltip } from "react-tooltip";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState({});
   const { user } = useAuth();
-  const [validationError, setValidationError] = useState("");
+  const [dateValidationError, setDateValidationError] = useState(false);
   const [courseNameLength, setCourseNameLength] = useState(0);
   const [shortDescriptionLength, setShortDescriptionLength] = useState(0);
   const [longDescriptionLength, setLongDescriptionLength] = useState(0);
   const [course, setCourse] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [courseNameError, setCourseNameError] = useState(false);
+  const [shortDescriptionError, setShortDescriptionError] = useState(false);
+  const [longDescriptionError, setLongDescriptionError] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
+  const [startDateError, setStartDateError] = useState(false);
+  const [endDateError, setEndDateError] = useState(false);
 
   const [categories, setCategories] = useState([]);
   const [searchParams] = useSearchParams();
@@ -137,13 +144,42 @@ const CreateCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setValidationError("");
+    setDateValidationError(false);
+    const courseNameInvalid =
+      !courseDetails.courseName ||
+      courseDetails.courseName.length > MAX_COURSE_NAME;
+    const shortDescriptionInvalid =
+      !courseDetails.shortDescription ||
+      courseDetails.shortDescription.length > MAX_SHORT_DESC;
+    const longDescriptionInvalid =
+      !courseDetails.shortDescription ||
+      courseDetails.longDescription.length > MAX_LONG_DESC;
+    const categoryInvalid = !courseDetails.category;
+    const startDateInvalid = !courseDetails.startDate;
+    const endDateInvalid = !courseDetails.endDate;
+
+    setCourseNameError(courseNameInvalid);
+    setShortDescriptionError(shortDescriptionInvalid);
+    setLongDescriptionError(longDescriptionInvalid);
+    setCategoryError(categoryInvalid);
+    setStartDateError(startDateInvalid);
+    setEndDateError(endDateInvalid);
+
+    if (
+      courseNameInvalid ||
+      shortDescriptionInvalid ||
+      longDescriptionInvalid ||
+      categoryInvalid ||
+      startDateInvalid ||
+      endDateInvalid
+    )
+      return;
 
     const startDate = new Date(courseDetails.startDate);
     const endDate = new Date(courseDetails.endDate);
 
     if (startDate >= endDate) {
-      setValidationError("End date must be after start date.");
+      setDateValidationError(true);
       return;
     }
 
@@ -193,16 +229,70 @@ const CreateCourse = () => {
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-        {validationError && (
-          <div className="text-red-500 text-sm">{validationError}</div>
+        {dateValidationError && (
+          <div className="text-red-500 text-sm">{dateValidationError}</div>
         )}
+        <Tooltip
+          anchorSelect=".course_name_anchor_element"
+          place="left"
+          isOpen={courseNameError}
+        >
+          Enter a course name
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".short_description_anchor_element"
+          place="left"
+          isOpen={shortDescriptionError}
+        >
+          Enter a short description
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".long_description_anchor_element"
+          place="left"
+          isOpen={longDescriptionError}
+        >
+          Enter a long description
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".category_anchor_element"
+          place="left"
+          isOpen={categoryError}
+        >
+          Choose a category
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".start_date_anchor_element"
+          place="left"
+          isOpen={startDateError}
+        >
+          Choose a starting date
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".end_date_anchor_element"
+          place="left"
+          isOpen={endDateError}
+        >
+          Choose an ending date
+        </Tooltip>
+
+        <Tooltip
+          anchorSelect=".date_validation_anchor_element"
+          place="left"
+          isOpen={dateValidationError}
+        >
+          End date must be after start date
+        </Tooltip>
 
         <InputField
+          className={"course_name_anchor_element"}
           label="Course Name *"
           placeholder="Software Engineering"
           name="courseName"
           value={courseDetails.courseName || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setCourseNameError(false);
+          }}
           required={true}
         />
         <p
@@ -214,11 +304,15 @@ const CreateCourse = () => {
         </p>
 
         <TextareaField
+          className={"short_description_anchor_element"}
           label="Short Description *"
           placeholder="Enter a short description"
           name="shortDescription"
           value={courseDetails.shortDescription || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setShortDescriptionError(false);
+          }}
           rows={2}
           maxLength={MAX_SHORT_DESC}
           hint={`Max ${MAX_SHORT_DESC} characters.`}
@@ -233,12 +327,16 @@ const CreateCourse = () => {
         </p>
 
         <TextareaField
+          className={"long_description_anchor_element"}
           label="Long Description *"
           placeholder="Enter a detailed description"
           name="longDescription"
           rows={6}
           value={courseDetails.longDescription || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setLongDescriptionError(false);
+          }}
           maxLength={MAX_LONG_DESC}
           hint={`Max ${MAX_LONG_DESC} characters.`}
           required={true}
@@ -252,36 +350,48 @@ const CreateCourse = () => {
         </p>
 
         <SelectField
+          className={"category_anchor_element"}
           label="Category *"
           name="category"
           value={courseDetails.category || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setCategoryError(false);
+          }}
           options={categories}
           required={true}
         />
 
         <InputField
+          className={"start_date_anchor_element"}
           label="Start Date *"
           type="date"
           name="startDate"
           value={courseDetails.startDate || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setStartDateError(false);
+          }}
           required={true}
         />
 
         <InputField
+          className={"end_date_anchor_element date_validation_anchor_element"}
           label="End Date *"
           type="date"
           name="endDate"
           value={courseDetails.endDate || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setEndDateError(false);
+          }}
           required={true}
         />
         <ActionButton
           type={"submit"}
           onClick={() => {}}
           icon={isEditMode ? "sync" : "add_circle"}
-          className="mb-4"
+          className="my-4"
           text={isEditMode ? "Update Course" : "Create Course"}
           design={"action"}
         />

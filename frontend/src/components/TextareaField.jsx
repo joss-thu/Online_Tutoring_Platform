@@ -1,9 +1,19 @@
 //import React from "react";
 
-const TextareaField = ({ label, placeholder, value, onChange, name, rows }) => {
+const TextareaField = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  name,
+  rows,
+  className,
+}) => {
   return (
     <div>
-      <label className="block text-gray-700 text-sm font-medium mb-2">
+      <label
+        className={`block text-gray-700 text-sm font-medium mb-2 ${className}`}
+      >
         {label}
       </label>
       <textarea
