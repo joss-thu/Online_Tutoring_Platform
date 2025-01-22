@@ -150,10 +150,19 @@ public class CourseServiceImpl implements CourseService {
   @Override
   @Transactional
   public void deleteCourse(Long courseId) {
-    if (!courseRepository.existsById(courseId)) {
-      throw new EntityNotFoundException("Course not found with ID: " + courseId);
-    }
-    courseRepository.deleteById(courseId);
+    CourseDBO course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new EntityNotFoundException("Course not found with ID: " + courseId));
+
+    // Clear relationships with students
+    course.getStudents().forEach(student -> student.getStudentCourses().remove(course));
+    course.getStudents().clear();
+
+    // Clear relationships with categories
+    course.getCourseCategories().forEach(category -> category.getCourses().remove(course));
+    course.getCourseCategories().clear();
+
+    // Delete the course
+    courseRepository.delete(course);
   }
 
   /**

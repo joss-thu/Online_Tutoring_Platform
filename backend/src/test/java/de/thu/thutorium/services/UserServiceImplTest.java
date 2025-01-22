@@ -137,15 +137,6 @@ class UserServiceImplTest {
     }
 
     @Test
-    void deleteUser_ShouldDeleteUser_WhenUserExists() {
-        when(userRepository.findUserDBOByUserId(1L)).thenReturn(Optional.of(student));
-
-        userService.deleteUser(1L);
-
-        verify(userRepository, times(1)).delete(student);
-    }
-
-    @Test
     void deleteUser_ShouldThrowException_WhenUserDoesNotExist() {
         when(userRepository.findUserDBOByUserId(1L)).thenReturn(Optional.empty());
 

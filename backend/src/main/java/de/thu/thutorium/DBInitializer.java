@@ -115,7 +115,7 @@ public class DBInitializer {
       jdbcTemplate.execute(
           "ALTER TABLE meeting "
               + "ADD CONSTRAINT meeting_date_limit "
-              + "CHECK (meeting_date <= CURRENT_DATE + INTERVAL '1 year')");
+              + "CHECK (meeting_start_time <= CURRENT_TIMESTAMP + INTERVAL '1 year')");
 
       log.info("Database constraints added successfully.");
     } catch (DataIntegrityViolationException e) {

@@ -247,6 +247,14 @@ public class UserDBO implements UserDetails {
   @Builder.Default
   private List<CourseDBO> tutorCourses = new ArrayList<>();
 
+  @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<ReportDBO> writtenReports = new ArrayList<>();
+
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<ReportDBO> receivedReports = new ArrayList<>();
+
   /** Constructs a UserDBO object with default values. */
   public UserDBO() {
     this.roles = new HashSet<>();
@@ -326,6 +334,7 @@ public class UserDBO implements UserDetails {
   public boolean isCredentialsNonExpired() {
     return true;
   }
+
 
   /**
    * Indicates whether the user is enabled or disabled.

@@ -1,7 +1,9 @@
-const DateTimePicker = ({ onChange, value, label, name }) => {
+const DateTimePicker = ({ onChange, value, label, name, className }) => {
   return (
     <div className="flex flex-col">
-      <label className="block text-gray-700 text-sm font-medium mb-2 mt-4">
+      <label
+        className={`block text-gray-700 text-sm font-medium mb-2 mt-4 ${className}`}
+      >
         {label}
       </label>
       <input
