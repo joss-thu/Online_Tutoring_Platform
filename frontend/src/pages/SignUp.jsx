@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import apiClient from "../services/AxiosConfig";
 import { useAuth } from "../services/AuthContext";
 import { Tooltip } from "react-tooltip";
+import ActionButton from "../components/ActionButton";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -61,7 +62,7 @@ function SignUp() {
 
   return (
     <div className="relative min-h-screen bg-white overflow-hidden">
-      <NavBar currentPage={"/"} />
+      <NavBar currentPage={"/signup"} />
       <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center w-full px-4">
         <div className="flex flex-col justify-center w-full max-w-xl bg-gray-100 p-10 rounded-2xl font-merriweather_sans">
           <div className="flex items-center justify-center text-2xl">
@@ -216,12 +217,12 @@ function SignUp() {
             </p>
           )}
 
-          <button
+          <ActionButton
+            className={"items-center justify-center mt-4"}
             onClick={handleRegisterClick}
-            className="bg-blue-900 text-white py-2 px-1 rounded-md mt-7 hover:bg-blue-800 focus:outline-none"
-          >
-            Sign Up
-          </button>
+            text={"Sign Up"}
+            design={"action"}
+          />
           <div
             className="inline-flex items-center justify-center text-sm mt-3 cursor-pointer w-fit mx-auto"
             onClick={() => navigate("/login")}

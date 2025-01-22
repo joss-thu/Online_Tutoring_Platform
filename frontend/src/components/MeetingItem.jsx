@@ -3,6 +3,8 @@ import { format } from "date-fns";
 import apiClient from "../services/AxiosConfig";
 import { Tooltip } from "react-tooltip";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import ActionButton from "./ActionButton";
 
 const MeetingItem = ({
   result,
@@ -19,6 +21,7 @@ const MeetingItem = ({
     roomNum,
     campusName,
     universityName,
+    courseId,
   } = result;
 
   const tooltipText =
@@ -27,6 +30,8 @@ const MeetingItem = ({
         ? null
         : "Contact your tutor for meeting link"
       : `${roomNum}, ${universityName} (${campusName})`;
+
+  const navigate = useNavigate();
 
   const handleActionClick = async () => {
     if (!isYourMeeting) {
@@ -47,6 +52,10 @@ const MeetingItem = ({
       } catch (e) {
         console.error(e);
       }
+    } else {
+      navigate(
+        `/create-meeting?edit=true&courseId=${courseId}&meetingId=${meetingId}?ref=course`,
+      );
     }
   };
 
@@ -86,19 +95,13 @@ const MeetingItem = ({
         {duration_in_minutes} min
       </div>
 
-      {/* Action Button */}
-      <button
+      {/* Edit Button */}
+      <ActionButton
         onClick={handleActionClick}
-        className={`px-3 py-1 min-w-[80px] text-center font-medium rounded-lg transition ${
-          isYourMeeting
-            ? "bg-gray-400 hover:bg-gray-300 text-gray-950"
-            : isBooked
-              ? "bg-red-800 hover:bg-red-900 text-white"
-              : "bg-blue-600 hover:bg-blue-500 text-white"
-        }`}
-      >
-        {isYourMeeting ? "Edit" : isBooked ? "Cancel" : "Book"}
-      </button>
+        icon={isYourMeeting ? "edit_calendar" : isBooked ? "close" : "event"}
+        text={isYourMeeting ? "Edit" : isBooked ? "Cancel" : "Book"}
+        design={isYourMeeting ? "neutral" : isBooked ? "alert" : "action"}
+      />
     </div>
   );
 };

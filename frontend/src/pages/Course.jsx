@@ -7,7 +7,11 @@ import { useAuth } from "../services/AuthContext";
 import { BACKEND_URL, STUDENT_ROLE, TUTOR_ROLE } from "../config";
 import getCourseDuration from "../helpers/CalculateDuration";
 import apiClient from "../services/AxiosConfig";
-import CourseTabs from "../components/CourseTabs";
+import InfoTabs from "../components/InfoTabs";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import RatingDialog from "../components/RatingDialog";
+import ActionButton from "../components/ActionButton";
+import error404 from "../assets/error404.svg";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -46,6 +50,9 @@ function Course() {
   const [meetings, setMeetings] = useState(null);
   const [visibleTabs, setVisibleTabs] = useState(null);
   const [bookedMeetings, setBookedMeetings] = useState(null);
+  const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
+  const [isOpenRating, setIsOpenRating] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchStudentEnrollStatus = async (courseData) => {
     if (!courseData) return;
@@ -171,6 +178,7 @@ function Course() {
     if (!id || !user) return;
     setCourse(null);
     try {
+      setLoading(true);
       const res = await fetch(`${BACKEND_URL}/search/get-course/${id}`);
       const data = await res.json();
       setCourse(data);
@@ -185,6 +193,8 @@ function Course() {
       }
     } catch (error) {
       console.error("Error fetching course details:", error);
+    } finally {
+      setLoading(false);
     }
   }, [id, user]);
 
@@ -239,7 +249,7 @@ function Course() {
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar isLoggedIn={false} currentPage="/" />
-      {course ? (
+      {!loading && course && (
         <div className="mt-[120px] w-full max-w-7xl font-merriweather_sans mb-10">
           {/* Course Banner */}
           <div className="w-full h-60 bg-gray-300 flex items-center justify-center text-gray-600 rounded-xl">
@@ -289,34 +299,82 @@ function Course() {
                 >
                   link
                 </span>
+                {user && user.id === course.tutorId && (
+                  <span
+                    onClick={() =>
+                      navigate(
+                        "/create-course?edit=true&courseId=" + course.courseId,
+                      )
+                    }
+                    className="material-symbols-rounded text-2xl ml-3 cursor-pointer text-gray-600"
+                  >
+                    edit_square
+                  </span>
+                )}
+
                 {/* Enroll Button */}
                 {user &&
                   isAuthenticated &&
                   checkRole(STUDENT_ROLE) &&
                   course.tutorId !== user.id && (
-                    <button
-                      onClick={
-                        enrolled ? handleStudentUnenroll : handleStudentEnroll
-                      }
-                      className={`ml-auto max-h-12 rounded-full text-white py-2 px-4 ${enrolled ? "bg-red-900" : "bg-blue-800"}`}
-                    >
-                      {enrolled ? "Unenroll" : "Enroll Now"}
-                    </button>
+                    <ActionButton
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (enrolled) {
+                          setIsOpenWithdraw(true);
+                        } else {
+                          handleStudentEnroll();
+                        }
+                      }}
+                      icon={enrolled ? "exit_to_app" : "add"}
+                      className="ml-auto"
+                      text={enrolled ? "Withdraw" : "Enroll Now"}
+                      design={enrolled ? "alert" : "action"}
+                    />
                   )}
+                {/* Rate Button */}
+                {user &&
+                  isAuthenticated &&
+                  checkRole(STUDENT_ROLE) &&
+                  course.tutorId !== user.id &&
+                  enrolled && (
+                    <ActionButton
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsOpenRating(true);
+                      }}
+                      icon={"reviews"}
+                      className="ml-4"
+                      text={"Rate Course"}
+                      design={"neutral"}
+                    />
+                  )}
+                <ConfirmationDialog
+                  isOpen={isOpenWithdraw}
+                  setIsOpen={setIsOpenWithdraw}
+                  title="Withdraw from Course?"
+                  message="Are you sure you want to withdraw from this course? All associated data will be removed."
+                  confirmText="Withdraw"
+                  confirmIcon="exit_to_app"
+                  onConfirm={handleStudentUnenroll}
+                />
 
                 {/* Meetings Button */}
                 {user &&
                   isAuthenticated &&
                   checkRole(TUTOR_ROLE) &&
                   course.tutorId === user.id && (
-                    <button
+                    <ActionButton
                       onClick={() => {
-                        navigate(`/create-meeting?courseId=${course.courseId}`);
+                        navigate(
+                          `/create-meeting?courseId=${course.courseId}&ref=course`,
+                        );
                       }}
-                      className={`ml-auto max-h-12 rounded-full text-white py-2 px-4 ${enrolled ? "bg-red-900" : "bg-blue-800"}`}
-                    >
-                      Create a New Meeting
-                    </button>
+                      icon={"add"}
+                      className="ml-auto"
+                      text={"Create a New Meeting"}
+                      design={"action"}
+                    />
                   )}
               </div>
               <Tooltip
@@ -341,6 +399,14 @@ function Course() {
                   </div>
                 </div>
               </div>
+
+              <RatingDialog
+                isOpen={isOpenRating}
+                setIsOpen={setIsOpenRating}
+                user={user}
+                courseId={course.courseId}
+                refreshRatings={fetchCourseRatings}
+              />
 
               {/* Rating */}
               <Rating
@@ -411,7 +477,7 @@ function Course() {
               </div>
             </div>
             {visibleTabs && user && (
-              <CourseTabs
+              <InfoTabs
                 ratings={ratings}
                 enrolledStudents={enrolledStudents}
                 meetings={meetings}
@@ -462,9 +528,17 @@ function Course() {
               </div>
             )}
         </div>
-      ) : (
+      )}
+      {!loading && !course && (
         <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans text-xl">
-          Loading...
+          <div className="flex flex-col justify-center items-center w-full mt-[12%]">
+            <img
+              src={error404}
+              alt="Course not found"
+              className="w-2/5 h-auto"
+            />
+            <p className={"text-xl mt-4"}>Course not found</p>
+          </div>
         </div>
       )}
     </div>

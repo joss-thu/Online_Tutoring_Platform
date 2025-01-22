@@ -1,4 +1,5 @@
 import { useSocket } from "../services/SocketContext";
+import ActionButton from "./ActionButton";
 
 const CallNotification = () => {
   const { incomingCall, incomingUserName, acceptCall, rejectCall } =
@@ -21,18 +22,12 @@ const CallNotification = () => {
       </div>
 
       <div className="flex space-x-4 mt-4">
-        <button
+        <ActionButton
           onClick={acceptCall}
-          className="bg-green-500 px-4 py-2 rounded-xl hover:bg-green-600 w-full"
-        >
-          Accept
-        </button>
-        <button
-          onClick={rejectCall}
-          className="bg-red-500 px-4 py-2 rounded-xl hover:bg-red-600 w-full"
-        >
-          Reject
-        </button>
+          text={"Accept"}
+          design={"positive"}
+        />
+        <ActionButton onClick={rejectCall} text={"Reject"} design={"alert"} />
       </div>
     </div>
   );
