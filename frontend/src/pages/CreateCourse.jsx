@@ -8,12 +8,14 @@ import NavBar from "../components/Navbar";
 import { BACKEND_URL } from "../config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ActionButton from "../components/ActionButton";
 
 const CreateCourse = () => {
   const navigate = useNavigate();
   const [courseDetails, setCourseDetails] = useState({});
   const { user } = useAuth();
   const [validationError, setValidationError] = useState("");
+  const [courseNameLength, setCourseNameLength] = useState(0);
   const [shortDescriptionLength, setShortDescriptionLength] = useState(0);
   const [longDescriptionLength, setLongDescriptionLength] = useState(0);
   const [course, setCourse] = useState(null);
@@ -101,10 +103,12 @@ const CreateCourse = () => {
   }, [course, isEditMode]);
 
   useEffect(() => {
+    setCourseNameLength(courseDetails.courseName?.length || 0);
     setShortDescriptionLength(courseDetails.shortDescription?.length || 0);
     setLongDescriptionLength(courseDetails.longDescription?.length || 0);
   }, [courseDetails]);
 
+  const MAX_COURSE_NAME = 50;
   const MAX_SHORT_DESC = 150;
   const MAX_LONG_DESC = 2000;
 
@@ -119,6 +123,11 @@ const CreateCourse = () => {
     } else if (name === "longDescription") {
       if (value.length <= MAX_LONG_DESC) {
         setLongDescriptionLength(value.length);
+        setCourseDetails({ ...courseDetails, [name]: value });
+      }
+    } else if (name === "courseName") {
+      if (value.length <= MAX_COURSE_NAME) {
+        setCourseNameLength(value.length);
         setCourseDetails({ ...courseDetails, [name]: value });
       }
     } else {
@@ -196,6 +205,13 @@ const CreateCourse = () => {
           onChange={handleChange}
           required={true}
         />
+        <p
+          className={`text-xs mb-4 ${
+            courseNameLength === MAX_COURSE_NAME ? "text-red-500" : ""
+          }`}
+        >
+          {courseNameLength}/{MAX_COURSE_NAME}
+        </p>
 
         <TextareaField
           label="Short Description *"
@@ -227,7 +243,11 @@ const CreateCourse = () => {
           hint={`Max ${MAX_LONG_DESC} characters.`}
           required={true}
         />
-        <p className="text-xs mb-4">
+        <p
+          className={`text-xs mb-4 ${
+            longDescriptionLength === MAX_LONG_DESC ? "text-red-500" : ""
+          }`}
+        >
           {longDescriptionLength}/{MAX_LONG_DESC}
         </p>
 
@@ -257,24 +277,25 @@ const CreateCourse = () => {
           onChange={handleChange}
           required={true}
         />
-
-        <button
-          type="submit"
-          className="bg-blue-800 max-h-12 mb-4 rounded-full text-white py-2 px-6"
-        >
-          {isEditMode ? "Update Course" : "Create Course"}
-        </button>
+        <ActionButton
+          type={"submit"}
+          onClick={() => {}}
+          icon={isEditMode ? "sync" : "add_circle"}
+          className="mb-4"
+          text={isEditMode ? "Update Course" : "Create Course"}
+          design={"action"}
+        />
         {isEditMode && course && courseId && user && (
-          <button
-            type="button"
+          <ActionButton
             onClick={(e) => {
               e.preventDefault();
               setIsOpen(true);
             }}
-            className="bg-red-800 ml-4 max-h-12 rounded-full text-white py-2 px-6"
-          >
-            Delete Course
-          </button>
+            icon={"delete"}
+            className="ml-4"
+            text={"Delete Course"}
+            design={"alert"}
+          />
         )}
       </form>
       <ConfirmationDialog
@@ -283,6 +304,7 @@ const CreateCourse = () => {
         title="Delete Course?"
         message="Are you sure you want to delete this course? All associated data will be removed."
         confirmText="Delete"
+        confirmIcon={"delete"}
         onConfirm={handleDelete}
       />
     </div>

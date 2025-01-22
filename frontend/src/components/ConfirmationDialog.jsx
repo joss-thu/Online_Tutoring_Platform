@@ -4,6 +4,7 @@ import {
   DialogTitle,
   Description,
 } from "@headlessui/react";
+import ActionButton from "./ActionButton";
 
 const ConfirmationDialog = ({
   isOpen,
@@ -12,6 +13,7 @@ const ConfirmationDialog = ({
   message,
   confirmText = "Confirm",
   onConfirm,
+  confirmIcon,
 }) => {
   return (
     <Dialog
@@ -38,21 +40,21 @@ const ConfirmationDialog = ({
 
           {/* Action Buttons */}
           <div className="mt-6 flex justify-end gap-3">
-            <button
+            <ActionButton
               onClick={() => setIsOpen(false)}
-              className="px-4 py-2 rounded-full bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
-            >
-              Cancel
-            </button>
-            <button
+              text={"Cancel"}
+              design={"neutral"}
+              icon={"close"}
+            />
+            <ActionButton
               onClick={() => {
                 onConfirm();
                 setIsOpen(false);
               }}
-              className="px-4 py-2 rounded-full bg-red-800 text-white hover:bg-red-700 transition"
-            >
-              {confirmText}
-            </button>
+              text={confirmText}
+              design={"alert"}
+              icon={confirmIcon}
+            />
           </div>
         </DialogPanel>
       </div>

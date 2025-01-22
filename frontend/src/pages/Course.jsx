@@ -7,9 +7,10 @@ import { useAuth } from "../services/AuthContext";
 import { BACKEND_URL, STUDENT_ROLE, TUTOR_ROLE } from "../config";
 import getCourseDuration from "../helpers/CalculateDuration";
 import apiClient from "../services/AxiosConfig";
-import CourseTabs from "../components/CourseTabs";
+import InfoTabs from "../components/InfoTabs";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RatingDialog from "../components/RatingDialog";
+import ActionButton from "../components/ActionButton";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -311,7 +312,7 @@ function Course() {
                   isAuthenticated &&
                   checkRole(STUDENT_ROLE) &&
                   course.tutorId !== user.id && (
-                    <button
+                    <ActionButton
                       onClick={(e) => {
                         e.preventDefault();
                         if (enrolled) {
@@ -320,10 +321,11 @@ function Course() {
                           handleStudentEnroll();
                         }
                       }}
-                      className={`ml-auto max-h-12 rounded-full text-white py-2 px-4 ${enrolled ? "bg-red-900" : "bg-blue-800"}`}
-                    >
-                      {enrolled ? "Withdraw" : "Enroll Now"}
-                    </button>
+                      icon={enrolled ? "exit_to_app" : "add"}
+                      className="ml-auto"
+                      text={enrolled ? "Withdraw" : "Enroll Now"}
+                      design={enrolled ? "alert" : "action"}
+                    />
                   )}
                 {/* Rate Button */}
                 {user &&
@@ -331,15 +333,16 @@ function Course() {
                   checkRole(STUDENT_ROLE) &&
                   course.tutorId !== user.id &&
                   enrolled && (
-                    <button
+                    <ActionButton
                       onClick={(e) => {
                         e.preventDefault();
                         setIsOpenRating(true);
                       }}
-                      className={`ml-4 max-h-12 rounded-full text-white py-2 px-4 bg-blue-800`}
-                    >
-                      Rate Course
-                    </button>
+                      icon={"reviews"}
+                      className="ml-4"
+                      text={"Rate Course"}
+                      design={"neutral"}
+                    />
                   )}
                 <ConfirmationDialog
                   isOpen={isOpenWithdraw}
@@ -347,6 +350,7 @@ function Course() {
                   title="Withdraw from Course?"
                   message="Are you sure you want to withdraw from this course? All associated data will be removed."
                   confirmText="Withdraw"
+                  confirmIcon="exit_to_app"
                   onConfirm={handleStudentUnenroll}
                 />
 
@@ -355,14 +359,15 @@ function Course() {
                   isAuthenticated &&
                   checkRole(TUTOR_ROLE) &&
                   course.tutorId === user.id && (
-                    <button
+                    <ActionButton
                       onClick={() => {
                         navigate(`/create-meeting?courseId=${course.courseId}`);
                       }}
-                      className={`ml-auto max-h-12 rounded-full text-white py-2 px-4 ${enrolled ? "bg-red-900" : "bg-blue-800"}`}
-                    >
-                      Create a New Meeting
-                    </button>
+                      icon={"add"}
+                      className="ml-auto"
+                      text={"Create a New Meeting"}
+                      design={"action"}
+                    />
                   )}
               </div>
               <Tooltip
@@ -465,7 +470,7 @@ function Course() {
               </div>
             </div>
             {visibleTabs && user && (
-              <CourseTabs
+              <InfoTabs
                 ratings={ratings}
                 enrolledStudents={enrolledStudents}
                 meetings={meetings}

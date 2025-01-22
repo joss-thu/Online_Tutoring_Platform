@@ -25,7 +25,7 @@ function TutorSearchResultItem({ tutor }) {
       className="col-span-2 cursor-pointer flex rounded-2xl bg-gray-900 py-6 pr-8 pl-4 mt-1 flex-col justify-between"
     >
       <div className="flex-shrink-0">
-        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold ml-4 mb-2  text-gray-600 text-lg">
+        <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-bold ml-4 mb-2  text-blue-800 text-lg">
           {initials}
         </div>
       </div>

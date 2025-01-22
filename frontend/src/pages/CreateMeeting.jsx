@@ -8,6 +8,7 @@ import { BACKEND_URL } from "../config";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import DateTimePicker from "../components/DateTimePicker";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ActionButton from "../components/ActionButton";
 
 const CreateMeeting = () => {
   const meetingTypes = ["ONLINE", "OFFLINE", "HYBRID"];
@@ -18,6 +19,7 @@ const CreateMeeting = () => {
 
   const courseId = searchParams.get("courseId");
   const meetingId = searchParams.get("meetingId");
+  const ref = searchParams.get("ref");
   const isEditMode = searchParams.get("edit") === "true";
 
   const [meetingDetails, setMeetingDetails] = useState({});
@@ -143,7 +145,15 @@ const CreateMeeting = () => {
       } else {
         await apiClient.post("/tutor/create-meeting", requestBody);
       }
-      navigate(`/course?id=${courseId}`);
+      if (ref) {
+        if (ref === "course") {
+          navigate(`/course?id=${courseId}`);
+        } else if (ref === "meeting") {
+          navigate(`/tutor-meetings`);
+        }
+      } else {
+        navigate(`/tutor-meetings`);
+      }
     } catch (error) {
       if (error.response?.status === 409) {
         alert("A meeting with similar details already exists.");
@@ -177,8 +187,14 @@ const CreateMeeting = () => {
         />
         {(meetingDetails.meetingType === "ONLINE" ||
           meetingDetails.meetingType === "HYBRID") && (
-          <div className="mt-2 font-semibold italic text-gray-500">
-            ** Contact the tutor for the meeting link **
+          <div className="mt-2 text-gray-500 flex items-center">
+            <span
+              style={{ fontSize: "1.15rem" }}
+              className="material-symbols-rounded mr-2"
+            >
+              info
+            </span>
+            Students will contact you for the meeting link
           </div>
         )}
         {(meetingDetails.meetingType === "OFFLINE" ||
@@ -222,23 +238,24 @@ const CreateMeeting = () => {
           value={meetingDetails.endTime || ""}
         />
 
-        <button
-          type="submit"
-          className="bg-blue-800 max-h-12 my-4 rounded-full text-white py-2 px-6"
-        >
-          {isEditMode ? "Update Meeting" : "Create Meeting"}
-        </button>
+        <ActionButton
+          className={"my-4"}
+          type={"submit"}
+          icon={isEditMode ? "sync" : "add_circle"}
+          text={isEditMode ? "Update Meeting" : "Create Meeting"}
+          design={"action"}
+        />
         {isEditMode && meetingDetails && meetingId && courseId && user && (
-          <button
-            type="button"
+          <ActionButton
             onClick={(e) => {
               e.preventDefault();
               setIsOpen(true);
             }}
-            className="bg-red-800 ml-4 max-h-12 rounded-full text-white py-2 px-6"
-          >
-            Delete Meeting
-          </button>
+            className={"ml-4 my-4"}
+            text={`Delete Meeting`}
+            icon={"delete"}
+            design={"alert"}
+          />
         )}
       </form>
       <ConfirmationDialog

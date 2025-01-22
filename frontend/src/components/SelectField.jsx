@@ -54,6 +54,14 @@ const SelectField = ({ label, id, name, value, onChange, options }) => {
             );
           }
 
+          if (option.affiliation.universityName) {
+            return (
+              <option key={index} value={option.affiliation.universityName}>
+                {option.affiliation.universityName}
+              </option>
+            );
+          }
+
           return null;
         })}
       </select>

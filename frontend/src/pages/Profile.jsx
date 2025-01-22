@@ -4,8 +4,10 @@ import CapitalizeFirstLetter from "../helpers/CapitalizeFirstLetter";
 import { useAuth } from "../services/AuthContext";
 import apiClient from "../services/AxiosConfig";
 import { useNavigate } from "react-router-dom";
-import { STUDENT_ROLE, TUTOR_ROLE } from "../config";
+import { BACKEND_URL, STUDENT_ROLE, TUTOR_ROLE } from "../config";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ActionButton from "../components/ActionButton";
+import SelectField from "../components/SelectField";
 
 function Profile() {
   const { user, logout, checkRole } = useAuth();
@@ -21,13 +23,40 @@ function Profile() {
   const [isOpen, setIsOpen] = useState(false);
   const [shortDescriptionLength, setShortDescriptionLength] = useState(0);
   const MAX_SHORT_DESC = 100;
+  const [universities, setUniversities] = useState(null);
+  const affiliationTypes = ["STUDENT", "PROFESSOR", "EXTERNAL"];
 
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState({
     firstName: "",
     lastName: "",
     description: "",
+    email: "",
+    affiliation: {
+      affiliationType: affiliationTypes[0],
+      universityName: "",
+    },
   });
+
+  useEffect(() => {
+    const getUniversityName = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/user/get-addresses`);
+        if (res.status === 200) {
+          const data = await res.json();
+
+          const uniqueUniversities = Array.from(
+            new Set(data.map((item) => item.university.universityName)),
+          );
+          setUniversities(uniqueUniversities);
+        }
+      } catch (err) {
+        console.log("Error fetching addresses:", err);
+      }
+    };
+
+    getUniversityName();
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -37,7 +66,16 @@ function Profile() {
         setRoles(user.roles);
         setProfile(data);
         setInitials(getInitials(data.fullName));
-        setEditedProfile(data);
+        setEditedProfile({
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          description: data.description || "",
+          email: data.email || "",
+          affiliation: data.affiliation || {
+            affiliationType: affiliationTypes[0],
+            universityName: "",
+          },
+        });
       } catch (err) {
         setError("Failed to fetch profile data.");
         console.error(err);
@@ -96,12 +134,21 @@ function Profile() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
     if (name === "description") {
       if (value.length <= MAX_SHORT_DESC) {
-        console.log(name, value);
         setShortDescriptionLength(value.length);
         setEditedProfile((prev) => ({ ...prev, [name]: value }));
       }
+    } else if (name === "universityName" || name === "affiliationType") {
+      // Ensure affiliation exists before updating
+      setEditedProfile((prev) => ({
+        ...prev,
+        affiliation: {
+          ...prev.affiliation,
+          [name]: value,
+        },
+      }));
     } else {
       setEditedProfile((prev) => ({ ...prev, [name]: value }));
     }
@@ -110,12 +157,19 @@ function Profile() {
   const handleSave = async () => {
     try {
       await apiClient.put(`/user/update-user/${user.id}`, editedProfile);
+
       setProfile((prev) => ({
         ...prev,
         firstName: editedProfile.firstName,
         lastName: editedProfile.lastName,
         description: editedProfile.description,
+        email: editedProfile.email,
+        affiliation: {
+          affiliationType: editedProfile.affiliation?.affiliationType || "",
+          universityName: editedProfile.affiliation?.universityName || "",
+        },
       }));
+
       setIsEditing(false);
     } catch (err) {
       setError("Failed to update profile.");
@@ -146,15 +200,14 @@ function Profile() {
   return (
     <div className="flex flex-col items-center w-full min-h-screen">
       <NavBar currentPage="/profile" />
-
       <div className="flex flex-col w-full max-w-5xl font-merriweather_sans mt-[150px] bg-gray-50 p-8 rounded-2xl border border-gray-300">
         {/* Profile Header */}
         <div className="flex items-center gap-6">
-          <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600 text-3xl">
+          <div className="w-24 h-24 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-800 text-3xl">
             {initials}
           </div>
           <div>
-            {isEditing ? (
+            {isEditing && editedProfile ? (
               <div>
                 <input
                   type="text"
@@ -186,6 +239,25 @@ function Profile() {
                 >
                   {shortDescriptionLength}/{MAX_SHORT_DESC}
                 </p>
+
+                <SelectField
+                  label={"University Name *"}
+                  name={"universityName"}
+                  value={editedProfile.affiliation?.universityName || ""}
+                  options={universities}
+                  onChange={handleInputChange}
+                />
+                <div className="mt-4"></div>
+                <SelectField
+                  label={"Affiliation Type *"}
+                  name={"affiliationType"}
+                  value={
+                    editedProfile.affiliation?.affiliationType ||
+                    affiliationTypes[0]
+                  }
+                  options={affiliationTypes}
+                  onChange={handleInputChange}
+                />
               </div>
             ) : (
               <>
@@ -213,9 +285,27 @@ function Profile() {
           ))}
         </div>
 
+        {/* Affiliation Section */}
+        <div className="mt-6 bg-gray-300 border-dashed border-gray-500 border-2 rounded-lg p-4 w-full max-w-md shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800">Affiliation</h2>
+          <p className="text-gray-600 mt-1">
+            <span className="font-semibold">Type:</span>{" "}
+            {profile.affiliation?.affiliationType
+              ? CapitalizeFirstLetter(
+                  profile.affiliation.affiliationType.toLowerCase(),
+                )
+              : "Not specified"}
+          </p>
+          <p className="text-gray-600">
+            <span className="font-semibold">University:</span>{" "}
+            {profile.affiliation?.universityName || "Not specified"}
+          </p>
+        </div>
+
         {/* Quick Stats */}
+
         <div
-          className={`grid gap-20 bg-gray-900 p-4 rounded-xl mt-6 text-center ${coursesCountStudent && coursesCountTutor ? "grid-cols-3" : "grid-cols-2"}`}
+          className={`grid gap-20 bg-gray-900 p-4 rounded-xl mt-6 text-center grid-cols-3`}
         >
           {checkRole(TUTOR_ROLE) && (
             <div
@@ -240,7 +330,7 @@ function Profile() {
             </div>
           )}
           {meetings && (
-            <div className="hover:bg-gray-800 rounded-md py-2">
+            <div className="py-2">
               <p className="text-2xl font-bold text-blue-300">
                 {meetings.length}
               </p>
@@ -253,48 +343,59 @@ function Profile() {
         <div className="mt-8 flex flex-col md:flex-row gap-3">
           {isEditing ? (
             <>
-              <button
-                onClick={handleSave}
-                className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-500 transition"
-              >
-                Save
-              </button>
-              <button
+              <ActionButton
                 onClick={handleEditToggle}
-                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-400 transition"
-              >
-                Cancel
-              </button>
+                text={"Cancel"}
+                icon={"close"}
+                design={"neutral"}
+              />
+              <ActionButton
+                onClick={handleSave}
+                text={"Update"}
+                icon={"sync"}
+                design={"action"}
+              />
             </>
           ) : (
-            <button
+            <ActionButton
               onClick={handleEditToggle}
-              className="bg-gray-700 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition"
-            >
-              Edit Profile
-            </button>
+              text={"Edit Profile"}
+              icon={"edit"}
+              design={"neutral"}
+            />
           )}
-          <button
+          {user && checkRole(TUTOR_ROLE) && (
+            <ActionButton
+              onClick={() => {
+                navigate("/tutor?id=" + user.id);
+              }}
+              text={"My Tutor Profile"}
+              design={"action"}
+              icon={"school"}
+            />
+          )}
+          <ActionButton
             onClick={logout}
-            className="bg-blue-800 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
-          >
-            Log out
-          </button>
-          <button
+            text={"Log out"}
+            design={"alert"}
+            icon={"logout"}
+          />
+          <ActionButton
             onClick={(e) => {
               e.preventDefault();
               setIsOpen(true);
             }}
-            className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-500 transition"
-          >
-            Delete Account
-          </button>
+            text={"Delete Account"}
+            icon={"delete_forever"}
+            design={"alert"}
+          />
           <ConfirmationDialog
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             title="Delete Account?"
             message="Are you sure you want to delete your account? All associated data will be removed."
-            confirmText="Delete"
+            confirmText="Delete Forever"
+            confirmIcon={"delete_forever"}
             onConfirm={handleDelete}
           />
         </div>

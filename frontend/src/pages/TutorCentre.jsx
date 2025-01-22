@@ -3,8 +3,8 @@ import NavBar from "../components/Navbar";
 import { BACKEND_URL } from "../config";
 import { useAuth } from "../services/AuthContext";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
-import { Tooltip } from "react-tooltip";
 import { useNavigate } from "react-router-dom";
+import ActionButton from "../components/ActionButton";
 
 function TutorCentre() {
   const navigate = useNavigate();
@@ -34,14 +34,25 @@ function TutorCentre() {
               <div className="text-xl">Courses You Offer</div>
             </div>
           </div>
-          <button
-            onClick={() => {
-              navigate("/create-course");
-            }}
-            className="bg-blue-800 max-h-12 rounded-full text-white py-2 px-4"
-          >
-            Create a New Course
-          </button>
+          <div className="flex">
+            <ActionButton
+              onClick={() => {
+                navigate("/tutor-meetings");
+              }}
+              text={"View All Meetings"}
+              icon={"calendar_month"}
+              design={"neutral"}
+            />
+            <ActionButton
+              className={"ml-4"}
+              onClick={() => {
+                navigate("/create-course");
+              }}
+              text={"Create a New Course"}
+              icon={"add"}
+              design={"action"}
+            />
+          </div>
         </div>
         {courses?.map((result, index) => {
           return <CourseSearchResultItem course={result} key={index} />;

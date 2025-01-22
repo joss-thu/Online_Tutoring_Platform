@@ -7,6 +7,7 @@ import {
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import React, { useState } from "react";
 import apiClient from "../services/AxiosConfig";
+import ActionButton from "./ActionButton";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -19,31 +20,53 @@ const RatingDialog = ({
   setIsOpen,
   user,
   courseId,
+  tutorId,
   refreshRatings,
 }) => {
   const [rating, setRating] = useState(1);
-  const [review, setReview] = useState(null);
+  const [review, setReview] = useState("");
 
   const onSubmit = async () => {
     try {
       let data;
-      if (review) {
-        data = {
-          points: rating,
-          studentId: user.id,
-          courseId: courseId,
-          review: review,
-        };
-      } else {
-        data = {
-          points: rating,
-          studentId: user.id,
-          courseId: courseId,
-        };
-      }
-      const res = await apiClient.post(`/student/rate-course`, data);
-      if (res.status === 200) {
-        refreshRatings();
+      if (courseId) {
+        if (review) {
+          data = {
+            points: rating,
+            studentId: user.id,
+            courseId: courseId,
+            review: review,
+          };
+        } else {
+          data = {
+            points: rating,
+            studentId: user.id,
+            courseId: courseId,
+          };
+        }
+        const res = await apiClient.post(`/student/rate-course`, data);
+        if (res.status === 200) {
+          refreshRatings();
+        }
+      } else if (tutorId) {
+        if (review) {
+          data = {
+            points: rating,
+            studentId: user.id,
+            tutorId: tutorId,
+            review: review,
+          };
+        } else {
+          data = {
+            points: rating,
+            studentId: user.id,
+            tutorId: tutorId,
+          };
+        }
+        const res = await apiClient.post(`/student/rate-tutor`, data);
+        if (res.status === 200) {
+          refreshRatings();
+        }
       }
     } catch (e) {
       console.log(e);
@@ -63,12 +86,14 @@ const RatingDialog = ({
         <DialogPanel className="max-w-lg w-full font-merriweather_sans bg-gray-900 text-white rounded-2xl p-8 shadow-lg backdrop-blur-2xl transition-all duration-300 ease-out data-[closed]:scale-95 data-[closed]:opacity-0">
           {/* Title */}
           <DialogTitle className="text-xl font-bold">
-            Rate this Course
+            {courseId ? "Rate this Course" : "Rate this Tutor"}
           </DialogTitle>
 
           {/* Description */}
           <Description className="text-gray-300">
-            Give your honest review of this course.
+            {courseId
+              ? "Give your honest review of this course."
+              : "Give your honest review of this tutor."}
           </Description>
 
           <Rating
@@ -91,21 +116,21 @@ const RatingDialog = ({
 
           {/* Action Buttons */}
           <div className="mt-6 flex justify-end gap-3">
-            <button
+            <ActionButton
               onClick={() => setIsOpen(false)}
-              className="px-4 py-2 rounded-full bg-gray-700 text-gray-200 hover:bg-gray-600 transition"
-            >
-              Cancel
-            </button>
-            <button
+              text={"Cancel"}
+              icon={"close"}
+              design={"neutral"}
+            />
+            <ActionButton
               onClick={() => {
                 onSubmit();
                 setIsOpen(false);
               }}
-              className="px-4 py-2 rounded-full bg-blue-800 text-white hover:bg-blue-700 transition"
-            >
-              Submit
-            </button>
+              icon={"rate_review"}
+              text={"Submit"}
+              design={"action"}
+            />
           </div>
         </DialogPanel>
       </div>

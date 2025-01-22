@@ -32,21 +32,13 @@ function ChatHistoryItem({
         setSelectedChatObject(chat);
         readChat(chatId);
       }}
-      className={`flex items-center p-3 border-b border-gray-200 cursor-pointer transition-all overflow-hidden ${
-        selectedChatId === chatId ? "bg-gray-100" : "bg-white"
+      className={`flex items-center p-3 border border-gray-200 cursor-pointer transition-all overflow-hidden ${
+        selectedChatId === chatId ? "bg-gray-100 border-gray-400" : "bg-white"
       } hover:bg-gray-100`}
     >
       {/* Profile Picture */}
-      <div className="relative w-12 h-12 min-w-12 min-h-12 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">
-        {receiver.profilePicture ? (
-          <img
-            src={receiver.profilePicture}
-            alt={`${receiver.firstName} ${receiver.lastName}`}
-            className="w-full h-full rounded-full object-cover"
-          />
-        ) : (
-          receiverInitials
-        )}
+      <div className="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-800 text-lg">
+        {receiverInitials}
       </div>
 
       {/* Message Details */}

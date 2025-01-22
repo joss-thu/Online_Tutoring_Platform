@@ -20,6 +20,7 @@ import { STUDENT_ROLE, TUTOR_ROLE } from "./config";
 import { SocketProvider } from "./services/SocketContext";
 import CallNotification from "./components/CallNotification";
 import CreateMeeting from "./pages/CreateMeeting";
+import MeetingsPage from "./pages/MeetingsPage";
 
 export default function App() {
   return (
@@ -34,6 +35,14 @@ export default function App() {
               element={
                 <ProtectedRoutes roles={[TUTOR_ROLE]}>
                   <CreateCourse />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/tutor-meetings"
+              element={
+                <ProtectedRoutes roles={[TUTOR_ROLE]}>
+                  <MeetingsPage />
                 </ProtectedRoutes>
               }
             />

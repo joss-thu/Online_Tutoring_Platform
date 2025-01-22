@@ -6,7 +6,11 @@ import calculateAverageRating from "../helpers/CalculateAverageRating";
 import CourseSearchResultItem from "../components/CourseSearchResultItem";
 import { Rating, StickerStar } from "@smastrom/react-rating";
 import { useAuth } from "../services/AuthContext";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL, STUDENT_ROLE } from "../config";
+import ActionButton from "../components/ActionButton";
+import apiClient from "../services/AxiosConfig";
+import RatingDialog from "../components/RatingDialog";
+import InfoTabs from "../components/InfoTabs";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -15,14 +19,53 @@ const ratingStyle = {
 };
 
 function Tutor() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user, checkRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const id = query.get("id");
   const [tutor, setTutor] = useState(false);
-  const [courses, setCourses] = useState([]);
+  const [coursesTutor, setCoursesTutor] = useState([]);
   const [ratings, setRatings] = useState(null);
+  const [coursesStudent, setCoursesStudent] = useState(null);
+  const [isOpenRating, setIsOpenRating] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+
+  const checkEnrollment = useCallback(() => {
+    if (coursesStudent && coursesTutor) {
+      console.log("courses tutor: " + coursesTutor);
+      console.log("courses student: " + coursesStudent);
+      const enrolled = coursesStudent.some((studentCourse) =>
+        coursesTutor.some(
+          (tutorCourse) => tutorCourse.courseId === studentCourse.courseId,
+        ),
+      );
+      console.log("enrolled", enrolled);
+      setIsEnrolled(enrolled);
+    }
+  }, [coursesStudent, coursesTutor]);
+
+  useEffect(() => {
+    checkEnrollment();
+  }, [coursesStudent, coursesTutor, checkEnrollment]);
+
+  const fetchStudentCourses = useCallback(async () => {
+    try {
+      const res = await apiClient.get("/student/enrolled-courses");
+      if (res.status === 200) {
+        setCoursesStudent(res.data);
+      }
+    } catch (error) {
+      console.error("Error fetching student courses:", error);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchStudentCourses();
+    }
+  }, [user, fetchStudentCourses]);
+
   const fetchTutorDetails = useCallback(async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/user/tutor?id=${id}`);
@@ -37,7 +80,7 @@ function Tutor() {
     try {
       const res = await fetch(`${BACKEND_URL}/user/get-course/${tutor.userId}`);
       const data = await res.json();
-      setCourses(data);
+      setCoursesTutor(data);
     } catch (error) {
       console.error("Error fetching tutor courses:", error);
     }
@@ -93,6 +136,13 @@ function Tutor() {
                   link
                 </span>
               </div>
+              {/* Rating */}
+              <Rating
+                readOnly={true}
+                style={{ maxWidth: 100 }}
+                value={ratings ? calculateAverageRating(ratings).toFixed(1) : 0}
+                itemStyles={ratingStyle}
+              />
               <Tooltip
                 anchorSelect=".copy_link_anchor_element"
                 place="top"
@@ -101,20 +151,47 @@ function Tutor() {
                 Link copied!
               </Tooltip>
             </div>
-            <button
-              onClick={() => {
-                if (isAuthenticated) {
-                  navigate("/messages?userId=" + id);
+
+            {user &&
+              isAuthenticated &&
+              checkRole(STUDENT_ROLE) &&
+              isEnrolled && (
+                <>
+                  <ActionButton
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsOpenRating(true);
+                    }}
+                    text={"Rate Tutor"}
+                    icon={"reviews"}
+                    design={"neutral"}
+                  />
+                  <RatingDialog
+                    isOpen={isOpenRating}
+                    setIsOpen={setIsOpenRating}
+                    user={user}
+                    tutorId={tutor.userId}
+                    refreshRatings={fetchTutorRatings}
+                  />
+                </>
+              )}
+
+            {tutor.userId !== user.id && (
+              <ActionButton
+                className={
+                  isAuthenticated ? "ml-4" : "message_anchor_element ml-4"
                 }
-              }}
-              className={
-                isAuthenticated
-                  ? "bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
-                  : "message_anchor_element bg-blue-800 ml-10 max-h-12 rounded-full text-white py-2 px-4"
-              }
-            >
-              Message
-            </button>
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate("/messages?userId=" + id);
+                  }
+                }}
+                text={"Message"}
+                icon={"message"}
+                design={"action"}
+              />
+            )}
+
             <Tooltip
               anchorSelect=".message_anchor_element"
               place="top"
@@ -124,81 +201,26 @@ function Tutor() {
             </Tooltip>
           </div>
           <div className="flex">
-            <div className="flex flex-col w-3/4 mr-10">
-              <div className="mt-5 text-xl text-gray-800">Overview</div>
-              <div className="mt-1 text-sm text-gray-600">
-                {tutor.tutor_description}
+            <div className="flex flex-col w-2/3 mr-10">
+              <div className="mt-5 text-xl text-gray-800">About Me</div>
+              <div className="mt-1 text-sm text-gray-600 italic">
+                {tutor.description || "No description set"}
               </div>
-              <div className="mt-5 flex text-black">
-                {ratings?.length > 0 ? (
-                  <>
-                    <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
-                      <span className="text-sm">Rating</span>
-                      <span className="text-md">
-                        <strong>
-                          {calculateAverageRating(ratings).toFixed(1)}
-                        </strong>
-                      </span>
-                    </div>
-                    <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
-                      <span className="text-sm">Reviews</span>
-                      <span className="text-md">
-                        <strong>{ratings.length}</strong>
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
-                    <span className="text-sm">Rating</span>
-                    <span className="text-md">
-                      <strong>Not yet rated</strong>
-                    </span>
-                  </div>
-                )}
-                <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 py-2 px-4 rounded-lg mr-5">
-                  <span className="text-sm">Courses</span>
-                  <span className="text-md">
-                    <strong>{courses?.length}</strong>
-                  </span>
-                </div>
+
+              <div className="mt-10 text-2xl text-gray-800">
+                Courses ({coursesTutor.length})
               </div>
-              <div className="text-lg text-gray-800 mt-7">Description</div>
-              <div className="mt-1 text-md text-gray-600">
-                {tutor.description}
-              </div>
-              <div className="mt-10 text-2xl text-gray-800">Courses</div>
-              {courses?.map((result, index) => {
+              {coursesTutor?.map((result, index) => {
                 return <CourseSearchResultItem course={result} key={index} />;
               })}
             </div>
-            <div className="flex flex-col bg-gray-200 rounded-xl w-1/4 p-4 self-start h-auto">
-              <div className="text-xl rounded-md text-black self-start w-auto">
-                Reviews
-              </div>
-              {ratings?.length > 0 ? (
-                ratings.map((result, index) => {
-                  return (
-                    <>
-                      <div className="text-sm mt-4">{result.studentName}</div>
-                      <Rating
-                        key={index}
-                        readOnly={true}
-                        style={{ maxWidth: 100 }}
-                        value={result.points}
-                        itemStyles={ratingStyle}
-                      />
-                      <div className="text-sm text-gray-600">
-                        {result.review}
-                      </div>
-                    </>
-                  );
-                })
-              ) : (
-                <div className="font-merriweather_sans flex flex-col items-center bg-gray-200 p-4">
-                  No reviews yet
-                </div>
-              )}
-            </div>
+            {user && (
+              <InfoTabs
+                ratings={ratings}
+                user={user}
+                visibleTabs={["reviews"]}
+              />
+            )}
           </div>
         </div>
       ) : (
