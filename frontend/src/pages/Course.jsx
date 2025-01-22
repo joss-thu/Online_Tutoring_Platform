@@ -11,6 +11,7 @@ import InfoTabs from "../components/InfoTabs";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RatingDialog from "../components/RatingDialog";
 import ActionButton from "../components/ActionButton";
+import error404 from "../assets/error404.svg";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -51,6 +52,7 @@ function Course() {
   const [bookedMeetings, setBookedMeetings] = useState(null);
   const [isOpenWithdraw, setIsOpenWithdraw] = useState(false);
   const [isOpenRating, setIsOpenRating] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const fetchStudentEnrollStatus = async (courseData) => {
     if (!courseData) return;
@@ -176,6 +178,7 @@ function Course() {
     if (!id || !user) return;
     setCourse(null);
     try {
+      setLoading(true);
       const res = await fetch(`${BACKEND_URL}/search/get-course/${id}`);
       const data = await res.json();
       setCourse(data);
@@ -190,6 +193,8 @@ function Course() {
       }
     } catch (error) {
       console.error("Error fetching course details:", error);
+    } finally {
+      setLoading(false);
     }
   }, [id, user]);
 
@@ -244,7 +249,7 @@ function Course() {
   return (
     <div className="flex flex-col items-center w-full bg-white overflow-hidden">
       <NavBar isLoggedIn={false} currentPage="/" />
-      {course ? (
+      {!loading && course && (
         <div className="mt-[120px] w-full max-w-7xl font-merriweather_sans mb-10">
           {/* Course Banner */}
           <div className="w-full h-60 bg-gray-300 flex items-center justify-center text-gray-600 rounded-xl">
@@ -361,7 +366,9 @@ function Course() {
                   course.tutorId === user.id && (
                     <ActionButton
                       onClick={() => {
-                        navigate(`/create-meeting?courseId=${course.courseId}`);
+                        navigate(
+                          `/create-meeting?courseId=${course.courseId}&ref=course`,
+                        );
                       }}
                       icon={"add"}
                       className="ml-auto"
@@ -521,9 +528,17 @@ function Course() {
               </div>
             )}
         </div>
-      ) : (
+      )}
+      {!loading && !course && (
         <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans text-xl">
-          Loading...
+          <div className="flex flex-col justify-center items-center w-full mt-[12%]">
+            <img
+              src={error404}
+              alt="Course not found"
+              className="w-2/5 h-auto"
+            />
+            <p className={"text-xl mt-4"}>Course not found</p>
+          </div>
         </div>
       )}
     </div>

@@ -3,8 +3,9 @@ import { BACKEND_URL } from "../config";
 import FormatDateTime from "../helpers/FormatDateTime";
 import ActionButton from "./ActionButton";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../services/AxiosConfig";
 
-const MeetingCard = ({ meeting }) => {
+const MeetingCard = ({ meeting, isTutor, refreshMeetings }) => {
   const [participants, setParticipants] = useState([]);
   const navigate = useNavigate();
 
@@ -15,25 +16,35 @@ const MeetingCard = ({ meeting }) => {
       .catch((err) => console.error(err));
   }, [meeting.meetingId]);
 
+  const handleActionClick = async () => {
+    if (isTutor) {
+      navigate(
+        `/create-meeting?edit=true&courseId=${meeting.courseId}&meetingId=${meeting.meetingId}?ref=meetings`,
+      );
+    } else {
+      await apiClient.delete(`/user/meetings/cancel/${meeting.meetingId}`);
+      refreshMeetings();
+    }
+  };
+
   return (
     <div className="bg-gray-900 p-5 rounded-2xl shadow-md mt-4">
       <div className="flex justify-between items-center">
         <div className="text-lg text-white font-semibold">
           {meeting.courseName}
         </div>
-        {/* Edit Button */}
+        {/* Action Button */}
         <ActionButton
-          onClick={() => {
-            navigate(
-              `/create-meeting?edit=true&courseId=${meeting.courseId}&meetingId=${meeting.meetingId}?ref=meetings`,
-            );
-          }}
-          icon={"edit_calendar"}
-          text={"Edit"}
-          design={"neutral"}
+          onClick={handleActionClick}
+          icon={isTutor ? "edit_calendar" : "close"}
+          text={isTutor ? "Edit" : "Cancel"}
+          design={isTutor ? "neutral" : "alert"}
         />
       </div>
-      <div className="text-gray-300 mt-1">
+      {!isTutor && (
+        <div className="text-md text-gray-200">By {meeting.tutorName}</div>
+      )}
+      <div className="text-gray-300 mt-2">
         {FormatDateTime(meeting.startTime)} {"\u00A0"} - {"\u00A0"}{" "}
         {FormatDateTime(meeting.endTime)}
       </div>

@@ -11,12 +11,12 @@ export default function NavBar({ currentPage }) {
 
   const roleBasedMenuItems = {
     ROLE_STUDENT: [
-      { label: "My Courses", path: "/my-courses" },
       { label: "Messages", path: "/messages" },
+      { label: "Student Centre", path: "/student-centre" },
     ],
     ROLE_TUTOR: [
-      { label: "Tutor Centre", path: "/tutor-centre" },
       { label: "Messages", path: "/messages" },
+      { label: "Tutor Centre", path: "/tutor-centre" },
     ],
   };
 

@@ -387,7 +387,11 @@ function Messages() {
           </div>
         ) : (
           <div className="flex-1 flex flex-col bg-white border-l border-gray-200 p-4 justify-center items-center">
-            <h3 className="text-gray-800 font-medium">Select a Chat</h3>
+            <h3 className="text-gray-800 font-medium">
+              {chats && chats.length > 0
+                ? "Select a Chat"
+                : "Start a conversation"}
+            </h3>
           </div>
         )}
       </div>

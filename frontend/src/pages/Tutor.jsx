@@ -11,6 +11,7 @@ import ActionButton from "../components/ActionButton";
 import apiClient from "../services/AxiosConfig";
 import RatingDialog from "../components/RatingDialog";
 import InfoTabs from "../components/InfoTabs";
+import error404 from "../assets/error404.svg";
 
 const ratingStyle = {
   itemShapes: StickerStar,
@@ -30,6 +31,7 @@ function Tutor() {
   const [coursesStudent, setCoursesStudent] = useState(null);
   const [isOpenRating, setIsOpenRating] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const checkEnrollment = useCallback(() => {
     if (coursesStudent && coursesTutor) {
@@ -68,11 +70,14 @@ function Tutor() {
 
   const fetchTutorDetails = useCallback(async () => {
     try {
+      setLoading(true);
       const res = await fetch(`${BACKEND_URL}/user/tutor?id=${id}`);
       const data = await res.json();
       setTutor(data);
     } catch (error) {
       console.error("Error fetching tutor details:", error);
+    } finally {
+      setLoading(false);
     }
   }, [id]);
 
@@ -117,10 +122,10 @@ function Tutor() {
   }, [tutor, fetchTutorCourses]);
 
   return (
-    <div className="flex flex-col items-center w-full bg-white overflow-hidden">
+    <div className="flex flex-col items-center font-merriweather_sans w-full bg-white overflow-hidden">
       <NavBar currentPage="/" />
-      {tutor ? (
-        <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans mb-10">
+      {!loading && tutor && (
+        <div className="mt-[120px] w-full max-w-6xl mb-10">
           <div className="flex items-center">
             <div className="flex flex-col w-5/6">
               <div className="inline-flex items-center w-full mt-5">
@@ -223,8 +228,14 @@ function Tutor() {
             )}
           </div>
         </div>
-      ) : (
-        <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans text-xl"></div>
+      )}
+      {!loading && !tutor && (
+        <div className="mt-[120px] w-full max-w-6xl font-merriweather_sans text-xl">
+          <div className="flex flex-col justify-center items-center w-full mt-[12%]">
+            <img src={error404} alt="No tutor found" className="w-2/5 h-auto" />
+            <p className={"text-xl"}>No tutor found</p>
+          </div>
+        </div>
       )}
     </div>
   );
