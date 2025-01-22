@@ -229,9 +229,6 @@ const CreateCourse = () => {
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-        {dateValidationError && (
-          <div className="text-red-500 text-sm">{dateValidationError}</div>
-        )}
         <Tooltip
           anchorSelect=".course_name_anchor_element"
           place="left"
@@ -371,6 +368,7 @@ const CreateCourse = () => {
           onChange={(e) => {
             handleChange(e);
             setStartDateError(false);
+            setDateValidationError(false);
           }}
           required={true}
         />
@@ -384,6 +382,7 @@ const CreateCourse = () => {
           onChange={(e) => {
             handleChange(e);
             setEndDateError(false);
+            setDateValidationError(false);
           }}
           required={true}
         />

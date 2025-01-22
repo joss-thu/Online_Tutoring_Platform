@@ -9,6 +9,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import DateTimePicker from "../components/DateTimePicker";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import ActionButton from "../components/ActionButton";
+import { Tooltip } from "react-tooltip";
 
 const CreateMeeting = () => {
   const meetingTypes = ["ONLINE", "OFFLINE", "HYBRID"];
@@ -24,7 +25,13 @@ const CreateMeeting = () => {
 
   const [meetingDetails, setMeetingDetails] = useState({});
   const [addresses, setAddresses] = useState(null);
-  const [validationError, setValidationError] = useState("");
+  const [dateValidationError, setDateValidationError] = useState(false);
+  const [meetingTypeError, setMeetingTypeError] = useState(false);
+  const [addressIdError, setAddressIdError] = useState(false);
+  const [roomNumError, setRoomNumError] = useState(false);
+  const [startDateError, setStartDateError] = useState(false);
+  const [endDateError, setEndDateError] = useState(false);
+  const [crossDateError, setCrossDateError] = useState(false);
 
   const ensureSeconds = (dateTime) => {
     if (!dateTime) return "";
@@ -116,13 +123,47 @@ const CreateMeeting = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!courseId && !meetingId) return;
-    setValidationError("");
+
+    const meetingTypeInvalid = !meetingDetails.meetingType;
+    const addressInvalid =
+      (meetingDetails.meetingType === "OFFLINE" ||
+        meetingDetails.meetingType === "HYBRID") &&
+      !meetingDetails.addressId;
+    const roomNumInvalid =
+      (meetingDetails.meetingType === "OFFLINE" ||
+        meetingDetails.meetingType === "HYBRID") &&
+      !meetingDetails.roomNum;
+    const startDateInvalid = !meetingDetails.startTime;
+    const endDateInvalid = !meetingDetails.endTime;
+
+    setMeetingTypeError(meetingTypeInvalid);
+    setAddressIdError(addressInvalid);
+    setRoomNumError(roomNumInvalid);
+    setStartDateError(startDateInvalid);
+    setEndDateError(endDateInvalid);
+
+    if (
+      meetingTypeInvalid ||
+      addressInvalid ||
+      roomNumInvalid ||
+      startDateInvalid ||
+      endDateInvalid
+    )
+      return;
 
     const startDate = new Date(meetingDetails.startTime);
     const endDate = new Date(meetingDetails.endTime);
 
     if (startDate >= endDate) {
-      setValidationError("End date must be after start date.");
+      setDateValidationError(true);
+      return;
+    }
+    if (
+      startDate.getFullYear() !== endDate.getFullYear() ||
+      startDate.getMonth() !== endDate.getMonth() ||
+      startDate.getDate() !== endDate.getDate()
+    ) {
+      setCrossDateError(true);
       return;
     }
 
@@ -173,15 +214,67 @@ const CreateMeeting = () => {
         </h1>
       </div>
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-        {validationError && (
-          <div className="text-red-500 text-sm">{validationError}</div>
-        )}
+        <Tooltip
+          anchorSelect=".meeting_type_anchor_element"
+          place="left"
+          isOpen={meetingTypeError}
+        >
+          Choose a meeting type
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".address_id_anchor_element"
+          place="left"
+          isOpen={addressIdError}
+        >
+          Choose an address
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".room_num_anchor_element"
+          place="left"
+          isOpen={roomNumError}
+        >
+          Enter a room number
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".start_date_anchor_element"
+          place="left"
+          isOpen={startDateError}
+        >
+          Choose a starting date/time
+        </Tooltip>
+        <Tooltip
+          anchorSelect=".end_date_anchor_element"
+          place="left"
+          isOpen={endDateError}
+        >
+          Choose an ending date/time
+        </Tooltip>
+
+        <Tooltip
+          anchorSelect=".date_validation_anchor_element"
+          place="left"
+          isOpen={dateValidationError}
+        >
+          End date/time must be after start date/time
+        </Tooltip>
+
+        <Tooltip
+          anchorSelect=".cross_date_validation_anchor_element"
+          place="left"
+          isOpen={crossDateError}
+        >
+          The meeting must start and end on the same day
+        </Tooltip>
 
         <SelectField
+          className={"meeting_type_anchor_element"}
           label="Meeting Type *"
           name="meetingType"
           value={meetingDetails.meetingType || ""}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setMeetingTypeError(false);
+          }}
           options={meetingTypes}
           required={true}
         />
@@ -203,36 +296,57 @@ const CreateMeeting = () => {
             <div className="mt-4" />
 
             <SelectField
+              className={"address_id_anchor_element"}
               label="Address *"
               name="addressId"
               value={meetingDetails.addressId || ""}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                setAddressIdError(false);
+              }}
               options={addresses}
               required={true}
             />
 
             <InputField
+              className={"room_num_anchor_element"}
               label="Room Number *"
               placeholder="A108"
               name="roomNum"
               value={meetingDetails.roomNum || ""}
-              onChange={handleChange}
+              onChange={(e) => {
+                handleChange(e);
+                setRoomNumError(false);
+              }}
               required={true}
             />
           </>
         )}
 
         <DateTimePicker
+          className={"start_date_anchor_element"}
           label="Start Date/Time *"
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setStartDateError(false);
+            setDateValidationError(false);
+          }}
           required={true}
           name="startTime"
           value={meetingDetails.startTime || ""}
         />
 
         <DateTimePicker
+          className={
+            "end_date_anchor_element date_validation_anchor_element cross_date_validation_anchor_element"
+          }
           label="End Date/Time *"
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            setEndDateError(false);
+            setDateValidationError(false);
+            setCrossDateError(false);
+          }}
           required={true}
           name="endTime"
           value={meetingDetails.endTime || ""}
