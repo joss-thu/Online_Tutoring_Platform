@@ -155,12 +155,14 @@ public class UserServiceImpl implements UserService {
     user.getMeetings().forEach(meeting -> meeting.getParticipants().remove(user));
     user.getMeetings().clear();
 
+    // Clear chats
     List<ChatDBO> chats = chatRepository.findByParticipants_UserId(user.getUserId()); // Custom repository query
     chats.forEach(chat -> chatService.deleteChat(chat.getChatId()));
 
     // Delete the user
     userRepository.delete(user);
   }
+
 
   /**
    * Updates the details of an existing user in the system.

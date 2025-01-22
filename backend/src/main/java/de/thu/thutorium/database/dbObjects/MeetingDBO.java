@@ -126,6 +126,9 @@ public class MeetingDBO {
   @Column(name = "time_range", columnDefinition = "tsrange", insertable = false, updatable = false)
   private String timeRange;
 
+  @OneToOne(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+  private ReportDBO report;
+
   public MeetingDBO() {
     this.participants = new ArrayList<>();
   }
