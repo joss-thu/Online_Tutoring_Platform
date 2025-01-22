@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import MeetingCard from "../components/MeetingCard"; // Create a separate MeetingCard component for cleaner code
 import ActionButton from "../components/ActionButton";
 import NavBar from "../components/Navbar";

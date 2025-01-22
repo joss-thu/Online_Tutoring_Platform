@@ -9,7 +9,7 @@ function ChatHistoryItem({
   messages,
   currentUserId,
 }) {
-  const { receiver, senderId, unreadMessages, chatId } = chat;
+  const { receiver, unreadMessages, chatId } = chat;
 
   const lastMessage = messages?.slice(-1)[0];
   const isLastMessageSentByUser = lastMessage?.senderId === currentUserId;
