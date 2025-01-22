@@ -1,9 +1,7 @@
-// src/__tests__/SelectField.test.js
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SelectField from '../components/SelectField';
-// Removed the import for jest-dom as it's now set up globally
 
 describe('SelectField Component', () => {
     const mockOnChange = jest.fn();
@@ -53,13 +51,12 @@ describe('SelectField Component', () => {
             />
         );
 
-        // Check for the label
+
         expect(screen.getByLabelText('Select Option')).toBeInTheDocument();
 
-        // Check for the disabled default option
         expect(screen.getByText('Select an option')).toBeInTheDocument();
 
-        // Check for each string option
+
         stringOptions.forEach((option) => {
             expect(screen.getByRole('option', { name: option })).toBeInTheDocument();
         });
@@ -77,13 +74,13 @@ describe('SelectField Component', () => {
             />
         );
 
-        // Check for the label
+
         expect(screen.getByLabelText('Select Category')).toBeInTheDocument();
 
-        // Check for the disabled default option
+
         expect(screen.getByText('Select an option')).toBeInTheDocument();
 
-        // Check for each category option
+
         categoryOptions.forEach((option) => {
             expect(screen.getByRole('option', { name: option.categoryName })).toBeInTheDocument();
         });
@@ -101,13 +98,13 @@ describe('SelectField Component', () => {
             />
         );
 
-        // Check for the label
+
         expect(screen.getByLabelText('Select Address')).toBeInTheDocument();
 
-        // Check for the disabled default option
+
         expect(screen.getByText('Select an option')).toBeInTheDocument();
 
-        // Check for each formatted address option using regex
+
         addressOptions.forEach((option) => {
             const universityName = option.university.universityName || 'Unknown University';
             const formattedAddressRegex = new RegExp(
@@ -227,7 +224,7 @@ describe('SelectField Component', () => {
         const invalidOptions = [
             { invalidKey: 'Invalid Option' },
             { name: 'Missing categoryName or streetName' },
-            123, // Not an object or string
+            123,
         ];
 
         render(
@@ -241,10 +238,8 @@ describe('SelectField Component', () => {
             />
         );
 
-        // Only the disabled default option should be present
-        expect(screen.getByText('Select an option')).toBeInTheDocument();
 
-        // No other options should be rendered
+        expect(screen.getByText('Select an option')).toBeInTheDocument();
         expect(screen.queryByRole('option', { name: 'Invalid Option' })).not.toBeInTheDocument();
         expect(screen.queryByRole('option', { name: 'Missing categoryName or streetName' })).not.toBeInTheDocument();
         expect(screen.queryByRole('option', { name: '123' })).not.toBeInTheDocument();
