@@ -10,6 +10,8 @@ import de.thu.thutorium.database.DBOMappers.AffiliationDBOMapper;
 import de.thu.thutorium.database.dbObjects.*;
 import de.thu.thutorium.database.dbObjects.enums.Role;
 import de.thu.thutorium.database.repositories.*;
+import de.thu.thutorium.services.interfaces.ChatService;
+import de.thu.thutorium.services.interfaces.CourseService;
 import de.thu.thutorium.services.interfaces.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +48,9 @@ public class UserServiceImpl implements UserService {
   private final RatingTutorTOMapper ratingTutorTOMapper;
   private final ProgressRepository progressRepository;
   private final CourseTOMapper courseTOMapper;
+  private final ChatRepository chatRepository;
+  private final ChatService chatService;
+  private final CourseService courseService;
 
     /**
      * Returns the total number of students in the system.
@@ -128,15 +134,35 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void deleteUser(Long userId) {
-    userRepository
-        .findUserDBOByUserId(userId)
-        .ifPresentOrElse(
-            userRepository::delete,
-            () -> {
-              throw new EntityNotFoundException(
-                  "User with ID " + userId + " does not exist in database.");
-            });
+    UserDBO user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException(
+                    "User with ID " + userId + " does not exist in database."));
+
+    if (!user.getTutorCourses().isEmpty()) {
+      List<CourseDBO> tutorCourses = new ArrayList<>(user.getTutorCourses());
+      tutorCourses.forEach(course -> courseService.deleteCourse(course.getCourseId()));
+    }
+
+    // Clear roles
+    user.getRoles().forEach(role -> role.getUsers().remove(user));
+    user.getRoles().clear();
+
+    // Clear verifiers
+    user.getVerifiers().forEach(verifier -> verifier.getVerifiers().remove(user));
+    user.getVerifiers().clear();
+
+    // Clear meetings
+    user.getMeetings().forEach(meeting -> meeting.getParticipants().remove(user));
+    user.getMeetings().clear();
+
+    // Clear chats
+    List<ChatDBO> chats = chatRepository.findByParticipants_UserId(user.getUserId()); // Custom repository query
+    chats.forEach(chat -> chatService.deleteChat(chat.getChatId()));
+
+    // Delete the user
+    userRepository.delete(user);
   }
+
 
   /**
    * Updates the details of an existing user in the system.

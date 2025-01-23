@@ -19,16 +19,15 @@ import java.util.Optional;
  * <p>Todo: Handle whitepaces in the fields (possibly with JPQL queries)
  */
 public interface AddressRepository extends JpaRepository<AddressDBO, Long> {
-  Optional<AddressDBO> findByHouseNumAndStreetNameAndPostalCodeAndCountryContainsIgnoreCase(
-      String houseNum, String streetName, String postalCode, String country);
+    Optional<AddressDBO> findByHouseNumAndStreetNameAndPostalCodeAndCountryContainsIgnoreCase(
+            String houseNum, String streetName, String postalCode, String country);
 
-  Optional<AddressDBO>
-      findByHouseNumAndStreetNameIgnoreCaseAndPostalCodeAndCountryIgnoreCaseAndUniversity_UniversityNameIgnoreCase(
-          @NotNull String houseNum,
-          @NotEmpty(message = "The street name cannot be empty") String streetName,
-          @NotNull String postalCode,
-          @NotEmpty(message = "The country cannot be empty") String country,
-          @NotEmpty(message = "The university name cannot be empty") String universityName);
+    Optional<AddressDBO> findByHouseNumAndStreetNameIgnoreCaseAndPostalCodeAndCountryIgnoreCaseAndUniversity_UniversityNameIgnoreCase(
+            @NotNull String houseNum,
+            @NotEmpty(message = "The street name cannot be empty") String streetName,
+            @NotNull String postalCode,
+            @NotEmpty(message = "The country cannot be empty") String country,
+            @NotEmpty(message = "The university name cannot be empty") String universityName);
 
   List<AddressDBO> findByAddressId(Long addressId);
 }

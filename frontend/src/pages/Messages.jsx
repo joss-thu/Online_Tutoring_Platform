@@ -10,6 +10,7 @@ import FormatDate from "../helpers/FormatDate";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../services/AuthContext";
 import { BACKEND_URL } from "../config";
+import ActionButton from "../components/ActionButton";
 
 function Messages() {
   const { user } = useAuth();
@@ -41,7 +42,7 @@ function Messages() {
 
   useEffect(() => {
     async function createChat() {
-      if (idToMessage && chats && idToMessage !== user.id) {
+      if (idToMessage && chats && Number(idToMessage) !== user.id) {
         let chatExists = false;
         for (let i = 0; i < chats.length; i++) {
           if (String(chats[i].receiver.id) === String(idToMessage)) {
@@ -58,26 +59,17 @@ function Messages() {
             creatorId: Number(user.id),
           };
           await apiClient.post(`/chat-create`, postData);
-          // Create a URL object from the current window's location
-          const currentUrl = new URL(window.location.href);
-
-          // Remove the userId parameter
-          currentUrl.searchParams.delete("userId");
-
-          // Update the browser's URL without reloading the page
-          window.history.replaceState({}, "", currentUrl);
           await loadChats();
-        } else {
-          // Create a URL object from the current window's location
-          const currentUrl = new URL(window.location.href);
-
-          // Remove the userId parameter
-          currentUrl.searchParams.delete("userId");
-
-          // Update the browser's URL without reloading the page
-          window.history.replaceState({}, "", currentUrl);
         }
       }
+      // Create a URL object from the current window's location
+      const currentUrl = new URL(window.location.href);
+
+      // Remove the userId parameter
+      currentUrl.searchParams.delete("userId");
+
+      // Update the browser's URL without reloading the page
+      window.history.replaceState({}, "", currentUrl);
     }
     createChat();
   }, [idToMessage, chats]);
@@ -291,7 +283,7 @@ function Messages() {
                 placeholder="Search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-10 py-4 rounded-2xl bg-gray-100 text-sm text-gray-600 outline-none"
+                className="w-full px-10 py-4 rounded-2xl bg-gray-200 text-sm text-gray-800 outline-none"
               />
             </div>
           </div>
@@ -320,19 +312,19 @@ function Messages() {
             {/* Chat content */}
             <header
               style={{ left: "40%" }}
-              className="px-4 py-2 fixed top-0 right-0 z-10 space-x-10 bg-blue-900 text-white shadow-sm flex items-center justify-between rounded-2xl mx-4 mt-[80px]"
+              className="px-4 py-2 fixed top-0 right-0 z-10 space-x-10 bg-blue-950 text-white shadow-sm flex items-center justify-between rounded-2xl mx-4 mt-[80px]"
             >
               <h2 className="text-lg">
-                {selectedChatObject.receiver.firstName}{" "}
-                {selectedChatObject.receiver.lastName}
+                {selectedChatObject?.receiver?.firstName}{" "}
+                {selectedChatObject?.receiver?.lastName}
               </h2>
-              <div className="flex items-center space-x-3 mt-1.5">
-                <button
-                  className="text-white hover:text-gray-300"
-                  onClick={() => startCall(selectedChatObject.receiver.id)}
-                >
-                  <span className="material-symbols-rounded">videocam</span>
-                </button>
+              <div className="flex items-center space-x-3">
+                <ActionButton
+                  onClick={() => startCall(selectedChatObject?.receiver?.id)}
+                  text={`Call ${selectedChatObject?.receiver?.firstName}`}
+                  icon={"videocam"}
+                  design={"action"}
+                />
               </div>
             </header>
 
@@ -385,17 +377,21 @@ function Messages() {
                 onChange={handleInputChange}
                 className="flex-1 px-4 py-2 w-auto bg-gray-200 rounded-xl text-sm text-gray-800 outline-none resize-none"
               />
-              <button
-                className="bg-blue-900 text-white px-4 py-2 rounded-full"
+              <ActionButton
                 onClick={handleSendMessage}
-              >
-                Send
-              </button>
+                text={"Send"}
+                icon={"send"}
+                design={"action"}
+              />
             </footer>
           </div>
         ) : (
           <div className="flex-1 flex flex-col bg-white border-l border-gray-200 p-4 justify-center items-center">
-            <h3 className="text-gray-800 font-medium">Select a Chat</h3>
+            <h3 className="text-gray-800 font-medium">
+              {chats && chats.length > 0
+                ? "Select a Chat"
+                : "Start a conversation"}
+            </h3>
           </div>
         )}
       </div>
