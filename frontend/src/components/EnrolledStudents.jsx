@@ -3,12 +3,11 @@ import emptyStudents from "../assets/empty_students.svg";
 import EnrolledStudentItem from "./EnrolledStudentItem";
 
 const EnrolledStudents = ({ enrolledStudents }) => {
-  console.log(enrolledStudents);
   return (
     <div className="flex flex-col pt-2 rounded-xl overflow-y-scroll self-start h-auto scrollbar-hide ">
       {enrolledStudents && enrolledStudents?.length > 0 ? (
-        enrolledStudents?.map((result) => (
-          <EnrolledStudentItem result={result} />
+        enrolledStudents?.map((result, index) => (
+          <EnrolledStudentItem key={index} result={result} />
         ))
       ) : (
         <div className="flex justify-center items-center w-full mt-10">

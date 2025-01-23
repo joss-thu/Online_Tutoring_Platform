@@ -65,7 +65,7 @@ const SelectField = ({
             );
           }
 
-          if (option.affiliation.universityName) {
+          if (option.affiliation?.universityName) {
             return (
               <option key={index} value={option.affiliation.universityName}>
                 {option.affiliation.universityName}
