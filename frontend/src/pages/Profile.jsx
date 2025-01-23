@@ -196,6 +196,9 @@ function Profile() {
           universityName: editedProfile.affiliation?.universityName || "",
         },
       }));
+      setInitials(
+        getInitials(editedProfile.firstName + " " + editedProfile.lastName),
+      );
 
       setIsEditing(false);
     } catch (err) {

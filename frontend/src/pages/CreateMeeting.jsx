@@ -378,6 +378,7 @@ const CreateMeeting = () => {
         title="Delete Meeting?"
         message="Are you sure you want to delete this meeting? All associated data will be removed."
         confirmText="Delete"
+        confirmIcon={"delete"}
         onConfirm={handleDelete}
       />
     </div>
