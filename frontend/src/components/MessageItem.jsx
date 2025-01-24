@@ -1,7 +1,6 @@
 import React from "react";
 
 function MessageItem({ message, currentUserId }) {
-  console.log(message.sendAt);
   return (
     <div className="flex flex-col space-y-1">
       <div

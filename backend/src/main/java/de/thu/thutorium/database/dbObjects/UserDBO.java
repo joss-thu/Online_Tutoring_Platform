@@ -94,10 +94,10 @@ public class UserDBO implements UserDetails {
   @Builder.Default
   private LocalDateTime createdAt = LocalDateTime.now();
 
-  /** Indicates whether the user's email is verified. Defaults to {@code false} if not specified. */
+  /** Indicates whether the user's email is verified. Defaults to {@code true} if not specified. */
   @Column(name = "is_verified")
   @Builder.Default
-  private Boolean isVerified = false;
+  private Boolean isVerified = true;
 
   /** The timestamp when the user account was verified. */
   @Column(name = "verified_on")

@@ -7,7 +7,7 @@ const Reviews = ({ ratings }) => {
     <div className="flex flex-col pt-2 overflow-y-scroll self-start h-auto scrollbar-hide">
       {ratings && ratings?.length > 0 ? (
         ratings?.map((result, index) => (
-          <ReviewItem result={result} index={index} />
+          <ReviewItem key={index} result={result} index={index} />
         ))
       ) : (
         <div className="flex justify-center items-center w-full mt-10">

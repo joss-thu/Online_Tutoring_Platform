@@ -213,171 +213,175 @@ const CreateMeeting = () => {
           {isEditMode ? "Edit Your Meeting" : "Create a New Meeting"}
         </h1>
       </div>
-      <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-        <Tooltip
-          anchorSelect=".meeting_type_anchor_element"
-          place="left"
-          isOpen={meetingTypeError}
-        >
-          Choose a meeting type
-        </Tooltip>
-        <Tooltip
-          anchorSelect=".address_id_anchor_element"
-          place="left"
-          isOpen={addressIdError}
-        >
-          Choose an address
-        </Tooltip>
-        <Tooltip
-          anchorSelect=".room_num_anchor_element"
-          place="left"
-          isOpen={roomNumError}
-        >
-          Enter a room number
-        </Tooltip>
-        <Tooltip
-          anchorSelect=".start_date_anchor_element"
-          place="left"
-          isOpen={startDateError}
-        >
-          Choose a starting date/time
-        </Tooltip>
-        <Tooltip
-          anchorSelect=".end_date_anchor_element"
-          place="left"
-          isOpen={endDateError}
-        >
-          Choose an ending date/time
-        </Tooltip>
+      {addresses && addresses.length > 0 && (
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl">
+          <Tooltip
+            anchorSelect=".meeting_type_anchor_element"
+            place="left"
+            isOpen={meetingTypeError}
+          >
+            Choose a meeting type
+          </Tooltip>
+          <Tooltip
+            anchorSelect=".address_id_anchor_element"
+            place="left"
+            isOpen={addressIdError}
+          >
+            Choose an address
+          </Tooltip>
+          <Tooltip
+            anchorSelect=".room_num_anchor_element"
+            place="left"
+            isOpen={roomNumError}
+          >
+            Enter a room number
+          </Tooltip>
+          <Tooltip
+            anchorSelect=".start_date_anchor_element"
+            place="left"
+            isOpen={startDateError}
+          >
+            Choose a starting date/time
+          </Tooltip>
+          <Tooltip
+            anchorSelect=".end_date_anchor_element"
+            place="left"
+            isOpen={endDateError}
+          >
+            Choose an ending date/time
+          </Tooltip>
 
-        <Tooltip
-          anchorSelect=".date_validation_anchor_element"
-          place="left"
-          isOpen={dateValidationError}
-        >
-          End date/time must be after start date/time
-        </Tooltip>
+          <Tooltip
+            anchorSelect=".date_validation_anchor_element"
+            place="left"
+            isOpen={dateValidationError}
+          >
+            End date/time must be after start date/time
+          </Tooltip>
 
-        <Tooltip
-          anchorSelect=".cross_date_validation_anchor_element"
-          place="left"
-          isOpen={crossDateError}
-        >
-          The meeting must start and end on the same day
-        </Tooltip>
+          <Tooltip
+            anchorSelect=".cross_date_validation_anchor_element"
+            place="left"
+            isOpen={crossDateError}
+          >
+            The meeting must start and end on the same day
+          </Tooltip>
 
-        <SelectField
-          className={"meeting_type_anchor_element"}
-          label="Meeting Type *"
-          name="meetingType"
-          value={meetingDetails.meetingType || ""}
-          onChange={(e) => {
-            handleChange(e);
-            setMeetingTypeError(false);
-          }}
-          options={meetingTypes}
-          required={true}
-        />
-        {(meetingDetails.meetingType === "ONLINE" ||
-          meetingDetails.meetingType === "HYBRID") && (
-          <div className="mt-2 text-gray-500 flex items-center">
-            <span
-              style={{ fontSize: "1.15rem" }}
-              className="material-symbols-rounded mr-2"
-            >
-              info
-            </span>
-            Students will contact you for the meeting link
-          </div>
-        )}
-        {(meetingDetails.meetingType === "OFFLINE" ||
-          meetingDetails.meetingType === "HYBRID") && (
-          <>
-            <div className="mt-4" />
-
-            <SelectField
-              className={"address_id_anchor_element"}
-              label="Address *"
-              name="addressId"
-              value={meetingDetails.addressId || ""}
-              onChange={(e) => {
-                handleChange(e);
-                setAddressIdError(false);
-              }}
-              options={addresses}
-              required={true}
-            />
-
-            <InputField
-              className={"room_num_anchor_element"}
-              label="Room Number *"
-              placeholder="A108"
-              name="roomNum"
-              value={meetingDetails.roomNum || ""}
-              onChange={(e) => {
-                handleChange(e);
-                setRoomNumError(false);
-              }}
-              required={true}
-            />
-          </>
-        )}
-
-        <DateTimePicker
-          className={"start_date_anchor_element"}
-          label="Start Date/Time *"
-          onChange={(e) => {
-            handleChange(e);
-            setStartDateError(false);
-            setDateValidationError(false);
-          }}
-          required={true}
-          name="startTime"
-          value={meetingDetails.startTime || ""}
-        />
-
-        <DateTimePicker
-          className={
-            "end_date_anchor_element date_validation_anchor_element cross_date_validation_anchor_element"
-          }
-          label="End Date/Time *"
-          onChange={(e) => {
-            handleChange(e);
-            setEndDateError(false);
-            setDateValidationError(false);
-            setCrossDateError(false);
-          }}
-          required={true}
-          name="endTime"
-          value={meetingDetails.endTime || ""}
-        />
-
-        <ActionButton
-          className={"my-4"}
-          type={"submit"}
-          icon={isEditMode ? "sync" : "add_circle"}
-          text={isEditMode ? "Update Meeting" : "Create Meeting"}
-          design={"action"}
-        />
-        {isEditMode && meetingDetails && meetingId && courseId && user && (
-          <ActionButton
-            onClick={(e) => {
-              e.preventDefault();
-              setIsOpen(true);
+          <SelectField
+            className={"meeting_type_anchor_element"}
+            label="Meeting Type *"
+            name="meetingType"
+            value={meetingDetails.meetingType || ""}
+            onChange={(e) => {
+              handleChange(e);
+              setMeetingTypeError(false);
             }}
-            className={"ml-4 my-4"}
-            text={`Delete Meeting`}
-            icon={"delete"}
-            design={"alert"}
+            options={meetingTypes}
+            required={true}
           />
-        )}
-      </form>
+          {(meetingDetails.meetingType === "ONLINE" ||
+            meetingDetails.meetingType === "HYBRID") && (
+            <div className="mt-2 text-gray-500 flex items-center">
+              <span
+                style={{ fontSize: "1.15rem" }}
+                className="material-symbols-rounded mr-2"
+              >
+                info
+              </span>
+              Students will contact you for the meeting link
+            </div>
+          )}
+          {(meetingDetails.meetingType === "OFFLINE" ||
+            meetingDetails.meetingType === "HYBRID") && (
+            <>
+              <div className="mt-4" />
+
+              <SelectField
+                className={"address_id_anchor_element"}
+                label="Address *"
+                name="addressId"
+                value={meetingDetails.addressId || ""}
+                onChange={(e) => {
+                  handleChange(e);
+                  setAddressIdError(false);
+                }}
+                options={addresses}
+                required={true}
+              />
+
+              <InputField
+                className={"room_num_anchor_element"}
+                label="Room Number *"
+                placeholder="A108"
+                name="roomNum"
+                value={meetingDetails.roomNum || ""}
+                onChange={(e) => {
+                  handleChange(e);
+                  setRoomNumError(false);
+                }}
+                required={true}
+              />
+            </>
+          )}
+
+          <DateTimePicker
+            className={"start_date_anchor_element"}
+            label="Start Date/Time *"
+            onChange={(e) => {
+              handleChange(e);
+              setStartDateError(false);
+              setDateValidationError(false);
+            }}
+            required={true}
+            name="startTime"
+            value={meetingDetails.startTime || ""}
+          />
+
+          <DateTimePicker
+            className={
+              "end_date_anchor_element date_validation_anchor_element cross_date_validation_anchor_element"
+            }
+            label="End Date/Time *"
+            onChange={(e) => {
+              handleChange(e);
+              setEndDateError(false);
+              setDateValidationError(false);
+              setCrossDateError(false);
+            }}
+            required={true}
+            name="endTime"
+            value={meetingDetails.endTime || ""}
+          />
+
+          <ActionButton
+            className={"my-4"}
+            type={"submit"}
+            icon={isEditMode ? "sync" : "add_circle"}
+            text={isEditMode ? "Update Meeting" : "Create Meeting"}
+            design={"action"}
+          />
+          {isEditMode && meetingDetails && meetingId && courseId && user && (
+            <ActionButton
+              onClick={(e) => {
+                e.preventDefault();
+                setIsOpen(true);
+              }}
+              className={"ml-4 my-4"}
+              text={`Delete Meeting`}
+              icon={"delete"}
+              design={"alert"}
+            />
+          )}
+        </form>
+      )}
+
       <ConfirmationDialog
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         title="Delete Meeting?"
         message="Are you sure you want to delete this meeting? All associated data will be removed."
         confirmText="Delete"
+        confirmIcon={"delete"}
         onConfirm={handleDelete}
       />
     </div>
