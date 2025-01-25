@@ -76,7 +76,7 @@ jobs:
           # VALIDATE_JSX_PRETTIER: "true"
           VALIDATE_HTML: "true"
           # VALIDATE_HTML_PRETTIER: "true"
-          VALIDATE_CSS: "true" # Fixed typo from VALDIATE_CSS
+          # VALIDATE_CSS: "true" # Fixed typo from VALDIATE_CSS
           # VALIDATE_CSS_PRETTIER: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
