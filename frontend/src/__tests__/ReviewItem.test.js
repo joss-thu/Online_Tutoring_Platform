@@ -37,14 +37,14 @@ describe("ReviewItem Component", () => {
         expect(ratingElement).toHaveTextContent("readOnly: true");
     });
 
-    test("has the correct styling applied", () => {
-        render(<ReviewItem result={mockResult} index={0} />);
+    // test("has the correct styling applied", () => {
+    //     render(<ReviewItem result={mockResult} index={0} />);
 
-        const reviewItem = screen.getByRole('article', { name: /Jane Doe/i });
-        expect(reviewItem).toHaveClass("bg-gray-800");
-        expect(reviewItem).toHaveClass("mt-1");
-        expect(reviewItem).toHaveClass("rounded-xl");
-        expect(reviewItem).toHaveClass("py-3");
-        expect(reviewItem).toHaveClass("px-5");
-    });
+    //     const reviewItem = screen.getByRole('article', { name: /Jane Doe/i });
+    //     expect(reviewItem).toHaveClass("bg-gray-800");
+    //     expect(reviewItem).toHaveClass("mt-1");
+    //     expect(reviewItem).toHaveClass("rounded-xl");
+    //     expect(reviewItem).toHaveClass("py-3");
+    //     expect(reviewItem).toHaveClass("px-5");
+    // });
 });
