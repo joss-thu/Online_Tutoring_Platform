@@ -8,8 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Clean npm cache and install dependencies
-RUN npm cache clean --force
-RUN npm install
+RUN npm cache clean --force && npm install
 
 # Copy the rest of the application code
 COPY . .
@@ -18,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Use Nginx to serve the application
-FROM nginx:latest
+FROM nginx:1.21.6-alpine
 
 # Copy the built application from the build stage to the Nginx HTML directory
 COPY --from=build /app/build /usr/share/nginx/html
