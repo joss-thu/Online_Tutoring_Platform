@@ -44,4 +44,4 @@ jobs:
           SONAR_ORGANIZATION: joss-thu
         run: |
           cd backend
-          mvn clean verify sonar:sonar -Dsonar.organization=${{ env.SONAR_ORGANIZATION }}
+          mvn clean verify sonar:sonar -Dsonar.organization=${{ env.SONAR_ORGANIZATION }} -Dsonar.host.url=https://sonarcloud.io
