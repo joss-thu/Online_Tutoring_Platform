@@ -41,7 +41,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "nodemon ./src/server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lint:md": "markdownlint '**/*.md'"
   },
   "eslintConfig": {
     "env": {
@@ -50,7 +51,8 @@
     },
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:tailwindcss/recommended"
     ],
     "parserOptions": {
       "ecmaFeatures": {
@@ -60,14 +62,16 @@
       "sourceType": "module"
     },
     "plugins": [
-      "react"
+      "react",
+      "tailwindcss"
     ],
     "rules": {
       "no-sequences": "off",
       "no-unused-expressions": "off",
       "no-mixed-operators": "off",
       "no-restricted-globals": "off",
-      "no-undef": "off"
+      "no-undef": "off",
+      "tailwindcss/no-custom-classname": "off"
     }
   },
   "browserslist": {
@@ -88,12 +92,39 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-tailwindcss": "^3.18.0",
     "globals": "^15.12.0",
     "jest": "^27.5.1",
+    "markdownlint-cli": "^0.44.0",
     "prettier": "3.3.3",
     "react-app-rewired": "^2.2.1",
     "react-router-dom": "^7.1.3",
+    "stylelint": "^16.13.2",
+    "stylelint-config-standard": "^37.0.0",
     "tailwindcss": "^3.4.14"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "at-rule-no-unknown": [
+        true,
+        {
+          "ignoreAtRules": [
+            "tailwind",
+            "apply",
+            "variants",
+            "responsive",
+            "screen"
+          ]
+        }
+      ]
+    }
+  },
+  "markdownlint": {
+    "default": true,
+    "MD001": { "level": 2 },
+    "MD007": { "indent": 2 },
+    "MD009": { "br_spaces": 2 }
   },
   "jest": {
     "coverageThreshold": {
