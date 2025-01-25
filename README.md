@@ -11,19 +11,19 @@ An online tutoring platform exclusively for THU students from THU students.
 - Integrated Development Environment:
   - IntelliJ IDEA (Recommended)
 - Optional:
-   - API development and testing tool:
-      - POSTMAN
+  - API development and testing tool:
+    - POSTMAN
 
-### Steps:
+### Steps
 1. Delete any existing versions of the project
-2. Clone the Online_Tutoring_platform from the [github repository](https://github.com/ddarnold/Online_Tutoring_Platform.git).
+2. Clone the Online_Tutoring_platform from the [github repository](https://github.com/ddarnold/Online_Tutoring_Platform.git)
 3. Add the .env file at the root folder with **at least(!!)** the following parameters:
-- DB_NAME
-- DB_PASSWORD
-- DB_URL
-- DB_USER
-- JWT_SECRET_KEY
-- JWT_DURATION_IN_MILLISECONDS
+   - DB_NAME
+   - DB_PASSWORD
+   - DB_URL
+   - DB_USER
+   - JWT_SECRET_KEY
+   - JWT_DURATION_IN_MILLISECONDS
 
 Contact [Nikolai Ivanov](mailto:ivanni01@thu.de) or [Jossin Antony](antojo01@thu.de) for the values of the parameters.
 4. Pass the correct environment variables to the IDE (IntelliJ IDEA) - ***Edit configurations -> User Environment variables***.
