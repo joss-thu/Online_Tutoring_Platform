@@ -37,6 +37,7 @@ jobs:
           JAVA_FILE_NAME: "./checkstyle.xml"
           # VALIDATE_GOOGLE_JAVA_FORMAT: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: /
 
   frontend-lint:
     name: Frontend Lint
