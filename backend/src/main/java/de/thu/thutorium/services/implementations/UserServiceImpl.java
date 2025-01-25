@@ -390,12 +390,30 @@ public class UserServiceImpl implements UserService {
     courseRepository.save(course);
   }
 
+
+  /**
+   * Retrieves the ratings for a specific tutor.
+   *
+   * <p>This method retrieves all ratings associated with the specified tutor and returns them as a list of transfer objects (DTOs).
+   *
+   * @param tutorId the ID of the tutor whose ratings are to be retrieved
+   * @return a list of rating transfer objects for the specified tutor
+   */
   @Override
   public List<RatingTutorTO> getTutorRatings(Long tutorId) {
     List<RatingTutorDBO> ratingTutorDBOS = ratingTutorRepository.findByTutor_UserId(tutorId);
     return ratingTutorDBOS.stream().map(ratingTutorTOMapper::toDTO).toList();
   }
 
+    /**
+   * Retrieves the courses a student is enrolled in.
+   *
+   * <p>This method retrieves all courses that the specified student is enrolled in and returns them as a list of transfer objects (DTOs).
+   *
+   * @param studentId the ID of the student whose enrolled courses are to be retrieved
+   * @return a list of course transfer objects for the specified student
+   * @throws EntityNotFoundException if the student is not found
+   */
   @Override
   public List<CourseTO> getCoursesEnrolled(Long studentId) {
     // Fetch the student by their ID
@@ -407,5 +425,31 @@ public class UserServiceImpl implements UserService {
 
     // Map the student's courses to CourseTO
     return courseTOMapper.toDTOList(user.getStudentCourses());
+  }
+
+  /**
+   * Verifies a tutor.
+   *
+   * <p>This method verifies the specified tutor by their ID.
+   *
+   * @param tutorId the ID of the tutor to be verified
+   * @return true if the tutor is successfully verified, false otherwise
+   * @throws EntityNotFoundException if the tutor is not found
+   */
+  @Override
+  @Transactional
+  public boolean verifyTutor(Long tutorId) {
+    UserDBO tutor =
+            userRepository
+                    .findUserDBOByUserIdAndRoles_RoleName(tutorId, Role.TUTOR)
+                    .orElseThrow(
+                            () ->
+                                    new EntityNotFoundException(
+                                            "Tutor with id " + tutorId + " not found"));
+
+    tutor.setIsVerified(true);
+    tutor.setVerified_on(LocalDateTime.now());
+    userRepository.save(tutor);
+    return true;
   }
 }
