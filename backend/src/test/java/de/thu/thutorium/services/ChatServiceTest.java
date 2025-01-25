@@ -1,8 +1,5 @@
 package de.thu.thutorium.services;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.database.DBOMappers.ChatDBMapper;
 import de.thu.thutorium.database.dbObjects.ChatDBO;
@@ -19,6 +16,9 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ChatServiceTest {
@@ -76,7 +76,6 @@ public class ChatServiceTest {
         verify(chatRepository, never()).save(any(ChatDBO.class));
     }
 
-
     @Test
     public void testDeleteChat_Success() {
         // Given
@@ -124,7 +123,6 @@ public class ChatServiceTest {
         // Verify no interaction with the repository save method
         verify(chatRepository, never()).save(any(ChatDBO.class));
     }
-
 
     @Test
     public void testDeleteChat_AlreadyDeleted() {

@@ -111,7 +111,6 @@ class UserControllerTest {
         verify(userService, times(1)).deleteUser(1L);
     }
 
-
     @Test
     void getMeetingsForUser_Success() {
         MeetingTO meeting = new MeetingTO();

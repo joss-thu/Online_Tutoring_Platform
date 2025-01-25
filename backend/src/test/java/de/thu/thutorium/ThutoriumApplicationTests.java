@@ -2,17 +2,10 @@ package de.thu.thutorium;
 
 import de.thu.thutorium.api.controllers.AdminController;
 import de.thu.thutorium.api.controllers.AuthenticationController;
-import de.thu.thutorium.api.transferObjects.authentication.LogInRequestTO;
-import de.thu.thutorium.api.transferObjects.authentication.LogInResponseTO;
-import de.thu.thutorium.api.transferObjects.authentication.RegisterRequestTO;
 import de.thu.thutorium.api.transferObjects.common.AddressTO;
-import de.thu.thutorium.api.transferObjects.common.ChatCreateTO;
 import de.thu.thutorium.api.transferObjects.common.CourseCategoryTO;
-import de.thu.thutorium.api.transferObjects.common.UniversityTO;
-import de.thu.thutorium.exceptions.ResourceAlreadyExistsException;
 import de.thu.thutorium.services.interfaces.*;
 import jakarta.persistence.EntityExistsException;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

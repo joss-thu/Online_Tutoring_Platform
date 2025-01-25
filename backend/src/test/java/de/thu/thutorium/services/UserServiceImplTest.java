@@ -192,7 +192,6 @@ class UserServiceImplTest {
         verify(ratingTutorRepository, times(1)).save(any());
     }
 
-
     @Test
     void unenrollCourse_ShouldUnenrollStudent_WhenValid() {
         student.getStudentCourses().add(course);

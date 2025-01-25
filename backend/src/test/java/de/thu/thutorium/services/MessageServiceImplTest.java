@@ -1,8 +1,5 @@
 package de.thu.thutorium.services;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import de.thu.thutorium.api.TOMappers.MessageTOMapper;
 import de.thu.thutorium.api.transferObjects.common.MessageTO;
 import de.thu.thutorium.database.dbObjects.ChatDBO;
@@ -22,6 +19,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class MessageServiceImplTest {
 
