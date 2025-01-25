@@ -1,4 +1,3 @@
-
 # THUtorium
 An online tutoring platform exclusively for THU students from THU students.
 
@@ -6,9 +5,9 @@ An online tutoring platform exclusively for THU students from THU students.
 
 ### Prerequisites
 - Software development Kit:
-   - JAVA 17 or higher
+  - JAVA 17 or higher
 - Build Tool:
-   - MAVEN 3.9 or higher
+  - MAVEN 3.9 or higher
 - Integrated Development Environment:
   - IntelliJ IDEA (Recommended)
 - Optional:
