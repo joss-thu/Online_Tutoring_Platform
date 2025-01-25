@@ -38,9 +38,9 @@ describe("ReviewItem Component", () => {
     });
 
     test("has the correct styling applied", () => {
-        const { container } = render(<ReviewItem result={mockResult} index={0} />);
+        render(<ReviewItem result={mockResult} index={0} />);
 
-        const reviewItem = container.firstChild;
+        const reviewItem = screen.getByRole('article', { name: /Jane Doe/i });
         expect(reviewItem).toHaveClass("bg-gray-800");
         expect(reviewItem).toHaveClass("mt-1");
         expect(reviewItem).toHaveClass("rounded-xl");

@@ -15,9 +15,9 @@ describe("EnrolledStudentItem Component", () => {
     test("has the correct styling applied", () => {
         const student = { fullName: "Jane Doe", email: "jane.doe@example.com" };
 
-        const { container } = render(<EnrolledStudentItem result={student} />);
+        render(<EnrolledStudentItem result={student} />);
 
-        const studentItem = container.firstChild;
+        const studentItem = screen.getByRole('listitem', { name: /Jane Doe/i });
         expect(studentItem).toHaveClass("text-sm");
         expect(studentItem).toHaveClass("text-gray-100");
         expect(studentItem).toHaveClass("mt-1.5");

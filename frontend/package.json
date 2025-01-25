@@ -44,10 +44,31 @@
     "lint": "eslint ."
   },
   "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true
+    },
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "parserOptions": {
+      "ecmaFeatures": {
+        "jsx": true
+      },
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "react"
+    ],
+    "rules": {
+      "no-sequences": "off",
+      "no-unused-expressions": "off",
+      "no-mixed-operators": "off",
+      "no-restricted-globals": "off",
+      "no-undef": "off"
+    }
   },
   "browserslist": {
     "production": [
