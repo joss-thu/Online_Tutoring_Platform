@@ -43,7 +43,7 @@ From the root folder, access:
 
 ## Docker
 
-### Prerequisites
+### Docker Prerequisites
 
 Before running the application, ensure you have the following installed:
 
@@ -116,7 +116,7 @@ To run both the backend and frontend applications using Docker Compose, follow t
 ### Running the code
 
 - **`.env` file**: An `.env` file, required for creating the database and backend container, is included in the repository as an example.
-- **Running Backend Locally**: If you run the backend from an IDE, ensure the database is started first (**!!IMPORTANT!!**), ideally from the docker container. 
+- **Running Backend Locally**: If you run the backend from an IDE, ensure the database is started first (**!!IMPORTANT!!**), ideally from the docker container.
 Identical environment variables should be set in the IDE to match those in Docker. In the intellij IDE, these can be set in the 'Edit Configurations' section.
 - **Local Database URL**: If the backend runs outside a Docker container, make sure the `databaseUrl` points to your local database (e.g., `localhost`).
 - **JWT_SECRET_KEY**:The secret key must be an HMAC hash string of 256 bits; otherwise, the token generation will throw an error.
@@ -136,11 +136,10 @@ Identical environment variables should be set in the IDE to match those in Docke
 - **Webrtc server**: Available at [http://localhost:5000](http://localhost:5000)
 
 
-### Connecting with the local database from the IDE:
-- From the addon database section/icon in the IntelliJ IDE:
-   - create a new datasource
-   - select postgresql
-   - Pass the database credentials for the localhost deployment- Database name, username, password, URL (localhost URL) amnd the respective port number.
-   - Test connection
-   - Save connection.
-
+### Connecting with the local database from the IDE
+From the addon database section/icon in the IntelliJ IDE:
+- create a new datasource
+- select postgresql
+- Pass the database credentials for the localhost deployment- Database name, username, password, URL (localhost URL) amnd the respective port number.
+- Test connection
+- Save connection.
