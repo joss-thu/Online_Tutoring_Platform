@@ -34,7 +34,7 @@ jobs:
         uses: super-linter/super-linter/slim@v7.2.0
         env:
           VALIDATE_JAVA: "true"
-          JAVA_FILE_NAME: "backend/checkstyle.xml"
+          JAVA_FILE_NAME: "./checkstyle.xml"
           # VALIDATE_GOOGLE_JAVA_FORMAT: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
