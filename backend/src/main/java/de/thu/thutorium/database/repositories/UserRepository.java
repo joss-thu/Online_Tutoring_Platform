@@ -88,4 +88,5 @@ public interface UserRepository extends JpaRepository<UserDBO, Long> {
   Optional<UserDBO> findUserDBOByUserIdAndRoles_RoleName(Long userId, Role roleName);
 
   List<UserDBO> findUserDBOSByRoles_RoleName(Role roleName);
+
 }

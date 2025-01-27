@@ -45,46 +45,6 @@ public class StudentController {
    * @throws EntityNotFoundException, if the searched student/course does not exist in the database.
    */
 
-  //  @Operation(
-  //      summary = "Student enrolls in a course. ",
-  //      description = "A student can enroll in a course, provided it exists already in the
-  // database",
-  //      tags = {"Student Endpoints"})
-  //  @ApiResponses({
-  //    @ApiResponse(responseCode = "200", description = "User successfully enrolled."),
-  //    @ApiResponse(
-  //        responseCode = "404",
-  //        description = "Student or course not found.",
-  //        content =
-  //            @Content(
-  //                mediaType = "application/json",
-  //                schema = @Schema(implementation = String.class)))
-  //  })
-  //  @PostMapping("/enroll-course")
-  //  public ResponseEntity<?> enrollInCourse(
-  //      @Parameter(
-  //              name = "student ID",
-  //              description = "The ID of the student enrolling in the course",
-  //              required = true)
-  //          @RequestParam
-  //          Long studentId,
-  //      @Parameter(
-  //              name = "course ID",
-  //              description = "The ID of the course into which the student enrolls.",
-  //              required = true)
-  //          @RequestParam
-  //          Long courseId) {
-  //    try {
-  //      studentService.enrollCourse(studentId, courseId);
-  //      return ResponseEntity.status(HttpStatus.OK).body("Enrolled successfully in the course");
-  //    } catch (EntityNotFoundException ex) {
-  //      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
-  //    } catch (Exception ex) {
-  //      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-  //          .body("Unexpected error: " + ex.getMessage());
-  //    }
-  //  }
-
   @Operation(
       summary = "Student enrolls in a course. ",
       description = "A student can enroll in a course, provided it exists already in the database",
@@ -128,45 +88,6 @@ public class StudentController {
    * @return suitable HTTP response upon successful unenrolment.
    * @throws EntityNotFoundException, if the searched student/course does not exist in the database.
    */
-  //  @Operation(
-  //      summary = "Student unenrolls in a course. ",
-  //      description =
-  //          "A student can unenroll in a course, provided he is already enrolled in the course.",
-  //      tags = {"Student Endpoints"})
-  //  @ApiResponses({
-  //    @ApiResponse(responseCode = "200", description = "User successfully unenrolled."),
-  //    @ApiResponse(
-  //        responseCode = "404",
-  //        description = "Student or course not found.",
-  //        content =
-  //            @Content(
-  //                mediaType = "application/json",
-  //                schema = @Schema(implementation = String.class)))
-  //  })
-  //  @PostMapping("/unenroll-course")
-  //  public ResponseEntity<?> unenrollInCourse(
-  //      @Parameter(
-  //              name = "student ID",
-  //              description = "The ID of the student unenrolling in the course",
-  //              required = true)
-  //          @RequestParam
-  //          Long studentId,
-  //      @Parameter(
-  //              name = "course ID",
-  //              description = "The ID of the course from which the student unenrolls.",
-  //              required = true)
-  //          @RequestParam
-  //          Long courseId) {
-  //    try {
-  //      studentService.unenrollCourse(studentId, courseId);
-  //      return ResponseEntity.status(HttpStatus.OK).body("Unenrolled successfully in the course");
-  //    } catch (EntityNotFoundException ex) {
-  //      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + ex.getMessage());
-  //    } catch (Exception ex) {
-  //      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-  //          .body("Unexpected error: " + ex.getMessage());
-  //    }
-  //  }
 
   @Operation(
       summary = "Student unenrolls in a course. ",
