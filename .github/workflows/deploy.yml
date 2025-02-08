@@ -24,27 +24,48 @@ jobs:
           username: ${{ secrets.DROPLET_USER }}
           password: ${{ secrets.DO_PAT }}
 
+#      - name: Build and push backend Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: ./backend
+#          push: true
+#          tags: ${{ secrets.REGISTRY_LINK }}/backend:latest
+#
+#      - name: Build and push frontend Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: ./frontend
+#          push: true
+#          tags: ${{ secrets.REGISTRY_NAME }}/frontend:latest
+#
+#      - name: Build and push WebRTC server Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: ./webrtc
+#          push: true
+#          tags: ${{ secrets.REGISTRY_NAME }}/webrtc-server:latest
+
+#====================================================================
       - name: Build and push backend Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./backend
-          push: true
-          tags: ${{ secrets.REGISTRY_LINK }}/backend:latest
+        run: |
+          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/backend:latest ./backend
+          docker push registry.digitalocean.com/online_tutoring_platform-backend/backend:latest
 
       - name: Build and push frontend Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./frontend
-          push: true
-          tags: ${{ secrets.REGISTRY_NAME }}/frontend:latest
+        run: |
+          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/frontend:latest ./frontend
+          docker push registry.digitalocean.com/online_tutoring_platform-backend/frontend:latest
 
       - name: Build and push WebRTC server Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./webrtc
-          push: true
-          tags: ${{ secrets.REGISTRY_NAME }}/webrtc-server:latest
+        run: |
+          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/webrtc-server:latest ./webrtc
+          docker push registry.digitalocean.com/online_tutoring_platform-backend/webrtc-server:latest
 
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+#====================================================================
       - name: Configure kubectl with DigitalOcean
         run: doctl kubernetes cluster kubeconfig save do-fra1-k8s-thutorium
         env:
