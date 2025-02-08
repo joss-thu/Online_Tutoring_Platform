@@ -21,7 +21,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           registry: ${{ secrets.REGISTRY_LINK }}
-          username: ${{ secrets.DROPLET_USER }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.DO_PAT }}
 
 #      - name: Build and push backend Docker image
