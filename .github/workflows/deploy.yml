@@ -1,0 +1,56 @@
+name: Deploy to DigitalOcean
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to DigitalOcean Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.REGISTRY_NAME }}
+          username: ${{ secrets.DROPLET_USER }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.REGISTRY_NAME }}/backend:latest
+
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ secrets.REGISTRY_NAME }}/frontend:latest
+
+      - name: Build and push WebRTC server Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./webrtc
+          push: true
+          tags: ${{ secrets.REGISTRY_NAME }}/webrtc-server:latest
+
+      - name: Configure kubectl with DigitalOcean
+        run: doctl kubernetes cluster kubeconfig save do-fra1-k8s-thutorium
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f ./.github/k8s/deployment.yaml
+          kubectl apply -f ./.github/k8s/service.yaml

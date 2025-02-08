@@ -122,9 +122,15 @@
   },
   "markdownlint": {
     "default": true,
-    "MD001": { "level": 2 },
-    "MD007": { "indent": 2 },
-    "MD009": { "br_spaces": 2 }
+    "MD001": {
+      "level": 2
+    },
+    "MD007": {
+      "indent": 2
+    },
+    "MD009": {
+      "br_spaces": 2
+    }
   },
   "jest": {
     "coverageThreshold": {

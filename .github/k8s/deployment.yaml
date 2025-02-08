@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: registry.digitalocean.com/thutorium-registry/backend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_URL
+              value: "postgres://user:password@database:5432/otpDb"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: registry.digitalocean.com/thutorium-registry/frontend:latest
+          ports:
+            - containerPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webrtc-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webrtc-server
+  template:
+    metadata:
+      labels:
+        app: webrtc-server
+    spec:
+      containers:
+        - name: webrtc-server
+          image: registry.digitalocean.com/thutorium-registry/webrtc-server:latest
+          ports:
+            - containerPort: 5000
