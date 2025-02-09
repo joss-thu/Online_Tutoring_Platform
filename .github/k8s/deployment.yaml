@@ -20,6 +20,24 @@ spec:
           envFrom:
             - secretRef:
                 name: env-file-secret
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://database:5432/otpDb
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: env-file-secret
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: env-file-secret
+                  key: POSTGRES_PASSWORD
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: env-file-secret
+                  key: JWT_SECRET_KEY
 ---
 apiVersion: apps/v1
 kind: Deployment
