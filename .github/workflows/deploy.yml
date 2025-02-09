@@ -48,8 +48,7 @@ jobs:
 #====================================================================
       - name: Build and push backend Docker image
         run: |
-          docker buildx build ./backend -t otp-backend:registry.digitalocean.com/thutorium-registry/backend
-          docker push registry.digitalocean.com/thutorium-registry/backend
+          docker buildx build --push -t registry.digitalocean.com/thutorium-registry/backend ./backend
 
       - name: Build and push frontend Docker image
         run: |
