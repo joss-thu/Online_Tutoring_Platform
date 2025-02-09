@@ -27,12 +27,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: env-file-secret
-                  key: POSTGRES_USER
+                  key: DB_USER
             - name: SPRING_DATASOURCE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: env-file-secret
-                  key: POSTGRES_PASSWORD
+                  key: DB_PASSWORD
             - name: JWT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
