@@ -17,9 +17,9 @@ spec:
           image: registry.digitalocean.com/thutorium-registry/backend
           ports:
             - containerPort: 8080
-          env:
-            - name: DB_URL
-              value: "postgres://user:password@database:5432/otpDb"
+          envFrom:
+            - secretRef:
+                name: env-file-secret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -40,6 +40,9 @@ spec:
           image: registry.digitalocean.com/thutorium-registry/frontend
           ports:
             - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: env-file-secret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -60,3 +63,6 @@ spec:
           image: registry.digitalocean.com/thutorium-registry/webrtc
           ports:
             - containerPort: 5000
+          envFrom:
+            - secretRef:
+                name: env-file-secret

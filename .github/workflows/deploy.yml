@@ -83,8 +83,10 @@ jobs:
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_PAT }}
 
-      - name: Apply Kubernetes manifests
-        run: kubectl apply -f ./.github/k8s/deployment.yaml
+      - name: Create Kubernetes secret from ENV_FILE
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+          kubectl create secret generic env-file-secret --from-env-file=.env
 
       - name: Deploy to Kubernetes
         run: |
