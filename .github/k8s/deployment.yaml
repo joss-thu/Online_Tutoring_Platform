@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: registry.digitalocean.com/online_tutoring_platform-backend/backend:latest
+          image: registry.digitalocean.com/thutorium-registry/backend
           ports:
             - containerPort: 8080
           env:
@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: registry.digitalocean.com/online_tutoring_platform-backend/frontend:latest
+          image: registry.digitalocean.com/thutorium-registry/frontend
           ports:
             - containerPort: 3000
 ---
@@ -57,6 +57,6 @@ spec:
     spec:
       containers:
         - name: webrtc-server
-          image: registry.digitalocean.com/online_tutoring_platform-backend/webrtc-server:latest
+          image: registry.digitalocean.com/thutorium-registry/webrtc
           ports:
             - containerPort: 5000
