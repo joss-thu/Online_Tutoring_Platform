@@ -85,6 +85,7 @@ jobs:
 
       - name: Create Kubernetes secret from ENV_FILE
         run: |
+          kubectl delete secret env-file-secret --ignore-not-found
           echo "${{ secrets.ENV_FILE }}" > .env
           kubectl create secret generic env-file-secret --from-env-file=.env
 
