@@ -63,6 +63,10 @@ jobs:
         with:
           version: 'latest'
 #====================================================================
+
+      - name: Install doctl
+        run: sudo snap install doctl
+
       - name: Configure kubectl with DigitalOcean
         run: doctl kubernetes cluster kubeconfig save k8s-thutorium
         env:
