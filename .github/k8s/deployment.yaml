@@ -66,26 +66,30 @@ spec:
           envFrom:
             - secretRef:
                 name: env-file-secret
-# ---
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: database
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: database
-#   template:
-#     metadata:
-#       labels:
-#         app: database
-#     spec:
-#       containers:
-#         - name: database
-#           image: postgres:latest
-#           ports:
-#             - containerPort: 5432
-#           envFrom:
-#             - secretRef:
-#                 name: env-file-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: otpDb
+            - name: POSTGRES_USER
+              value: otp
+            - name: POSTGRES_PASSWORD
+              value: otp
