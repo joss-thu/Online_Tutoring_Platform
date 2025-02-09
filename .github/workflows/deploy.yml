@@ -48,18 +48,21 @@ jobs:
 #====================================================================
       - name: Build and push backend Docker image
         run: |
-          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/backend:latest ./backend
-          docker push registry.digitalocean.com/online_tutoring_platform-backend/backend:latest
+          docker build backend ./backend
+          docker tag  backend registry.digitalocean.com/thutorium-registry/backend
+          docker push registry.digitalocean.com/thutorium-registry/backend
 
       - name: Build and push frontend Docker image
         run: |
-          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/frontend:latest ./frontend
-          docker push registry.digitalocean.com/online_tutoring_platform-backend/frontend:latest
+          docker build frontend ./frontend
+          docker tag  frontend registry.digitalocean.com/thutorium-registry/frontend
+          docker push registry.digitalocean.com/thutorium-registry/frontend
 
       - name: Build and push WebRTC server Docker image
         run: |
-          docker build -t registry.digitalocean.com/online_tutoring_platform-backend/webrtc-server:latest ./webrtc
-          docker push registry.digitalocean.com/online_tutoring_platform-backend/webrtc-server:latest
+          docker build webrtc ./webrtc
+          docker tag  webrtc registry.digitalocean.com/thutorium-registry/webrtc
+          docker push registry.digitalocean.com/thutorium-registry/webrtc
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v1
