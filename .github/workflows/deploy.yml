@@ -69,6 +69,12 @@ jobs:
       - name: Install doctl
         run: sudo snap install doctl
 
+      - name: Grant access to doctl:kube-config
+        run: sudo snap connect doctl:kube-config
+
+      - name: Change permissions for .kube directory
+        run: sudo chown -R $USER /home/runner/.kube
+
       - name: Configure kubectl with DigitalOcean
         run: doctl kubernetes cluster kubeconfig save k8s-thutorium
         env:
