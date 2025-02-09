@@ -63,6 +63,8 @@ jobs:
         with:
           version: 'latest'
 #====================================================================
+      - name: Create .kube directory
+        run: mkdir -p /home/runner/.kube
 
       - name: Install doctl
         run: sudo snap install doctl
