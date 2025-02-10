@@ -90,7 +90,7 @@ jobs:
         run: |
           echo "Waiting for Ingress Controller to be ready..."
           kubectl wait --namespace ingress-nginx \
-            --for=condition=available deployment/ingress-nginx-controller --timeout=90s
+            --for=condition=available deployment/nginx-ingress-ingress-nginx-controller --timeout=120s
 
       - name: Create Kubernetes secret from ENV_FILE
         run: |
