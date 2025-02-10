@@ -80,9 +80,17 @@ jobs:
         run: doctl auth init -t ${{ secrets.DO_PAT }}
 
       - name: Configure kubectl with DigitalOcean
-        run: doctl kubernetes cluster kubeconfig save k8s-thutorium
+        run: |
+          doctl kubernetes cluster kubeconfig save k8s-thutorium
+          export KUBECONFIG=$HOME/.kube/config
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DO_PAT }}
+
+      - name: Wait for Ingress Controller to be ready
+        run: |
+          echo "Waiting for Ingress Controller to be ready..."
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=available deployment/ingress-nginx-controller --timeout=90s
 
       - name: Create Kubernetes secret from ENV_FILE
         run: |
@@ -95,4 +103,9 @@ jobs:
           kubectl apply -f ./.github/k8s/ingress.yaml
           kubectl apply -f ./.github/k8s/deployment.yaml
           kubectl apply -f ./.github/k8s/service.yaml
-          
+
+      - name: Verify Kubernetes Deployment
+        run: |
+          kubectl get pods -A
+          kubectl get services -A
+          kubectl get ingress -A
