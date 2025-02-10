@@ -94,3 +94,4 @@ jobs:
         run: |
           kubectl apply -f ./.github/k8s/deployment.yaml
           kubectl apply -f ./.github/k8s/service.yaml
+          kubectl apply -f ./.github/k8s/ingress.yaml
