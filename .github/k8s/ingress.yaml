@@ -5,6 +5,10 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  tls:
+    - hosts:
+        - thutorium.de
+      secretName: tls-secret
   rules:
     - host: thutorium.de
       http:
