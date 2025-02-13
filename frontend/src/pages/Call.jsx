@@ -33,23 +33,23 @@ function CallPage() {
       audio: true,
     };
     navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then((stream) => {
-        setStream(stream);
-        if (myVideo.current) myVideo.current.srcObject = stream;
+        .getUserMedia(constraints)
+        .then((stream) => {
+          setStream(stream);
+          if (myVideo.current) myVideo.current.srcObject = stream;
 
-        const videoTrack = stream.getVideoTracks()[0];
-        if (videoTrack) videoTrack.enabled = false;
+          const videoTrack = stream.getVideoTracks()[0];
+          if (videoTrack) videoTrack.enabled = false;
 
-        const audioTrack = stream.getAudioTracks()[0];
-        if (audioTrack) audioTrack.enabled = false;
+          const audioTrack = stream.getAudioTracks()[0];
+          if (audioTrack) audioTrack.enabled = false;
 
-        setVideoEnabled(false);
-        setAudioEnabled(false);
-      })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
+          setVideoEnabled(false);
+          setAudioEnabled(false);
+        })
+        .catch((error) => {
+          console.error("Error accessing media devices:", error);
+        });
 
     return () => {
       if (stream) {
@@ -103,7 +103,10 @@ function CallPage() {
     const peer = new Peer({
       initiator: false,
       trickle: false,
-      stream: stream,
+      stream,
+      config: {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      },
     });
 
     peer.on("signal", (data) => {
@@ -121,7 +124,14 @@ function CallPage() {
   };
 
   const callUser = (id) => {
-    const peer = new Peer({ initiator: true, trickle: false, stream });
+    const peer = new Peer({
+      initiator: true,
+      trickle: false,
+      stream,
+      config: {
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      },
+    });
 
     peer.on("signal", (data) => {
       socket.emit("callUser", {
@@ -176,8 +186,8 @@ function CallPage() {
 
         if (connectionRef.current) {
           const sender = connectionRef.current._pc
-            .getSenders()
-            .find((s) => s.track?.kind === "video");
+              .getSenders()
+              .find((s) => s.track?.kind === "video");
           if (sender) {
             sender.track.enabled = videoTrack.enabled;
           }
@@ -195,8 +205,8 @@ function CallPage() {
 
         if (connectionRef.current) {
           const sender = connectionRef.current._pc
-            .getSenders()
-            .find((s) => s.track?.kind === "audio");
+              .getSenders()
+              .find((s) => s.track?.kind === "audio");
           if (sender) {
             sender.track.enabled = audioTrack.enabled;
           }
@@ -206,73 +216,73 @@ function CallPage() {
   };
 
   return (
-    <div className="p-8 bg-gray-950 min-h-screen max-h-screen font-merriweather_sans flex flex-col items-center overflow-hidden">
-      <div className="flex flex-col items-center space-y-6 w-full max-w-screen-lg">
-        {/* Remote Video */}
-        <div className="relative rounded-3xl overflow-hidden shadow-lg bg-gray-900 w-full max-w-screen-lg aspect-video h-[45vh]">
-          <video
-            playsInline
-            ref={userVideo}
-            autoPlay
-            className="w-full h-full object-cover transform scale-x-[-1]"
-          />
-          {!callAccepted && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <PuffLoader color="#ffffff" size={150} />
-            </div>
-          )}
+      <div className="p-8 bg-gray-950 min-h-screen max-h-screen font-merriweather_sans flex flex-col items-center overflow-hidden">
+        <div className="flex flex-col items-center space-y-6 w-full max-w-screen-lg">
+          {/* Remote Video */}
+          <div className="relative rounded-3xl overflow-hidden shadow-lg bg-gray-900 w-full max-w-screen-lg aspect-video h-[45vh]">
+            <video
+                playsInline
+                ref={userVideo}
+                autoPlay
+                className="w-full h-full object-cover transform scale-x-[-1]"
+            />
+            {!callAccepted && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <PuffLoader color="#ffffff" size={150} />
+                </div>
+            )}
+          </div>
+
+          {/* Local Video */}
+          <div className="rounded-3xl overflow-hidden shadow-lg bg-gray-900 w-full max-w-screen-lg aspect-video h-[45vh]">
+            <video
+                playsInline
+                muted
+                ref={myVideo}
+                autoPlay
+                className="w-full h-full object-cover transform scale-x-[-1]"
+            />
+          </div>
         </div>
 
-        {/* Local Video */}
-        <div className="rounded-3xl overflow-hidden shadow-lg bg-gray-900 w-full max-w-screen-lg aspect-video h-[45vh]">
-          <video
-            playsInline
-            muted
-            ref={myVideo}
-            autoPlay
-            className="w-full h-full object-cover transform scale-x-[-1]"
-          />
-        </div>
-      </div>
+        {/* Controls */}
+        <div className="flex items-center space-x-6 absolute bottom-5">
+          {/* End Call */}
 
-      {/* Controls */}
-      <div className="flex items-center space-x-6 absolute bottom-5">
-        {/* End Call */}
-
-        <span
-          onClick={leaveCall}
-          className="px-6 py-2 cursor-pointer bg-red-600 text-white rounded-full hover:bg-red-700 transition material-symbols-rounded"
-        >
+          <span
+              onClick={leaveCall}
+              className="px-6 py-2 cursor-pointer bg-red-600 text-white rounded-full hover:bg-red-700 transition material-symbols-rounded"
+          >
           call_end
         </span>
 
-        {/* Toggle Video */}
+          {/* Toggle Video */}
 
-        <span
-          onClick={toggleVideo}
-          className={`px-6 py-2 cursor-pointer material-symbols-rounded text-white rounded-full transition ${
-            videoEnabled
-              ? "bg-blue-500 hover:bg-blue-600"
-              : "bg-gray-500 hover:bg-gray-600"
-          }`}
-        >
+          <span
+              onClick={toggleVideo}
+              className={`px-6 py-2 cursor-pointer material-symbols-rounded text-white rounded-full transition ${
+                  videoEnabled
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-gray-500 hover:bg-gray-600"
+              }`}
+          >
           {videoEnabled ? "videocam" : "videocam_off"}
         </span>
 
-        {/* Toggle Audio */}
+          {/* Toggle Audio */}
 
-        <span
-          onClick={toggleAudio}
-          className={`px-6 py-2 cursor-pointer text-white rounded-full transition material-symbols-rounded ${
-            audioEnabled
-              ? "bg-blue-500 hover:bg-blue-600"
-              : "bg-gray-500 hover:bg-gray-600"
-          }`}
-        >
+          <span
+              onClick={toggleAudio}
+              className={`px-6 py-2 cursor-pointer text-white rounded-full transition material-symbols-rounded ${
+                  audioEnabled
+                      ? "bg-blue-500 hover:bg-blue-600"
+                      : "bg-gray-500 hover:bg-gray-600"
+              }`}
+          >
           {audioEnabled ? "mic" : "mic_off"}
         </span>
+        </div>
       </div>
-    </div>
   );
 }
 
