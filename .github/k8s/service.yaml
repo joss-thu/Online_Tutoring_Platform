@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: backend
 spec:
-  type: ClusterIP
+  type: ClusterIP  # Internal only
   selector:
     app: backend
   ports:
@@ -16,7 +16,7 @@ kind: Service
 metadata:
   name: frontend
 spec:
-  type: LoadBalancer
+  type: ClusterIP  # CHANGED: No direct LoadBalancer, handled by Ingress
   selector:
     app: frontend
   ports:
@@ -29,7 +29,7 @@ kind: Service
 metadata:
   name: database
 spec:
-  type: ClusterIP
+  type: ClusterIP  # Internal only
   selector:
     app: database
   ports:
@@ -42,10 +42,11 @@ kind: Service
 metadata:
   name: webrtc-server
 spec:
-  type: LoadBalancer
+  type: ClusterIP  # CHANGED: No direct LoadBalancer, handled by Ingress
   selector:
     app: webrtc-server
   ports:
-    - protocol: TCP
+    - name: webrtc
+      protocol: TCP
       port: 5000
       targetPort: 5000

@@ -2,12 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-ingress
-  namespace: default  
+  namespace: default
   annotations:
+    kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /
-    kubernetes.io/ingress.class: "nginx"
-
-    # nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   tls:
     - hosts:
@@ -31,3 +29,10 @@ spec:
                 name: backend
                 port:
                   number: 8080
+          - path: /webrtc
+            pathType: Prefix
+            backend:
+              service:
+                name: webrtc-server
+                port:
+                  number: 5000
